@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3cd372273f32c81a9e43c91ec866406b",
+    "content-hash": "d87e1c4646a3e1eca839b90791f1ee85",
     "packages": [
         {
             "name": "chi-teck/drupal-code-generator",
@@ -414,6 +414,62 @@
             "time": "2017-02-14T19:40:03+00:00"
         },
         {
+            "name": "danielstjules/stringy",
+            "version": "3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danielstjules/Stringy.git",
+                "reference": "df24ab62d2d8213bbbe88cc36fc35a4503b4bd7e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danielstjules/Stringy/zipball/df24ab62d2d8213bbbe88cc36fc35a4503b4bd7e",
+                "reference": "df24ab62d2d8213bbbe88cc36fc35a4503b4bd7e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "symfony/polyfill-mbstring": "~1.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Stringy\\": "src/"
+                },
+                "files": [
+                    "src/Create.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel St. Jules",
+                    "email": "danielst.jules@gmail.com",
+                    "homepage": "http://www.danielstjules.com"
+                }
+            ],
+            "description": "A string manipulation library with multibyte support",
+            "homepage": "https://github.com/danielstjules/Stringy",
+            "keywords": [
+                "UTF",
+                "helpers",
+                "manipulation",
+                "methods",
+                "multibyte",
+                "string",
+                "utf-8",
+                "utility",
+                "utils"
+            ],
+            "time": "2017-06-12T01:10:27+00:00"
+        },
+        {
             "name": "dflydev/dot-access-data",
             "version": "v1.1.0",
             "source": {
@@ -506,17 +562,48 @@
             "time": "2014-10-24T07:27:01+00:00"
         },
         {
+            "name": "drupal/coder",
+            "version": "8.2.12",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/coder.git",
+                "reference": "984c54a7b1e8f27ff1c32348df69712afd86b17f"
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.4.0",
+                "squizlabs/php_codesniffer": ">=2.8.1 <3.0",
+                "symfony/yaml": ">=2.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=3.7 <6"
+            },
+            "type": "phpcodesniffer-standard",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Coder is a library to review Drupal code.",
+            "homepage": "https://www.drupal.org/project/coder",
+            "keywords": [
+                "code review",
+                "phpcs",
+                "standards"
+            ],
+            "time": "2017-03-18T10:28:49+00:00"
+        },
+        {
             "name": "drush/drush",
-            "version": "9.0.0-beta8",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "c9e6ac15b88d9329f560e90cc6c801b9b7859ad7"
+                "reference": "69a6f85946b5bdc1e025cb7f7490d19fdc62f66a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/c9e6ac15b88d9329f560e90cc6c801b9b7859ad7",
-                "reference": "c9e6ac15b88d9329f560e90cc6c801b9b7859ad7",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/69a6f85946b5bdc1e025cb7f7490d19fdc62f66a",
+                "reference": "69a6f85946b5bdc1e025cb7f7490d19fdc62f66a",
                 "shasum": ""
             },
             "require": {
@@ -541,7 +628,7 @@
                 "symfony/process": "~2.7|^3",
                 "symfony/var-dumper": "~2.7|^3",
                 "symfony/yaml": "~2.3|^3",
-                "webflo/drupal-finder": "^1.0",
+                "webflo/drupal-finder": "^1.1",
                 "webmozart/path-util": "^2.1.0"
             },
             "require-dev": {
@@ -604,7 +691,7 @@
             ],
             "description": "Drush is a command line shell and scripting interface for Drupal, a veritable Swiss Army knife designed to make life easier for those of us who spend some of our working hours hacking away at the command prompt.",
             "homepage": "http://www.drush.org",
-            "time": "2017-10-26T00:45:07+00:00"
+            "time": "2017-11-04T19:40:03+00:00"
         },
         {
             "name": "grasmash/yaml-expander",
@@ -807,16 +894,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "a1e8e1a30e1352f118feff1a8481066ddc2f234a"
+                "reference": "08131e7ff29de6bb9f12275c7d35df71f25f4d89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/a1e8e1a30e1352f118feff1a8481066ddc2f234a",
-                "reference": "a1e8e1a30e1352f118feff1a8481066ddc2f234a",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/08131e7ff29de6bb9f12275c7d35df71f25f4d89",
+                "reference": "08131e7ff29de6bb9f12275c7d35df71f25f4d89",
                 "shasum": ""
             },
             "require": {
@@ -854,7 +941,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2017-09-02T17:10:46+00:00"
+            "time": "2017-11-04T11:48:34+00:00"
         },
         {
             "name": "pear/console_table",
@@ -1114,6 +1201,200 @@
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
             "time": "2015-06-21T13:59:46+00:00"
+        },
+        {
+            "name": "squizlabs/php_codesniffer",
+            "version": "2.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
+                "reference": "dcbed1074f8244661eecddfc2a675430d8d33f62"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/dcbed1074f8244661eecddfc2a675430d8d33f62",
+                "reference": "dcbed1074f8244661eecddfc2a675430d8d33f62",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "ext-tokenizer": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.1.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "bin": [
+                "scripts/phpcs",
+                "scripts/phpcbf"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "CodeSniffer.php",
+                    "CodeSniffer/CLI.php",
+                    "CodeSniffer/Exception.php",
+                    "CodeSniffer/File.php",
+                    "CodeSniffer/Fixer.php",
+                    "CodeSniffer/Report.php",
+                    "CodeSniffer/Reporting.php",
+                    "CodeSniffer/Sniff.php",
+                    "CodeSniffer/Tokens.php",
+                    "CodeSniffer/Reports/",
+                    "CodeSniffer/Tokenizers/",
+                    "CodeSniffer/DocGenerators/",
+                    "CodeSniffer/Standards/AbstractPatternSniff.php",
+                    "CodeSniffer/Standards/AbstractScopeSniff.php",
+                    "CodeSniffer/Standards/AbstractVariableSniff.php",
+                    "CodeSniffer/Standards/IncorrectPatternException.php",
+                    "CodeSniffer/Standards/Generic/Sniffs/",
+                    "CodeSniffer/Standards/MySource/Sniffs/",
+                    "CodeSniffer/Standards/PEAR/Sniffs/",
+                    "CodeSniffer/Standards/PSR1/Sniffs/",
+                    "CodeSniffer/Standards/PSR2/Sniffs/",
+                    "CodeSniffer/Standards/Squiz/Sniffs/",
+                    "CodeSniffer/Standards/Zend/Sniffs/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Sherwood",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "keywords": [
+                "phpcs",
+                "standards"
+            ],
+            "time": "2017-05-22T02:43:20+00:00"
+        },
+        {
+            "name": "sweetchuck/lint-report",
+            "version": "v0.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sweetchuck/lint-report.git",
+                "reference": "a79ad3d0b6e48a98aae86d7d3d2f7e7addbb962b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sweetchuck/lint-report/zipball/a79ad3d0b6e48a98aae86d7d3d2f7e7addbb962b",
+                "reference": "a79ad3d0b6e48a98aae86d7d3d2f7e7addbb962b",
+                "shasum": ""
+            },
+            "require": {
+                "league/container": "^2.2",
+                "php": ">=7.1",
+                "symfony/console": "^2.8 || ^3.1",
+                "symfony/filesystem": "^2.8 || ^3.1",
+                "symfony/yaml": "^2.8 || ^3.1"
+            },
+            "require-dev": {
+                "codeception/codeception": "^2.2",
+                "squizlabs/php_codesniffer": "2.6.2",
+                "sweetchuck/git-hooks": "^0.0.10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sweetchuck\\LintReport\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Generate reports from lint results",
+            "time": "2017-10-22T18:13:27+00:00"
+        },
+        {
+            "name": "sweetchuck/robo-git",
+            "version": "v0.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sweetchuck/robo-git.git",
+                "reference": "969795e6f75215d93c54dc106b698b8a524ab711"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sweetchuck/robo-git/zipball/969795e6f75215d93c54dc106b698b8a524ab711",
+                "reference": "969795e6f75215d93c54dc106b698b8a524ab711",
+                "shasum": ""
+            },
+            "require": {
+                "consolidation/robo": "^1.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "codeception/codeception": "^2.2",
+                "squizlabs/php_codesniffer": "^3.0",
+                "sweetchuck/git-hooks": "^0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sweetchuck\\Robo\\Git\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0"
+            ],
+            "description": "Robo task to read the content of the staged files",
+            "time": "2017-07-29T19:26:47+00:00"
+        },
+        {
+            "name": "sweetchuck/robo-phpcs",
+            "version": "v0.0.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sweetchuck/robo-phpcs.git",
+                "reference": "10125244f92f2c1a480ef7cd074ea171ddcc1685"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sweetchuck/robo-phpcs/zipball/10125244f92f2c1a480ef7cd074ea171ddcc1685",
+                "reference": "10125244f92f2c1a480ef7cd074ea171ddcc1685",
+                "shasum": ""
+            },
+            "require": {
+                "consolidation/robo": "^1.0",
+                "php": ">=7.1",
+                "squizlabs/php_codesniffer": "^2.6",
+                "sweetchuck/lint-report": "^0.0"
+            },
+            "require-dev": {
+                "codeception/codeception": "^2.2",
+                "sweetchuck/codeception-module-robo-task-runner": "^0.0",
+                "sweetchuck/git-hooks": "^0.0",
+                "sweetchuck/robo-git": "^0.0",
+                "symfony/yaml": "^2.8 || ^3.1",
+                "webmozart/path-util": "^2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sweetchuck\\Robo\\Phpcs\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Robo task wrapper for PHPCS",
+            "time": "2017-08-26T14:42:32+00:00"
         },
         {
             "name": "symfony/config",
@@ -1937,9 +2218,14 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "drush/drush": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=7.1",
+        "ext-mbstring": "*"
+    },
     "platform-dev": []
 }

@@ -12,18 +12,30 @@
     "prefer-stable": true,
     "require": {
         "php": ">=7.1",
-        "drush/drush": "^9.0.0"
+        "ext-mbstring": "*",
+        "danielstjules/stringy": "^3.1",
+        "drupal/coder": "^8.2",
+        "drush/drush": "dev-master",
+        "sweetchuck/robo-git": "^0.0.7",
+        "sweetchuck/robo-phpcs": "^0.0"
     },
     "require-dev": {
         "sweetchuck/git-hooks": "^0.0"
     },
     "autoload": {
         "psr-4": {
-            "Drush\\Commands\\Marvin\\": "src/Commands/Marvin/"
+            "Drush\\Commands\\Marvin\\": "Commands/Marvin/",
+            "Drush\\marvin\\": "src/"
+        }
+    },
+    "extra": {
+        "sweetchuck/git-hooks": {
+            "core.hooksPath": "git-hooks/self",
+            "symlink": true
         }
     },
     "scripts": {
-        "post-install-cmd": "\\Drupal\\marvin\\Composer\\Scripts::postInstallCmd",
-        "post-update-cmd": "\\Drupal\\marvin\\Composer\\Scripts::postUpdateCmd"
+        "post-install-cmd": "\\Drush\\marvin\\Composer\\Scripts::selfPostInstallCmd",
+        "post-update-cmd": "\\Drush\\marvin\\Composer\\Scripts::selfPostUpdateCmd"
     }
 }

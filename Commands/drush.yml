@@ -1,0 +1,45 @@
+
+command:
+  marvin:
+    settings:
+      reportsDir: 'reports'
+      environment: 'dev'
+      gitHook: null
+      ci: null
+
+      # Only relevant if the "type" in the composer.json is equal to "project" or "drupal-project".
+      # Allowed values:
+      #   incubator
+      #   customer
+      projectType: 'incubator'
+    qa:
+      lint:
+        settings:
+          defaultReporterPreset:
+            dev:
+              verboseStdOutput: true
+            devPreCommit:
+              verboseStdOutput: true
+            watch:
+              verboseStdOutput: true
+            ci:
+              # @todo summaryStdOutput.
+              # @todo checkstyleFile.
+              verboseStdOutput: true
+          reporterPreset:
+            verboseStdOutput:
+              service: 'lintVerboseReporter'
+              options: {}
+        phpcs:
+          defaultPreset:
+            dev: 'default'
+            devPreCommit: 'default'
+            watch: 'default'
+            ci: 'default'
+            ciJenkins: 'default'
+          preset:
+            default:
+              failOn: 'warning'
+              standards:
+                Drupal: true
+                DrupalPractice: true

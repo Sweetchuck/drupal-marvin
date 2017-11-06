@@ -1,0 +1,9 @@
+
+services:
+  marvin_qa_lint_phpcs.commands:
+    class: '\Drush\Commands\Marvin\QaLintPhpcsCommands'
+    tags:
+      -  { name: drush.command }
+
+  marvin.managed_extension_collector:
+    class: '\Drush\marvin\Service\ManagedExtensionCollector'
