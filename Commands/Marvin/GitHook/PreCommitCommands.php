@@ -10,10 +10,10 @@ class PreCommitCommands extends GitHookCommandsBase {
    * @command marvin:git-hook:pre-commit
    */
   public function preCommit() {
-    $gitHook = $this->getConfig()->get('marvin.settings.gitHook');
-    $this->yell($gitHook);
-
-    throw new \Exception('My Dummy Exception');
+    return $this
+      ->collectionBuilder()
+      ->addCode($this->invokeCommand('marvin:qa:composer:validate'))
+      ->addCode($this->invokeCommand('marvin:qa:lint:phpcs'));
   }
 
 }

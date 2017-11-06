@@ -62,8 +62,6 @@ class LintPhpcsCommands extends LintCommandsBase {
   /**
    * @command marvin:qa:lint:phpcs
    * @bootstrap none
-   * @option string $git-hook
-   *   Name of the Git hook where this command trigger from. eg: pre-commit.
    */
   public function lintPhpcs(): ?TaskInterface {
     $args = func_get_args();

@@ -20,12 +20,19 @@
         "sweetchuck/robo-phpcs": "^0.0"
     },
     "require-dev": {
+        "phpunit/phpunit": "^6.4",
         "sweetchuck/git-hooks": "^0.0"
     },
     "autoload": {
         "psr-4": {
             "Drush\\Commands\\Marvin\\": "Commands/Marvin/",
             "Drush\\marvin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Drush\\Commands\\Marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/Commands/Marvin/",
+            "Drush\\marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/marvin/"
         }
     },
     "extra": {
