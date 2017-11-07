@@ -43,3 +43,13 @@ command:
               standards:
                 Drupal: true
                 DrupalPractice: true
+      phpunit:
+        testSuite:
+          # @var null|bool|bool[]
+          #   - null Run all.
+          #   - true Run all.
+          #   - false Run none
+          #   - array Run all "true" test suite.
+          #           If all of them is "false" then run none.
+          devPreCommit:
+            Unit: true

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Common Git hook callback.
+ */
+
 call_user_func(function () {
   $gitHook = basename($GLOBALS['argv'][0]);
   $drushCommand = "marvin:git-hook:$gitHook";

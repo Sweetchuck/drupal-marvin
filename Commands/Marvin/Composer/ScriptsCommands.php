@@ -26,6 +26,7 @@ class ScriptsCommands extends CommandsBase {
 
   /**
    * @command marvin:composer:post-install-cmd
+   * @hidden
    */
   public function composerPostInstallCmd() {
     $cb = $this->collectionBuilder();
@@ -37,6 +38,7 @@ class ScriptsCommands extends CommandsBase {
 
   /**
    * @command marvin:composer:post-update-cmd
+   * @hidden
    */
   public function composerPostUpdateCmd() {
     $cb = $this->collectionBuilder();

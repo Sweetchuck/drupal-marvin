@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drush\marvin\Tests\Unit;
 
 use Drush\marvin\Utils;
@@ -13,13 +12,17 @@ class UtilsTest extends TestCase {
 
   public function casesCommandClassNameToConfigIdentifier(): array {
     return [
-      'with leading backslash' => [
+      'with leading backslash - Qa\Lint*' => [
         'marvin.qa.lint.phpcs',
         '\Drush\Commands\Marvin\Qa\LintPhpcsCommands',
       ],
-      'without leading backslash' => [
+      'without leading backslash - Qa\Lint*' => [
         'marvin.qa.lint.phpcs',
         'Drush\Commands\Marvin\Qa\LintPhpcsCommands',
+      ],
+      'without leading backslash - Qa\Phpunit' => [
+        'marvin.qa.phpunit',
+        'Drush\Commands\Marvin\Qa\PhpunitCommands',
       ],
     ];
   }
