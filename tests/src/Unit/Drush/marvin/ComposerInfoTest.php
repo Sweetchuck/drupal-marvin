@@ -27,23 +27,24 @@ class ComposerInfoTest extends TestCase {
   }
 
   protected function tearDown() {
-    parent::tearDown();
-
     (new Filesystem())->remove($this->rootDir->getName());
+    $this->rootDir = NULL;
+
+    parent::tearDown();
   }
 
   public function casesGetLockFileName(): array {
     return [
       'empty' => [
-        'composer.lock',
+        '/ComposerInfo/composer.lock',
         '',
       ],
       'basic' => [
-        'composer.lock',
+        '/ComposerInfo/composer.lock',
         'composer.json',
       ],
       'advanced' => [
-        'a/b/c.lock',
+        '/ComposerInfo/a/b/c.lock',
         'a/b/c.json',
       ],
     ];
@@ -53,22 +54,26 @@ class ComposerInfoTest extends TestCase {
    * @dataProvider casesGetLockFileName
    */
   public function testGetLockFileName(string $expected, string $jsonFileName) {
-    $ci = ComposerInfo::create($jsonFileName);
-    $this->assertEquals($expected, $ci->getLockFileName());
+    $baseDir = $this->rootDir->url();
+    $ci = ComposerInfo::create($jsonFileName, NULL, $baseDir);
+    $this->assertEquals(
+      "vfs:/$expected",
+      $ci->getLockFileName()
+    );
   }
 
   public function casesGetWorkingDirectory(): array {
     return [
       'empty' => [
-        '',
+        '/ComposerInfo',
         '',
       ],
       'basic' => [
-        '',
+        '/ComposerInfo',
         'composer.json',
       ],
       'advanced' => [
-        'a/b',
+        '/ComposerInfo/a/b',
         'a/b/c.json',
       ],
     ];
@@ -78,8 +83,9 @@ class ComposerInfoTest extends TestCase {
    * @dataProvider casesGetWorkingDirectory
    */
   public function testGetWorkingDirectory(string $expected, string $jsonFileName) {
-    $ci = ComposerInfo::create($jsonFileName);
-    $this->assertEquals($expected, $ci->getWorkingDirectory());
+    $baseDir = $this->rootDir->url();
+    $ci = ComposerInfo::create($jsonFileName, NULL, $baseDir);
+    $this->assertEquals("vfs:/$expected", $ci->getWorkingDirectory());
   }
 
   public function casesCreate(): array {
@@ -143,13 +149,16 @@ class ComposerInfoTest extends TestCase {
    * @dataProvider casesCreate
    */
   public function testCreate(array $expected, array $json, array $lock): void {
-    $jsonFileName = $this->rootDir->url() . '/composer.json';
-    file_put_contents($jsonFileName, json_encode($json));
+    $baseDir = $this->rootDir->url();
+    mkdir("$baseDir/real");
 
-    $lockFileName = $this->rootDir->url() . '/composer.lock';
-    file_put_contents($lockFileName, json_encode($lock));
+    $jsonFileName = 'real/composer.json';
+    file_put_contents("$baseDir/$jsonFileName", json_encode($json));
 
-    $ci = ComposerInfo::create($jsonFileName);
+    $lockFileName = 'real/composer.lock';
+    file_put_contents("$baseDir/$lockFileName", json_encode($lock));
+
+    $ci = ComposerInfo::create($jsonFileName, NULL, $baseDir);
     $this->assertEquals($expected['json'], $ci->getJson());
     $this->assertEquals($expected['lock'], $ci->getLock());
   }

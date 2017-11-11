@@ -74,6 +74,24 @@ class ManagedDrupalExtensionListTask extends BaseTask implements
   }
 
   /**
+   * @var array
+   */
+  protected $ignoredPackages = [];
+
+  public function getIgnoredPackages(): array {
+    return $this->ignoredPackages;
+  }
+
+  /**
+   * @return $this
+   */
+  public function setIgnoredPackages(array $value) {
+    $this->ignoredPackages = $value;
+
+    return $this;
+  }
+
+  /**
    * @var \Drush\marvin\ComposerInfo
    */
   protected $composerInfo;
@@ -86,7 +104,7 @@ class ManagedDrupalExtensionListTask extends BaseTask implements
     foreach ($options as $key => $value) {
       switch ($key) {
         case 'assetNamePrefix':
-          $this->setComposerJsonFileName($value);
+          $this->setAssetNamePrefix($value);
           break;
 
         case 'composerJsonFileName':
@@ -95,6 +113,10 @@ class ManagedDrupalExtensionListTask extends BaseTask implements
 
         case 'packagePaths':
           $this->setPackagePaths($value);
+          break;
+
+        case 'ignoredPackages':
+          $this->setIgnoredPackages($value);
           break;
 
       }
@@ -111,6 +133,11 @@ class ManagedDrupalExtensionListTask extends BaseTask implements
       Path::makeAbsolute($this->composerInfo->getWorkingDirectory(), getcwd()),
       $this->composerInfo->getLock(),
       $this->getPackagePaths()
+    );
+
+    $managedDrupalExtensions = array_diff_key(
+      $managedDrupalExtensions,
+      array_flip($this->getIgnoredPackages())
     );
 
     $assetNamePrefix = $this->getAssetNamePrefix();

@@ -2,6 +2,7 @@
 
 namespace Drush\Commands\Marvin;
 
+use Drush\marvin\ArrayUtils\FilterArrayUtils;
 use Drush\marvin\ComposerInfo;
 use Drush\marvin\Robo\ManagedDrupalExtensionTaskLoader;
 use Drush\marvin\Utils;
@@ -97,12 +98,18 @@ class CommandsBase extends Tasks implements ConfigAwareInterface {
   }
 
   protected function getTaskManagedDrupalExtensionList(): CollectionBuilder {
+    $packageDefinitions = (array) $this
+      ->getConfig()
+      ->get('command.marvin.settings.managedDrupalExtension.package');
+    $ignoredPackages = FilterArrayUtils::filterEnabled($packageDefinitions, 'ignored', FALSE);
+
     return $this
       ->collectionBuilder()
       ->addTask($this->taskComposerPackagePaths())
       ->addTask(
         $this
           ->taskManagedDrupalExtensionList()
+          ->setIgnoredPackages(array_keys($ignoredPackages))
           ->deferTaskConfiguration('setPackagePaths', 'packagePaths'));
   }
 

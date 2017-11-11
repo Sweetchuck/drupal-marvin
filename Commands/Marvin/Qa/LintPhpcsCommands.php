@@ -186,9 +186,10 @@ class LintPhpcsCommands extends LintCommandsBase {
       case 'drupal-module':
       case 'drupal-theme':
       case 'drupal-drush':
-        $filePaths['files'][] = 'Commands/';
-        $filePaths['files'][] = 'src/';
-        $filePaths['files'][] = 'tests/';
+        // @todo Autodetect PHP files.
+        $filePaths['files']['Commands/'] = TRUE;
+        $filePaths['files']['src/'] = TRUE;
+        $filePaths['files']['tests/'] = TRUE;
         break;
 
       case 'drupal-profile':

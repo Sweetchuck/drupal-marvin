@@ -10,7 +10,7 @@ class PreCommitCommands extends GitHookCommandsBase {
    * @command marvin:git-hook:pre-commit
    * @hidden
    */
-  public function preCommit() {
+  public function preCommit(string $packagePath = '') {
     // @todo Make it configurable what to run.
     return $this
       ->collectionBuilder()

@@ -3,6 +3,7 @@
 namespace Drush\marvin;
 
 use Stringy\Stringy;
+use Webmozart\PathUtil\Path;
 
 class Utils {
 
@@ -18,6 +19,10 @@ class Utils {
     'drupal-profile' => TRUE,
     'drupal-theme' => TRUE,
   ];
+
+  public static function marvinRootDir(): string {
+    return Path::getDirectory(__DIR__);
+  }
 
   public static function commandClassNameToConfigIdentifier(string $className): string {
     return (string) (new Stringy($className))

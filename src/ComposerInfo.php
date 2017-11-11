@@ -75,21 +75,21 @@ class ComposerInfo implements \ArrayAccess {
   /**
    * @return $this
    */
-  public static function create(string $jsonFileName = '', ?Filesystem $fs = NULL) {
+  public static function create(string $jsonFileName = '', ?Filesystem $fs = NULL, string $baseDir = '') {
     if (!$jsonFileName) {
       $jsonFileName = getenv('COMPOSER') ?: 'composer.json';
     }
 
     if (!isset(static::$instances[$jsonFileName])) {
-      static::$instances[$jsonFileName] = new static($jsonFileName, $fs);
+      static::$instances[$jsonFileName] = new static($jsonFileName, $fs, $baseDir);
     }
 
     return static::$instances[$jsonFileName];
   }
 
-  protected function __construct(string $jsonFileName, ?Filesystem $fs = NULL) {
+  protected function __construct(string $jsonFileName, ?Filesystem $fs = NULL, string $baseDir = '') {
     $this->fs = $fs ?: new Filesystem();
-    $this->jsonFileName = $jsonFileName;
+    $this->jsonFileName = Path::isAbsolute($jsonFileName) ? $jsonFileName : Path::join(($baseDir ?: getcwd()), $jsonFileName);
     $this->initLockFileName();
   }
 

@@ -40,7 +40,7 @@ class FileSystemArrayUtils {
   }
 
   public function walkExists(bool &$exists, string $filePath) {
-    if (mb_strpos($filePath, '*')) {
+    if (mb_strpos($filePath, '*') !== FALSE) {
       return;
     }
 

@@ -11,6 +11,7 @@ command:
       environment: 'dev'
       gitHook: null
       ci: null
+      composerExecutable: 'composer'
 
       # Only relevant if the "type" in the composer.json is equal to "project" or "drupal-project".
       # Allowed values:
@@ -18,7 +19,10 @@ command:
       #   customer
       projectType: 'incubator'
       autodetectManagedDrupalExtensions: true
-      managedDrupalExtensions: {}
+      managedDrupalExtension:
+        package:
+          drupal/marvin:
+            ignored: true
     qa:
       lint:
         settings:
