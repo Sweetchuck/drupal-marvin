@@ -3,26 +3,10 @@
 namespace Drush\Commands\Marvin\Composer;
 
 use Drush\Commands\Marvin\CommandsBase;
-use Drush\marvin\Service\ManagedExtensionCollector;
-use League\Container\ContainerInterface;
 use Robo\Collection\CollectionBuilder;
 use Robo\Contract\TaskInterface;
 
 class ScriptsCommands extends CommandsBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setContainer(ContainerInterface $container) {
-    if (!$container->has('marvin.managed_extension_collector')) {
-      $container->share(
-        'marvin.managed_extension_collector',
-        ManagedExtensionCollector::class
-      );
-    }
-
-    return parent::setContainer($container);
-  }
 
   /**
    * @command marvin:composer:post-install-cmd
@@ -61,6 +45,10 @@ class ScriptsCommands extends CommandsBase {
   }
 
   protected function getTaskDeployGitHooks(): ?TaskInterface {
+    $composerJson = $this->composerInfo->getJson();
+    if (in_array($composerJson['type'], ['project', 'drupal-project'])) {
+    }
+
     return NULL;
   }
 

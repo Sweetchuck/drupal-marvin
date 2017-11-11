@@ -4,13 +4,13 @@ namespace Drush\Commands\Marvin\Qa;
 
 use Drush\Commands\Marvin\QaCommandsBase;
 use Robo\Contract\TaskInterface;
-use Stringy\StaticStringy;
 use Sweetchuck\Robo\Git\Utils;
 
 class PhpunitCommands extends QaCommandsBase {
 
   /**
    * @command marvin:qa:phpunit
+   * @bootstrap none
    */
   public function phpunitRun(): ?TaskInterface {
     $testSuiteNames = $this->getTestSuiteNamesByEnvironmentVariant();
@@ -41,18 +41,7 @@ class PhpunitCommands extends QaCommandsBase {
   }
 
   protected function getTestSuiteNamesByEnvironmentVariant(): ?array {
-    $config = $this->getConfig();
-    $environment = $config->get('command.marvin.settings.environment');
-    $gitHook = $config->get('command.marvin.settings.gitHook');
-
-    $environmentVariants = [$environment];
-
-    if ($environment === 'dev' && $gitHook) {
-      array_unshift(
-        $environmentVariants,
-        StaticStringy::camelize("$environment-$gitHook")
-      );
-    }
+    $environmentVariants = $this->getEnvironmentVariants();
 
     $testSuites = NULL;
     foreach ($environmentVariants as $environmentVariant) {

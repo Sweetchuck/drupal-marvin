@@ -108,8 +108,7 @@ class LintPhpcsCommands extends LintCommandsBase {
    * @return null|\Robo\Contract\TaskInterface|\Robo\Collection\CollectionBuilder
    */
   protected function getTaskLintPhpcsExtension(string $workingDirectory): ?TaskInterface {
-    $config = $this->getConfig();
-    $environment = $config->get('command.marvin.settings.environment');
+    $gitHook = $this->getConfig()->get('command.marvin.settings.gitHook');
     $phpcsXml = $this->getPhpcsConfigurationFileName($workingDirectory);
 
     $presetName = $this->getPresetNameByEnvironmentVariant();
@@ -124,9 +123,9 @@ class LintPhpcsCommands extends LintCommandsBase {
     );
 
     $options += ['lintReporters' => []];
-    $options['lintReporters'] += $this->getLintReporters($environment);
+    $options['lintReporters'] += $this->getLintReporters();
 
-    if ($environment === 'gitHook-pre-commit') {
+    if ($gitHook === 'pre-commit') {
       // @todo Get file paths from the drush.yml configuration.
       $paths = $phpcsXml ? $this->getFilePathsFromXml($phpcsXml)
         : $paths = $this->getFilePathsByProjectType($workingDirectory);

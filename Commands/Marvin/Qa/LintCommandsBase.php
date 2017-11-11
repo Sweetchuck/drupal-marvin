@@ -65,38 +65,59 @@ class LintCommandsBase extends QaCommandsBase {
     return 'default';
   }
 
-  protected function getLintReporters(string $environment): array {
+  /**
+   * @return string[]
+   */
+  protected function getLintReporterConfigNamesByEnvironmentVariant(): array {
     $config = $this->getConfig();
-    $lintSettings = $config->get('command.marvin.qa.lint.settings');
-    $reporterPresetNames = $lintSettings['defaultReporterPreset'][$environment];
-    $reporterPresetNames = Utils::filterEnabled($reporterPresetNames);
-    $presets = array_intersect_key($lintSettings['reporterPreset'], array_flip($reporterPresetNames));
+    $environmentVariants = $this->getEnvironmentVariants();
 
-    return $this->parseLintReporterPresets($presets);
+    $reporterCombinations = $config->get('command.marvin.qa.lint.settings.reporterCombination');
+    foreach ($environmentVariants as $environmentVariant) {
+      if (isset($reporterCombinations[$environmentVariant])) {
+        return Utils::filterEnabled($reporterCombinations[$environmentVariant]);
+      }
+    }
+
+    return [];
+  }
+
+  protected function getLintReporters(): array {
+    $config = $this->getConfig();
+    $lintReporterConfigs = $config->get('command.marvin.qa.lint.settings.reporterConfig');
+    $lintReporterConfigNames = $this->getLintReporterConfigNamesByEnvironmentVariant();
+
+    $selectedLintReporterConfigs = array_intersect_key(
+      $lintReporterConfigs,
+      array_flip($lintReporterConfigNames)
+    );
+
+    return $this->parseLintReporterConfigs($selectedLintReporterConfigs);
   }
 
   /**
    * @return \Sweetchuck\LintReport\ReporterInterface[]
    */
-  protected function parseLintReporterPresets(array $presets): array {
+  protected function parseLintReporterConfigs(array $lintReporterConfigs): array {
     $reporters = [];
-    foreach ($presets as $presetId => $preset) {
-      if (!is_array($preset)) {
-        $preset = ['service' => $preset];
+    foreach ($lintReporterConfigs as $configId => $config) {
+      if (!is_array($config)) {
+        $config = ['service' => $config];
       }
 
-      $reporters[$presetId] = $this->parseLintReporterPreset($preset);
+      $reporters[$configId] = $this->parseLintReporterConfig($config);
     }
 
     return $reporters;
   }
 
-  protected function parseLintReporterPreset(array $preset): ReporterInterface {
+  protected function parseLintReporterConfig(array $config): ReporterInterface {
     /** @var \Sweetchuck\LintReport\ReporterInterface $reporter */
-    $reporter = $this->getContainer()->get($preset['service']);
+    $reporter = $this->getContainer()->get($config['service']);
+
     // @todo Support "setOptions()" by the ReporterInterface.
-    if (isset($preset['options']) && method_exists($reporter, 'setOptions')) {
-      $reporter->setOptions($preset['options']);
+    if (!empty($config['options']) && method_exists($reporter, 'setOptions')) {
+      $reporter->setOptions($config['options']);
     }
 
     return $reporter;

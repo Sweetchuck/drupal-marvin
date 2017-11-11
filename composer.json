@@ -16,10 +16,13 @@
         "danielstjules/stringy": "^3.1",
         "drupal/coder": "^8.2",
         "drush/drush": "dev-master",
+        "sweetchuck/robo-composer": "^0.0.1",
         "sweetchuck/robo-git": "^0.0.7",
-        "sweetchuck/robo-phpcs": "^0.0"
+        "sweetchuck/robo-phpcs": "^0.0",
+        "webmozart/path-util": "^2.3"
     },
     "require-dev": {
+        "mikey179/vfsStream": "^1.6",
         "phpunit/phpunit": "^6.4",
         "sweetchuck/git-hooks": "^0.0"
     },
@@ -31,13 +34,13 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Drush\\Commands\\Marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/Commands/Marvin/",
+            "Drush\\Commands\\Marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/marvin/",
             "Drush\\marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/marvin/"
         }
     },
     "extra": {
         "sweetchuck/git-hooks": {
-            "core.hooksPath": "git-hooks/self",
+            "core.hooksPath": "gitHooks/self",
             "symlink": true
         }
     },

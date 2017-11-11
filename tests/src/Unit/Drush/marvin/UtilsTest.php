@@ -39,4 +39,55 @@ class UtilsTest extends TestCase {
     );
   }
 
+  public function casesCollectManagedDrupalExtensions(): array {
+    return [
+      'empty' => [
+        [],
+        '/a/b',
+        [],
+        [],
+      ],
+      'basic' => [
+        [
+          'v1/a' => '/a/c',
+          'v2/a' => '/a/c/c',
+        ],
+        '/a/b',
+        [
+          'packages' => [
+            'v1/a' => [
+              'type' => 'drupal-module',
+            ],
+            'v2/a' => [
+              'type' => 'drupal-drush',
+            ],
+          ],
+        ],
+        [
+          'v1/a' => '/a/c',
+          'v1/b' => '/a/b',
+          'v1/c' => '/a/b/c',
+          'v2/a' => '/a/c/c',
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @covers ::collectManagedDrupalExtensions
+   *
+   * @dataProvider casesCollectManagedDrupalExtensions
+   */
+  public function testCollectManagedDrupalExtensions(
+    array $expected,
+    string $rootProjectDir,
+    array $composerLock,
+    array $packagePaths
+  ): void {
+    $this->assertEquals(
+      $expected,
+      Utils::collectManagedDrupalExtensions($rootProjectDir, $composerLock, $packagePaths)
+    );
+  }
+
 }

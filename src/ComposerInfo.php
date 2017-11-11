@@ -4,6 +4,7 @@ namespace Drush\marvin;
 
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
+use Webmozart\PathUtil\Path;
 
 /**
  * @property-read string $packageVendor
@@ -28,6 +29,14 @@ class ComposerInfo implements \ArrayAccess {
    */
   protected $jsonFileName = '';
 
+  public function getJsonFileName(): string {
+    return $this->jsonFileName;
+  }
+
+  public function getWorkingDirectory(): string {
+    return Path::getDirectory($this->getJsonFileName());
+  }
+
   /**
    * @var int
    */
@@ -42,6 +51,10 @@ class ComposerInfo implements \ArrayAccess {
    * @var string
    */
   protected $lockFileName = '';
+
+  public function getLockFileName(): string {
+    return $this->lockFileName;
+  }
 
   /**
    * @var int
@@ -60,7 +73,7 @@ class ComposerInfo implements \ArrayAccess {
   ];
 
   /**
-   * @return static
+   * @return $this
    */
   public static function create(string $jsonFileName = '', ?Filesystem $fs = NULL) {
     if (!$jsonFileName) {
@@ -89,7 +102,8 @@ class ComposerInfo implements \ArrayAccess {
    */
   protected function initLockFileName() {
     $jsonExtension = pathinfo($this->jsonFileName, PATHINFO_EXTENSION);
-    $this->lockFileName = basename($this->jsonFileName, $jsonExtension) . 'lock';
+    $jsonExtensionLength = mb_strlen($jsonExtension);
+    $this->lockFileName = mb_substr($this->jsonFileName, 0, $jsonExtensionLength * -1) . 'lock';
 
     return $this;
   }
@@ -156,17 +170,6 @@ class ComposerInfo implements \ArrayAccess {
     return NULL;
   }
 
-  /**
-   * @return $this
-   */
-  protected function init() {
-    $this
-      ->initJson()
-      ->initLock();
-
-    return $this;
-  }
-
   protected function initJson() {
     $this->checkJsonExists();
     $changedTime = filectime($this->jsonFileName);
@@ -182,7 +185,19 @@ class ComposerInfo implements \ArrayAccess {
     return $this;
   }
 
+  /**
+   * @return $this
+   */
   protected function initLock() {
+    return $this
+      ->initLockReadFile()
+      ->initLockChangeKeys();
+  }
+
+  /**
+   * @return $this
+   */
+  protected function initLockReadFile() {
     if ($this->fs->exists($this->lockFileName)) {
       $changedTime = filectime($this->lockFileName);
       if ($changedTime > $this->lockChangedTime) {
@@ -192,6 +207,24 @@ class ComposerInfo implements \ArrayAccess {
     }
     else {
       $this->lock = [];
+    }
+
+    return $this;
+  }
+
+  /**
+   * @return $this
+   */
+  protected function initLockChangeKeys() {
+    foreach (['packages', 'packages-dev'] as $mainKey) {
+      if (!isset($this->lock[$mainKey])) {
+        continue;
+      }
+
+      foreach ($this->lock[$mainKey] as $key => $package) {
+        unset($this->lock[$mainKey][$key]);
+        $this->lock[$mainKey][$package['name']] = $package;
+      }
     }
 
     return $this;

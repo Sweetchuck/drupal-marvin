@@ -1,4 +1,9 @@
 
+drush:
+  paths:
+    include:
+      - '.'
+
 command:
   marvin:
     settings:
@@ -12,10 +17,12 @@ command:
       #   incubator
       #   customer
       projectType: 'incubator'
+      autodetectManagedDrupalExtensions: true
+      managedDrupalExtensions: {}
     qa:
       lint:
         settings:
-          defaultReporterPreset:
+          reporterCombination:
             dev:
               verboseStdOutput: true
             devPreCommit:
@@ -26,7 +33,7 @@ command:
               # @todo summaryStdOutput.
               # @todo checkstyleFile.
               verboseStdOutput: true
-          reporterPreset:
+          reporterConfig:
             verboseStdOutput:
               service: 'lintVerboseReporter'
               options: {}
@@ -43,6 +50,8 @@ command:
               standards:
                 Drupal: true
                 DrupalPractice: true
+            ciJenkins:
+              failOn: 'never'
       phpunit:
         testSuite:
           # @var null|bool|bool[]
