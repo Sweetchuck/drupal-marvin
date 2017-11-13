@@ -76,7 +76,16 @@ class CommandsBase extends Tasks implements ConfigAwareInterface {
   }
 
   protected function makeRelativePathToComposerBinDir(string $fromDirectory): string {
-    return Path::makeRelative($this->composerInfo['config']['bin-dir'], $fromDirectory);
+    if ($fromDirectory === '.') {
+      return './' . $this->composerInfo['config']['bin-dir'];
+    }
+
+    $projectRoot = $this->getConfig()->get('env.cwd');
+
+    return Path::makeRelative(
+      Path::join($projectRoot, $this->composerInfo['config']['bin-dir']),
+      $fromDirectory
+    );
   }
 
   /**
@@ -113,13 +122,73 @@ class CommandsBase extends Tasks implements ConfigAwareInterface {
           ->deferTaskConfiguration('setPackagePaths', 'packagePaths'));
   }
 
-  protected function getManagedDrupalExtensions(): array {
-    $result = $this
-      ->getTaskManagedDrupalExtensionList()
-      ->run()
-      ->stopOnFail();
+  /**
+   * @var null|array
+   */
+  protected $managedDrupalExtensions = NULL;
 
-    return $result['managedDrupalExtensions'];
+  protected function getManagedDrupalExtensions(): array {
+    if ($this->managedDrupalExtensions === NULL) {
+      $result = $this
+        ->getTaskManagedDrupalExtensionList()
+        ->run()
+        ->stopOnFail();
+
+      $this->managedDrupalExtensions = $result['managedDrupalExtensions'];
+    }
+
+    return $this->managedDrupalExtensions;
+  }
+
+  protected function normalizeManagedDrupalExtensionName(string $extensionName): ?array {
+    $managedDrupalExtensions = $this->getManagedDrupalExtensions();
+
+    // Fully qualified composer package name.
+    if (isset($managedDrupalExtensions[$extensionName])) {
+      return [
+        'name' => $extensionName,
+        'path' => $managedDrupalExtensions[$extensionName],
+      ];
+    }
+
+    // Transform a Drupal extension machine-name to a fq composer package name.
+    if (mb_strpos($extensionName, '/') === FALSE) {
+      $packageName = "drupal/$extensionName";
+      if (isset($managedDrupalExtensions[$packageName])) {
+        return [
+          'name' => $packageName,
+          'path' => $managedDrupalExtensions[$packageName],
+        ];
+      }
+    }
+
+    // Full real path.
+    $packageName = array_search($extensionName, $managedDrupalExtensions);
+    if ($packageName !== FALSE) {
+      return [
+        'name' => $packageName,
+        'path' => $extensionName,
+      ];
+    }
+
+    // Relative path.
+    if (is_dir($extensionName)) {
+      $packagePath = realpath($extensionName);
+      $packageName = array_search($packagePath, $managedDrupalExtensions);
+      if ($packageName !== FALSE) {
+        return [
+          'name' => $packageName,
+          'path' => $packagePath,
+        ];
+      }
+    }
+
+    return NULL;
+  }
+
+  protected function isIncubatorProject(): bool {
+    return in_array($this->composerInfo['type'], ['project', 'drupal-project'])
+      && $this->getConfig()->get('command.marvin.settings.projectType') === 'incubator';
   }
 
   protected function invokeCommand(string $commandName, array $arguments = []): \Closure {

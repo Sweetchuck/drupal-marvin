@@ -11,12 +11,17 @@ class PreCommitCommands extends GitHookCommandsBase {
    * @hidden
    */
   public function preCommit(string $packagePath = '') {
+    $arguments = [];
+    if ($packagePath) {
+      $arguments[] = $packagePath;
+    }
+
     // @todo Make it configurable what to run.
     return $this
       ->collectionBuilder()
-      ->addCode($this->invokeCommand('marvin:qa:composer:validate'))
-      ->addCode($this->invokeCommand('marvin:qa:lint:phpcs'))
-      ->addCode($this->invokeCommand('marvin:qa:phpunit'));
+      ->addCode($this->invokeCommand('marvin:qa:composer:validate', $arguments))
+      ->addCode($this->invokeCommand('marvin:qa:lint:phpcs', $arguments))
+      ->addCode($this->invokeCommand('marvin:qa:phpunit', $arguments));
   }
 
 }

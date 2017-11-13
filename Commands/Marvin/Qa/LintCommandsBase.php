@@ -30,17 +30,6 @@ class LintCommandsBase extends QaCommandsBase {
     return parent::setContainer($container);
   }
 
-  /**
-   * @return string[]
-   */
-  protected function lintGetSupportedProjectTypes(): array {
-    return [
-      'project',
-      'drupal-project',
-      'drupal-drush',
-    ];
-  }
-
   protected function getPresetNameByEnvironmentVariant(): string {
     $config = $this->getConfig();
     $environment = $config->get('command.marvin.settings.environment');

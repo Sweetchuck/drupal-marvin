@@ -2,7 +2,8 @@
 
 namespace Drush\Commands\Marvin\Qa;
 
-use Consolidation\AnnotatedCommand\AnnotationData;
+use Consolidation\AnnotatedCommand\CommandData;
+use Consolidation\AnnotatedCommand\CommandError;
 use Drush\marvin\ArrayUtils\FileSystemArrayUtils;
 use Drush\marvin\ComposerInfo;
 use Robo\Contract\TaskInterface;
@@ -20,43 +21,47 @@ class LintPhpcsCommands extends LintCommandsBase {
   /**
    * @hook option marvin:qa:lint:phpcs
    */
-  public function lintPhpcsOptionExtensions(Command $command, AnnotationData $annotationData) {
+  public function lintPhpcsHookOption(Command $command) {
     $definition = $command->getDefinition();
-    switch ($this->composerInfo['type']) {
-      case 'project':
-      case 'drupal-project':
-        if (!$definition->hasArgument('extensions')) {
-          $command->addArgument(
-            'extensions',
-            InputArgument::IS_ARRAY,
-            'Theme or module machine-names'
-          );
-        }
-        break;
-
-      case 'drupal-drush':
-        // @todo Implement.
-        break;
-
-      default:
-        $command->setHidden(TRUE);
-        break;
-
+    if ($this->isIncubatorProject() && !$definition->hasArgument('packages')) {
+      $command->addArgument(
+        'packages',
+        InputArgument::IS_ARRAY,
+        'Filesystem path or machine-name of any kind of Drupal extension.'
+      );
     }
   }
 
   /**
-   * @hook pre-validate marvin:qa:lint:phpcs
+   * @hook validate marvin:qa:lint:phpcs
    */
-  public function lintPhpcsPreValidate() {
-    $supportedProjectTypes = $this->lintGetSupportedProjectTypes();
-    if (!in_array($this->composerInfo['type'], $supportedProjectTypes)) {
-      throw new \Exception(sprintf(
-        'PHP Code sniffer is not supported for "%s" project type. The supported project types are: %s',
-        $this->composerInfo['type'],
-        implode(', ', $supportedProjectTypes)
-      ));
+  public function lintPhpcsHookValidate(CommandData $commandData): ?CommandError {
+    if ($this->isIncubatorProject()) {
+      $packageNames = $commandData->input()->getArgument('packages');
+      $packages = [];
+      $invalidPackageNames = [];
+      foreach ($packageNames as $packageName) {
+        $package = $this->normalizeManagedDrupalExtensionName($packageName);
+        if ($package) {
+          $packages[] = $package['name'];
+        }
+        else {
+          $invalidPackageNames[] = $packageName;
+        }
+      }
+
+      if ($invalidPackageNames) {
+        // @todo Designed exit codes and messages.
+        return new CommandError(
+          'The following packages are invalid: ' . implode(', ', $invalidPackageNames),
+          1
+        );
+      }
+
+      $commandData->input()->setArgument('packages', $packages);
     }
+
+    return NULL;
   }
 
   /**
@@ -64,11 +69,25 @@ class LintPhpcsCommands extends LintCommandsBase {
    * @bootstrap none
    */
   public function lintPhpcs(): ?TaskInterface {
+    // @todo Validate the arguments.
+    // - Only managed Drupal extensions are allowed.
+    // @todo Parse arguments.
+    // - drupal/dummy_m1
+    // - dummy_m1
+    // - /path/to/modules/dummy_m1.
     $args = func_get_args();
     $options = array_pop($args);
 
-    $this->cliArgs = $args;
+    $argNames = [
+      'packages',
+    ];
+
     $this->cliOptions = $options;
+    $this->cliArgs = [];
+    foreach ($args as $key => $value) {
+      $key = $argNames[$key] ?? $key;
+      $this->cliArgs[$key] = $value;
+    }
 
     return $this->getTaskLintPhpcs();
   }
@@ -76,32 +95,25 @@ class LintPhpcsCommands extends LintCommandsBase {
   /**
    * @return null|\Robo\Contract\TaskInterface|\Robo\Collection\CollectionBuilder
    */
-  protected function getTaskLintPhpcs(): ?TaskInterface {
-    switch ($this->composerInfo['type']) {
-      case 'project':
-      case 'drupal-project':
-        $workingDirectory = 'web/core/modules/action';
-        $relativeBinDir = Path::makeRelative($this->composerInfo['config']['bin-dir'], $workingDirectory);
+  protected function getTaskLintPhpcs(): TaskInterface {
+    if ($this->isIncubatorProject()) {
+      $packagePaths = $this->getManagedDrupalExtensions();
+      if ($this->cliArgs['packages']) {
+        $packagePaths = array_intersect_key(
+          $packagePaths,
+          array_flip($this->cliArgs['packages'])
+        );
+      }
 
-        return $this
-          ->taskPhpcsLintFiles()
-          ->setWorkingDirectory($workingDirectory)
-          ->setPhpcsExecutable("$relativeBinDir/phpcs")
-          ->setStandards(['Drupal', 'DrupalPractice'])
-          ->setLintReporters([
-            'lintVerboseReporter' => NULL,
-          ])
-          ->setFiles([
-            'src/',
-            'action.module',
-          ]);
+      $cb = $this->collectionBuilder();
+      foreach ($packagePaths as $packagePath) {
+        $cb->addTask($this->getTaskLintPhpcsExtension($packagePath));
+      }
 
-      case 'drupal-drush':
-        return $this->getTaskLintPhpcsExtension('.');
-
+      return $cb;
     }
 
-    return NULL;
+    return $this->getTaskLintPhpcsExtension('.');
   }
 
   /**
@@ -121,7 +133,7 @@ class LintPhpcsCommands extends LintCommandsBase {
       $this->makeRelativePathToComposerBinDir($workingDirectory),
       'phpcs'
     );
-
+    $options['workingDirectory'] = $workingDirectory;
     $options += ['lintReporters' => []];
     $options['lintReporters'] += $this->getLintReporters();
 
