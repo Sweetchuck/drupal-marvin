@@ -3,14 +3,12 @@
 namespace Drush\Commands\Marvin\Qa;
 
 use Consolidation\AnnotatedCommand\CommandData;
-use Consolidation\AnnotatedCommand\CommandError;
 use Drush\marvin\ArrayUtils\FileSystemArrayUtils;
 use Drush\marvin\ComposerInfo;
 use Robo\Contract\TaskInterface;
 use Sweetchuck\Robo\Git\GitTaskLoader;
 use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Webmozart\PathUtil\Path;
 
 class LintPhpcsCommands extends LintCommandsBase {
@@ -22,46 +20,14 @@ class LintPhpcsCommands extends LintCommandsBase {
    * @hook option marvin:qa:lint:phpcs
    */
   public function lintPhpcsHookOption(Command $command) {
-    $definition = $command->getDefinition();
-    if ($this->isIncubatorProject() && !$definition->hasArgument('packages')) {
-      $command->addArgument(
-        'packages',
-        InputArgument::IS_ARRAY,
-        'Filesystem path or machine-name of any kind of Drupal extension.'
-      );
-    }
+    $this->hookOptionAddArgumentPackages($command);
   }
 
   /**
    * @hook validate marvin:qa:lint:phpcs
    */
-  public function lintPhpcsHookValidate(CommandData $commandData): ?CommandError {
-    if ($this->isIncubatorProject()) {
-      $packageNames = $commandData->input()->getArgument('packages');
-      $packages = [];
-      $invalidPackageNames = [];
-      foreach ($packageNames as $packageName) {
-        $package = $this->normalizeManagedDrupalExtensionName($packageName);
-        if ($package) {
-          $packages[] = $package['name'];
-        }
-        else {
-          $invalidPackageNames[] = $packageName;
-        }
-      }
-
-      if ($invalidPackageNames) {
-        // @todo Designed exit codes and messages.
-        return new CommandError(
-          'The following packages are invalid: ' . implode(', ', $invalidPackageNames),
-          1
-        );
-      }
-
-      $commandData->input()->setArgument('packages', $packages);
-    }
-
-    return NULL;
+  public function lintPhpcsHookValidate(CommandData $commandData) {
+    $this->hookValidateArgumentPackages($commandData);
   }
 
   /**
@@ -69,12 +35,6 @@ class LintPhpcsCommands extends LintCommandsBase {
    * @bootstrap none
    */
   public function lintPhpcs(): ?TaskInterface {
-    // @todo Validate the arguments.
-    // - Only managed Drupal extensions are allowed.
-    // @todo Parse arguments.
-    // - drupal/dummy_m1
-    // - dummy_m1
-    // - /path/to/modules/dummy_m1.
     $args = func_get_args();
     $options = array_pop($args);
 
@@ -97,16 +57,10 @@ class LintPhpcsCommands extends LintCommandsBase {
    */
   protected function getTaskLintPhpcs(): TaskInterface {
     if ($this->isIncubatorProject()) {
-      $packagePaths = $this->getManagedDrupalExtensions();
-      if ($this->cliArgs['packages']) {
-        $packagePaths = array_intersect_key(
-          $packagePaths,
-          array_flip($this->cliArgs['packages'])
-        );
-      }
-
+      $managedDrupalExtensions = $this->getManagedDrupalExtensions();
       $cb = $this->collectionBuilder();
-      foreach ($packagePaths as $packagePath) {
+      foreach ($this->cliArgs['packages'] as $packageName) {
+        $packagePath = $managedDrupalExtensions[$packageName];
         $cb->addTask($this->getTaskLintPhpcsExtension($packagePath));
       }
 

@@ -2,6 +2,7 @@
 
 namespace Drush\Commands\Marvin;
 
+use Consolidation\AnnotatedCommand\CommandData;
 use Drush\marvin\ArrayUtils\FilterArrayUtils;
 use Drush\marvin\ComposerInfo;
 use Drush\marvin\Robo\ManagedDrupalExtensionTaskLoader;
@@ -9,11 +10,12 @@ use Drush\marvin\Utils;
 use Robo\Collection\CollectionBuilder;
 use Robo\Common\ConfigAwareTrait;
 use Robo\Contract\ConfigAwareInterface;
-use Robo\Robo;
 use Robo\Tasks;
 use Stringy\StaticStringy;
 use Sweetchuck\Robo\Composer\ComposerTaskLoader;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputArgument;
 use Webmozart\PathUtil\Path;
 
 class CommandsBase extends Tasks implements ConfigAwareInterface {
@@ -58,21 +60,63 @@ class CommandsBase extends Tasks implements ConfigAwareInterface {
   /**
    * {@inheritdoc}
    */
-  public static function configure($key, $value, $config = NULL) {
-    if (!$config) {
-      $config = Robo::config();
-    }
-
-    $config->setDefault(static::getClassKey($key), $value);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function getConfigValue($key, $default = NULL) {
     $config = $this->getConfig();
 
     return $config ? $config->get(static::getClassKey($key), $default) : $default;
+  }
+
+  /**
+   * @return $this
+   */
+  protected function hookOptionAddArgumentPackages(Command $command) {
+    if ($this->isIncubatorProject()
+      && !$command->getDefinition()->hasArgument('packages')
+    ) {
+      $command->addArgument(
+        'packages',
+        InputArgument::IS_ARRAY,
+        'Filesystem path or machine-name of any kind of Drupal extension.'
+      );
+    }
+
+    return $this;
+  }
+
+  /**
+   * @return $this
+   */
+  protected function hookValidateArgumentPackages(CommandData $commandData) {
+    if ($this->isIncubatorProject()) {
+      $packageNames = $commandData->input()->getArgument('packages');
+      $packages = [];
+      $invalidPackageNames = [];
+      foreach ($packageNames as $packageName) {
+        $package = $this->normalizeManagedDrupalExtensionName($packageName);
+        if ($package) {
+          $packages[] = $package['name'];
+        }
+        else {
+          $invalidPackageNames[] = $packageName;
+        }
+      }
+
+      if ($invalidPackageNames) {
+        // @todo Designed exit codes and messages.
+        throw new \Exception(
+          'The following packages are invalid: ' . implode(', ', $invalidPackageNames),
+          1
+        );
+      }
+
+      if (!$packages) {
+        $packages = array_keys($this->getManagedDrupalExtensions());
+      }
+
+      $commandData->input()->setArgument('packages', $packages);
+    }
+
+    return $this;
   }
 
   protected function makeRelativePathToComposerBinDir(string $fromDirectory): string {
