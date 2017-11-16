@@ -65,6 +65,7 @@ class ComposerInfo implements \ArrayAccess {
    * @var array
    */
   protected $jsonDefault = [
+    'name' => '',
     'type' => 'library',
     'config' => [
       'bin-dir' => 'vendor/bin',
@@ -73,18 +74,23 @@ class ComposerInfo implements \ArrayAccess {
   ];
 
   /**
+   * @param string $jsonFileName
+   * @param string $baseDir
+   * @param null|\Symfony\Component\Filesystem\Filesystem $fs
+   *
    * @return $this
    */
-  public static function create(string $jsonFileName = '', ?Filesystem $fs = NULL, string $baseDir = '') {
+  public static function create(string $jsonFileName = '', string $baseDir = '', ?Filesystem $fs = NULL) {
     if (!$jsonFileName) {
       $jsonFileName = getenv('COMPOSER') ?: 'composer.json';
     }
 
-    if (!isset(static::$instances[$jsonFileName])) {
-      static::$instances[$jsonFileName] = new static($jsonFileName, $fs, $baseDir);
+    $instanceId = Path::isAbsolute($jsonFileName) ? $jsonFileName : Path::join(($baseDir ?: getcwd()), $jsonFileName);
+    if (!isset(static::$instances[$instanceId])) {
+      static::$instances[$instanceId] = new static($jsonFileName, $fs, $baseDir);
     }
 
-    return static::$instances[$jsonFileName];
+    return static::$instances[$instanceId];
   }
 
   protected function __construct(string $jsonFileName, ?Filesystem $fs = NULL, string $baseDir = '') {

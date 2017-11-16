@@ -55,7 +55,7 @@ class ComposerInfoTest extends TestCase {
    */
   public function testGetLockFileName(string $expected, string $jsonFileName) {
     $baseDir = $this->rootDir->url();
-    $ci = ComposerInfo::create($jsonFileName, NULL, $baseDir);
+    $ci = ComposerInfo::create($jsonFileName, $baseDir);
     $this->assertEquals(
       "vfs:/$expected",
       $ci->getLockFileName()
@@ -84,7 +84,7 @@ class ComposerInfoTest extends TestCase {
    */
   public function testGetWorkingDirectory(string $expected, string $jsonFileName) {
     $baseDir = $this->rootDir->url();
-    $ci = ComposerInfo::create($jsonFileName, NULL, $baseDir);
+    $ci = ComposerInfo::create($jsonFileName, $baseDir);
     $this->assertEquals("vfs:/$expected", $ci->getWorkingDirectory());
   }
 
@@ -158,7 +158,7 @@ class ComposerInfoTest extends TestCase {
     $lockFileName = 'real/composer.lock';
     file_put_contents("$baseDir/$lockFileName", json_encode($lock));
 
-    $ci = ComposerInfo::create($jsonFileName, NULL, $baseDir);
+    $ci = ComposerInfo::create($jsonFileName, $baseDir);
     $this->assertEquals($expected['json'], $ci->getJson());
     $this->assertEquals($expected['lock'], $ci->getLock());
   }

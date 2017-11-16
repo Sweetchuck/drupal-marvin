@@ -23,6 +23,7 @@ command:
         package:
           drupal/marvin:
             ignored: true
+      buildDir: 'build'
     qa:
       lint:
         settings:

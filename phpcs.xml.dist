@@ -13,6 +13,7 @@
     <exclude name="Drupal.Commenting.ClassComment.Missing"/>
     <exclude name="Drupal.Commenting.FunctionComment.Missing"/>
     <exclude name="Drupal.Commenting.DocComment.MissingShort"/>
+    <exclude name="Drupal.Commenting.FunctionComment.MissingParamComment"/>
     <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment"/>
   </rule>
 
