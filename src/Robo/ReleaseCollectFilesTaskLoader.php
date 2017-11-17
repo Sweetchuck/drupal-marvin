@@ -11,7 +11,7 @@ trait ReleaseCollectFilesTaskLoader {
   /**
    * @return \Robo\Collection\CollectionBuilder|\Drush\marvin\Robo\Task\ReleaseCollectFilesTask
    */
-  protected function taskMarvinCopyFiles(array $options = []) {
+  protected function taskMarvinReleaseCollectFiles(array $options = []) {
     /** @var \Drush\marvin\Robo\Task\ReleaseCollectFilesTask $task */
     $task = $this->task(ReleaseCollectFilesTask::class, $options);
     if ($this instanceof ContainerAwareInterface) {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Drush\Commands\Marvin\GitHook;
+namespace Drush\Commands\marvin\GitHook;
 
-use Drush\Commands\Marvin\GitHookCommandsBase;
+use Drush\Commands\marvin\GitHookCommandsBase;
 
 class PreCommitCommands extends GitHookCommandsBase {
 

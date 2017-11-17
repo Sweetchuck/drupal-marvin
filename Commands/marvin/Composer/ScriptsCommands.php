@@ -1,8 +1,8 @@
 <?php
 
-namespace Drush\Commands\Marvin\Composer;
+namespace Drush\Commands\marvin\Composer;
 
-use Drush\Commands\Marvin\CommandsBase;
+use Drush\Commands\marvin\CommandsBase;
 use Drush\marvin\Utils;
 use Robo\Collection\CollectionBuilder;
 use Robo\Contract\TaskInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\Commands\Marvin\Tests\Unit\Robo\Task;
+namespace Drush\Commands\marvin\Tests\Unit\Robo\Task;
 
 use Drush\marvin\Robo\Task\ReleaseCollectFilesTask;
 use org\bovigo\vfs\vfsStream;
@@ -14,8 +14,8 @@ class ReleaseCollectFilesTaskTest extends TestCase {
 
   public function casesRunSuccess(): array {
     $cases = [];
-    foreach (['module', 'theme', 'drush'] as $projectType) {
-      $files = $this->getDrupalModuleOrThemeFiles('dummy_m1', $projectType);
+    foreach (['module', 'theme', 'drush', 'profile'] as $projectType) {
+      $files = $this->getDrupalExtensionFiles('dummy_m1', $projectType);
       $cases["$projectType.basic"] = [$files['expected'], $files['structure']];
     }
 
@@ -63,7 +63,7 @@ class ReleaseCollectFilesTaskTest extends TestCase {
     $this->assertEquals($expected, $files);
   }
 
-  protected function getDrupalModuleOrThemeFiles(string $name, string $type): array {
+  protected function getDrupalExtensionFiles(string $name, string $type): array {
     $nameUpperCamel = StaticStringy::upperCamelize($name);
     $fileContent = 'a';
 

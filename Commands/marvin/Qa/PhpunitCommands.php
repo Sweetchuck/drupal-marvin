@@ -1,8 +1,8 @@
 <?php
 
-namespace Drush\Commands\Marvin\Qa;
+namespace Drush\Commands\marvin\Qa;
 
-use Drush\Commands\Marvin\QaCommandsBase;
+use Drush\Commands\marvin\QaCommandsBase;
 use Robo\Contract\TaskInterface;
 use Sweetchuck\Robo\Git\Utils;
 
@@ -29,7 +29,6 @@ class PhpunitCommands extends QaCommandsBase {
     $gitHook = $this->getConfig()->get('command.marvin.settings.gitHook');
     if ($gitHook === 'pre-commit') {
       $cmdPattern .= ' --no-coverage';
-      $cmdPattern .= ' --no-logging';
     }
 
     if ($testSuiteNames) {

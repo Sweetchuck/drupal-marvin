@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\Commands\Marvin\Tests\Unit;
+namespace Drush\Commands\marvin\Tests\Unit;
 
 use Drush\marvin\ComposerInfo;
 use org\bovigo\vfs\vfsStream;
@@ -161,6 +161,26 @@ class ComposerInfoTest extends TestCase {
     $ci = ComposerInfo::create($jsonFileName, $baseDir);
     $this->assertEquals($expected['json'], $ci->getJson());
     $this->assertEquals($expected['lock'], $ci->getLock());
+  }
+
+  public function testInstances() {
+    $vfs = vfsStream::setup(
+      'instances',
+      NULL,
+      [
+        'p1' => [
+          'composer.json' => json_encode(['type' => 'a']),
+        ],
+        'p2' => [
+          'composer.json' => json_encode(['type' => 'b']),
+        ],
+      ]
+    );
+
+    $p1 = ComposerInfo::create('', $vfs->url() . '/p1');
+    $p2 = ComposerInfo::create('', $vfs->url() . '/p2');
+    $this->assertEquals('a', $p1['type']);
+    $this->assertEquals('b', $p2['type']);
   }
 
 }

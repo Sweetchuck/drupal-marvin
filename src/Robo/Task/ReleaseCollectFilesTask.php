@@ -87,9 +87,6 @@ class ReleaseCollectFilesTask extends BaseTask {
         break;
 
       case 'drupal-profile':
-        // @todo
-        break;
-
       case 'drupal-module':
       case 'drupal-theme':
       case 'drupal-drush':
@@ -115,6 +112,14 @@ class ReleaseCollectFilesTask extends BaseTask {
           ->configFinderCi($files)
           ->configFinderOs($files)
           ->configFinderIde($files);
+
+        if ($composerInfo['type'] === 'drupal-profile') {
+          // These directories probably are in the DRUPAL_ROOT directory.
+          $files
+            ->notPath('modules/contrib')
+            ->notPath('libraries/contrib')
+            ->notPath('themes/contrib');
+        }
 
         $this->assets['files'] = $files;
         break;

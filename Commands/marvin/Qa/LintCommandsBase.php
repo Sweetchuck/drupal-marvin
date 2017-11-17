@@ -1,8 +1,8 @@
 <?php
 
-namespace Drush\Commands\Marvin\Qa;
+namespace Drush\Commands\marvin\Qa;
 
-use Drush\Commands\Marvin\QaCommandsBase;
+use Drush\Commands\marvin\QaCommandsBase;
 use League\Container\ContainerInterface;
 use Stringy\StaticStringy;
 use Sweetchuck\LintReport\Reporter\BaseReporter;

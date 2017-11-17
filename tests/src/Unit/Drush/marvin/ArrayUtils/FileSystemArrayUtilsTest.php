@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\Commands\Marvin\Tests\Unit\ArrayUtils;
+namespace Drush\Commands\marvin\Tests\Unit\ArrayUtils;
 
 use Drush\marvin\ArrayUtils\FileSystemArrayUtils;
 use org\bovigo\vfs\vfsStream;

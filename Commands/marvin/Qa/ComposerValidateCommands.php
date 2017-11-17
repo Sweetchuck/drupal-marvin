@@ -1,9 +1,9 @@
 <?php
 
-namespace Drush\Commands\Marvin\Qa;
+namespace Drush\Commands\marvin\Qa;
 
 use Consolidation\AnnotatedCommand\CommandData;
-use Drush\Commands\Marvin\CommandsBase;
+use Drush\Commands\marvin\CommandsBase;
 use Robo\Contract\TaskInterface;
 use Symfony\Component\Console\Command\Command;
 

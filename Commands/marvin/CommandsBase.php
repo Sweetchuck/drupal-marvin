@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\Commands\Marvin;
+namespace Drush\Commands\marvin;
 
 use Consolidation\AnnotatedCommand\CommandData;
 use Drush\marvin\ArrayUtils\FilterArrayUtils;

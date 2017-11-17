@@ -33,13 +33,13 @@
   </php>
 
   <testsuites>
+    <testsuite name="Unish">
+      <directory>tests/src/Unish</directory>
+    </testsuite>
+
     <testsuite name="Unit">
       <directory>tests/src/Unit</directory>
     </testsuite>
-
-    <!--<testsuite name="Unish">-->
-      <!--<directory>tests/src/Unish</directory>-->
-    <!--</testsuite>-->
   </testsuites>
 
   <filter>

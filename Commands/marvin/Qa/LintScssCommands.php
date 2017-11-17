@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\Commands\Marvin\Qa;
+namespace Drush\Commands\marvin\Qa;
 
 class LintScssCommands extends LintCommandsBase {
 

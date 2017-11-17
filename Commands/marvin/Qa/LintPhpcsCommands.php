@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\Commands\Marvin\Qa;
+namespace Drush\Commands\marvin\Qa;
 
 use Consolidation\AnnotatedCommand\CommandData;
 use Drush\marvin\ArrayUtils\FileSystemArrayUtils;
