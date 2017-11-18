@@ -2,9 +2,9 @@
 
 namespace Drush\marvin\Tests\Unish\marvin\Release;
 
-use Unish\CommandUnishTestCase;
+use Drush\marvin\Tests\Unish\marvin\CommandsTestBase;
 
-class ReleaseCommandsTest extends CommandUnishTestCase {
+class ReleaseCommandsTest extends CommandsTestBase {
 
   public function testDummy() {
     $this->assertEquals(1, 1);
