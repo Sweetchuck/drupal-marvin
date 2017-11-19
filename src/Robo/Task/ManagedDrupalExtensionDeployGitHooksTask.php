@@ -164,25 +164,31 @@ class ManagedDrupalExtensionDeployGitHooksTask extends BaseTask implements
    * {@inheritdoc}
    */
   protected function runAction() {
-    // @todo Create a runValidate() method.
+    $commonTemplateFileName = $this->getCommonTemplateFileName();
     $packagePath = $this->getPackagePath();
+
+    $context = [
+      'packagePath' => $packagePath,
+      'commonTemplateFileName' => $commonTemplateFileName,
+    ];
+
+    // @todo Create a runValidate() method.
     if (!$this->fs->exists($packagePath)) {
-      $this->printTaskError("The '$packagePath' directory does not exists.");
+      $this->printTaskError("The '{packagePath}' directory does not exists.", $context);
 
       // @todo Set an error.
       return $this;
     }
 
     if (!$this->fs->exists("$packagePath/.git")) {
-      $this->printTaskError("The '$packagePath' directory is not a Git repository.");
+      $this->printTaskError("The '{packagePath}' directory is not a Git repository.", $context);
 
       // @todo Set an error.
       return $this;
     }
 
-    $commonTemplateFileName = $this->getCommonTemplateFileName();
     if (!$this->fs->exists($commonTemplateFileName)) {
-      $this->printTaskError("The '$commonTemplateFileName' file does not exists.");
+      $this->printTaskError("The '{commonTemplateFileName}' file does not exists.", $context);
 
       // @todo Set an error.
       return $this;
@@ -198,13 +204,14 @@ class ManagedDrupalExtensionDeployGitHooksTask extends BaseTask implements
    * @return $this
    */
   protected function runActionPrepareDestinationDir() {
-    // @todo Support for ".git" file.
-    $destinationDir = Path::join($this->getPackagePath(), '.git', 'hooks');
+    $destinationDir = $this->getDestinationDir();
 
     if (is_link($destinationDir)) {
       $this->fs->remove($destinationDir);
     }
-    elseif (!$this->fs->exists($destinationDir)) {
+
+    // @todo This looks like a PrepareDirectoryTask.
+    if (!$this->fs->exists($destinationDir)) {
       $this->fs->mkdir($destinationDir, 0777 - umask());
     }
     else {
@@ -264,6 +271,7 @@ class ManagedDrupalExtensionDeployGitHooksTask extends BaseTask implements
   }
 
   protected function getDestinationDir(): string {
+    // @todo Support for ".git" file.
     return Path::join($this->getPackagePath(), '.git', 'hooks');
   }
 

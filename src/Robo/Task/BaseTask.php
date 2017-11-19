@@ -132,7 +132,7 @@ abstract class BaseTask extends RoboBaseTask implements
    * @return $this
    */
   protected function runHeader() {
-    $this->printTaskInfo('{taskName}');
+    $this->printTaskInfo('');
 
     return $this;
   }
@@ -188,10 +188,7 @@ abstract class BaseTask extends RoboBaseTask implements
    */
   protected function getTaskContext($context = NULL) {
     $context = parent::getTaskContext($context);
-
-    if (empty($context['taskName'])) {
-      $context['taskName'] = $this->getTaskName();
-    }
+    $context['name'] = $this->getTaskName();
 
     return $context;
   }

@@ -17,9 +17,7 @@ pipeline {
         }
         stage('Report') {
             steps {
-                ansiColor('xterm') {
-                    junit 'reports/machine/unit/junit.xml'
-                }
+                junit 'reports/machine/unit/junit.xml'
                 step([
                     $class: 'CloverPublisher',
                     cloverReportDir: 'reports/machine/coverage',

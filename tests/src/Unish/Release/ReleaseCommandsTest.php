@@ -7,7 +7,6 @@ use Drush\marvin\Tests\Unish\marvin\CommandsTestBase;
 class ReleaseCommandsTest extends CommandsTestBase {
 
   public function testDummy() {
-    $this->assertEquals(1, 1);
   }
 
 }

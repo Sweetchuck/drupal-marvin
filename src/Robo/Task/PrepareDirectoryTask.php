@@ -58,15 +58,32 @@ class PrepareDirectoryTask extends BaseTask {
     return $this;
   }
 
+  protected function runHeader() {
+    $this->printTaskInfo(
+      '{directory}',
+      [
+        'directory' => $this->getWorkingDirectory(),
+      ]
+    );
+
+    return $this;
+  }
+
   /**
    * {@inheritdoc}
    */
   protected function runAction() {
     $dir = $this->getWorkingDirectory();
+    $context = [
+      'workingDirectory' => $dir,
+    ];
+
     if (!$this->fs->exists($dir)) {
+      $this->printTaskDebug('Create directory: {workingDirectory}', $context);
       $this->fs->mkdir($dir);
     }
     else {
+      $this->printTaskDebug('Delete all content from directory {workingDirectory}', $context);
       $directDescendants = (new Finder())
         ->in($dir)
         ->depth('== 0')

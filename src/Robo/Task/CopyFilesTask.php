@@ -120,7 +120,7 @@ class CopyFilesTask extends BaseTask {
       $dstFileName = Path::join($dstDir, $relativeFileName);
 
       $this->printTaskDebug(
-        "COPY FILE: {srcDir} {file} {dstDir}",
+        "copy: {srcDir} {dstDir} {file}",
         [
           'srcDir' => $srcDir,
           'file' => $relativeFileName,

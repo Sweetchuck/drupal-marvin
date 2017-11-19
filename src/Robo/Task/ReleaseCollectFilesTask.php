@@ -73,6 +73,15 @@ class ReleaseCollectFilesTask extends BaseTask {
   /**
    * {@inheritdoc}
    */
+  protected function runHeader() {
+    $this->printTaskInfo($this->getPackagePath());
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function runAction() {
     // @todo Add extra exclude dirs configuration.
     // This task should be independent from the $this->getConfig().
