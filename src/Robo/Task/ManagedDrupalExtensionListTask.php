@@ -40,7 +40,25 @@ class ManagedDrupalExtensionListTask extends BaseTask implements
   /**
    * @var string
    */
-  protected $composerJsonFileName = '';
+  protected $workingDirectory = '.';
+
+  public function getWorkingDirectory(): string {
+    return $this->workingDirectory;
+  }
+
+  /**
+   * @return $this
+   */
+  public function setWorkingDirectory(string $value) {
+    $this->workingDirectory = $value;
+
+    return $this;
+  }
+
+  /**
+   * @var string
+   */
+  protected $composerJsonFileName = 'composer.json';
 
   public function getComposerJsonFileName(): string {
     return $this->composerJsonFileName;
@@ -107,6 +125,10 @@ class ManagedDrupalExtensionListTask extends BaseTask implements
           $this->setAssetNamePrefix($value);
           break;
 
+        case 'workingDirectory':
+          $this->setWorkingDirectory($value);
+          break;
+
         case 'composerJsonFileName':
           $this->setComposerJsonFileName($value);
           break;
@@ -127,7 +149,10 @@ class ManagedDrupalExtensionListTask extends BaseTask implements
    * {@inheritdoc}
    */
   public function run() {
-    $this->composerInfo = ComposerInfo::create($this->getComposerJsonFileName());
+    $this->composerInfo = ComposerInfo::create(
+      $this->getWorkingDirectory(),
+      $this->getComposerJsonFileName()
+    );
 
     $managedDrupalExtensions = Utils::collectManagedDrupalExtensions(
       Path::makeAbsolute($this->composerInfo->getWorkingDirectory(), getcwd()),

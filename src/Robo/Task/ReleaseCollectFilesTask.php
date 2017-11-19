@@ -88,7 +88,7 @@ class ReleaseCollectFilesTask extends BaseTask {
     $buildDir = $this->getConfig()->get('command.marvin.settings.buildDir');
 
     $packagePath = $this->getPackagePath();
-    $composerInfo = ComposerInfo::create($this->getComposerJsonFileName(), $packagePath);
+    $composerInfo = ComposerInfo::create($packagePath, $this->getComposerJsonFileName());
     switch ($composerInfo['type']) {
       case 'project':
       case 'drupal-project':

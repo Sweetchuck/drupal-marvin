@@ -1,1 +1,19 @@
-{}
+{
+    "name": "drupal/dummy_m1",
+    "description": "",
+    "license": "GPL-2.0",
+    "type": "drupal-module",
+    "autoload": {
+        "psr-4": {
+            "Drupal\\dummy_m1\\": "src/"
+        }
+    },
+    "scripts": {
+        "pre-install-cmd": "@pm-policy",
+        "pre-update-cmd": "@pm-policy",
+        "pm-policy": [
+            "echo 'The package management with composer is disabled.'",
+            "false"
+        ]
+    }
+}

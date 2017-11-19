@@ -74,15 +74,11 @@ class ComposerInfo implements \ArrayAccess {
   ];
 
   /**
-   * @param string $jsonFileName
-   * @param string $baseDir
-   * @param null|\Symfony\Component\Filesystem\Filesystem $fs
-   *
    * @return $this
    */
-  public static function create(string $jsonFileName = '', string $baseDir = '', ?Filesystem $fs = NULL) {
+  public static function create(string $baseDir = '', string $jsonFileName = '', ?Filesystem $fs = NULL) {
     if (!$jsonFileName) {
-      $jsonFileName = getenv('COMPOSER') ?: 'composer.json';
+      $jsonFileName = Utils::getComposerJsonFileName();
     }
 
     $instanceId = Path::isAbsolute($jsonFileName) ? $jsonFileName : Path::join(($baseDir ?: getcwd()), $jsonFileName);

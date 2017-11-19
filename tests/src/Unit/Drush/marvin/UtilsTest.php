@@ -3,7 +3,9 @@
 namespace Drush\marvin\Tests\Unit;
 
 use Drush\marvin\Utils;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Webmozart\PathUtil\Path;
 
 /**
  * @coversDefaultClass \Drush\marvin\Utils
@@ -88,6 +90,80 @@ class UtilsTest extends TestCase {
       $expected,
       Utils::collectManagedDrupalExtensions($rootProjectDir, $composerLock, $packagePaths)
     );
+  }
+
+  public function casesFindFileUpward(): array {
+    return [
+      'not-exists' => [
+        '',
+        'a.txt',
+        'foo',
+        [
+          'foo' => [],
+        ],
+      ],
+      '0-0' => [
+        'vfs://testFindFileUpward',
+        'a.txt',
+        '.',
+        [
+          'a.txt' => 'okay',
+        ],
+      ],
+      '1-0' => [
+        'vfs://testFindFileUpward',
+        'a.txt',
+        'foo',
+        [
+          'a.txt' => 'okay',
+          'foo' => [],
+        ],
+      ],
+      '2-0' => [
+        'vfs://testFindFileUpward',
+        'a.txt',
+        'foo/bar',
+        [
+          'a.txt' => 'okay',
+          'foo' => [
+            'bar' => [],
+          ],
+        ],
+      ],
+      '2-1' => [
+        'vfs://testFindFileUpward/foo',
+        'a.txt',
+        'foo/bar',
+        [
+          'foo' => [
+            'bar' => [],
+            'a.txt' => 'okay',
+          ],
+        ],
+      ],
+      '2-2' => [
+        'vfs://testFindFileUpward/foo/bar',
+        'a.txt',
+        'foo/bar',
+        [
+          'foo' => [
+            'bar' => [
+              'a.txt' => 'okay',
+            ],
+          ],
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesFindFileUpward
+   */
+  public function testFindFileUpward($expected, string $fileName, string $relativeDirectory, array $structure): void {
+    $vfs = vfsStream::setup(__FUNCTION__, NULL, $structure);
+    $absoluteDirectory = Path::join($vfs->url(), $relativeDirectory);
+
+    $this->assertEquals($expected, Utils::findFileUpward($fileName, $absoluteDirectory));
   }
 
 }

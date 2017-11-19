@@ -3,6 +3,7 @@
 namespace Drush\Commands\marvin;
 
 use Consolidation\AnnotatedCommand\CommandData;
+use Drush\Drush;
 use Drush\marvin\ArrayUtils\FilterArrayUtils;
 use Drush\marvin\ComposerInfo;
 use Drush\marvin\Robo\ManagedDrupalExtensionTaskLoader;
@@ -40,7 +41,7 @@ class CommandsBase extends Tasks implements ConfigAwareInterface {
   protected $composerInfo;
 
   public function __construct() {
-    $this->composerInfo = ComposerInfo::create();
+    $this->composerInfo = ComposerInfo::create($this->getProjectRootDir());
   }
 
   protected static function getClassKey(string $key): string {
@@ -81,6 +82,19 @@ class CommandsBase extends Tasks implements ConfigAwareInterface {
     }
 
     return $this;
+  }
+
+  /**
+   * @todo This is not bullet proof, but good enough.
+   */
+  protected function getProjectRootDir(): string {
+    // This method called from the __constructor() and the $this->config is not
+    // initialized yet.
+    // @todo Find a better way to initialize the $this->composerInfo.
+    $config = $this->getConfig() ?: Drush::config();
+    $vendorDir = $config->get('drush.vendor-dir');
+
+    return Utils::findFileUpward(Utils::getComposerJsonFileName(), $vendorDir);
   }
 
   /**
@@ -156,12 +170,18 @@ class CommandsBase extends Tasks implements ConfigAwareInterface {
       ->get('command.marvin.settings.managedDrupalExtension.package');
     $ignoredPackages = FilterArrayUtils::filterEnabled($packageDefinitions, 'ignored', FALSE);
 
+    $workingDirectory = $this->getProjectRootDir();
+
     return $this
       ->collectionBuilder()
-      ->addTask($this->taskComposerPackagePaths())
+      ->addTask(
+        $this
+          ->taskComposerPackagePaths()
+          ->setWorkingDirectory($workingDirectory))
       ->addTask(
         $this
           ->taskManagedDrupalExtensionList()
+          ->setWorkingDirectory($workingDirectory)
           ->setIgnoredPackages(array_keys($ignoredPackages))
           ->deferTaskConfiguration('setPackagePaths', 'packagePaths'));
   }

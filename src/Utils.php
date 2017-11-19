@@ -67,4 +67,29 @@ class Utils {
     return $managedExtensions;
   }
 
+  public static function getComposerJsonFileName(): string {
+    return getenv('COMPOSER') ?: 'composer.json';
+  }
+
+  public static function findFileUpward(string $fileName, string $absoluteDirectory = ''): string {
+    if (!$absoluteDirectory) {
+      $absoluteDirectory = getcwd();
+    }
+
+    while ($absoluteDirectory) {
+      if (file_exists("$absoluteDirectory/$fileName")) {
+        return $absoluteDirectory;
+      }
+
+      $parent = Path::getDirectory($absoluteDirectory);
+      if ($parent === $absoluteDirectory) {
+        break;
+      }
+
+      $absoluteDirectory = $parent;
+    }
+
+    return '';
+  }
+
 }
