@@ -114,10 +114,6 @@ class ManagedDrupalExtensionListTask extends BaseTask implements
    */
   protected $composerInfo;
 
-  public function __construct(array $options = []) {
-    $this->setOptions($options);
-  }
-
   public function setOptions(array $options) {
     foreach ($options as $key => $value) {
       switch ($key) {

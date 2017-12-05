@@ -5,6 +5,12 @@ namespace Drush\marvin\Robo\Task;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Creates an empty directory with the given name.
+ *
+ * If the given directory isn't exists then creates it, otherwise deletes
+ * everything in that directory.
+ */
 class PrepareDirectoryTask extends BaseTask {
 
   /**
@@ -38,9 +44,7 @@ class PrepareDirectoryTask extends BaseTask {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $options = [], Filesystem $fs = NULL) {
-    parent::__construct($options);
-
+  public function __construct(Filesystem $fs = NULL) {
     $this->fs = $fs ?: new Filesystem();
   }
 

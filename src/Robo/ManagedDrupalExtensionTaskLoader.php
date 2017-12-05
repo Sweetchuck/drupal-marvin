@@ -4,8 +4,6 @@ namespace Drush\marvin\Robo;
 
 use Drush\marvin\Robo\Task\ManagedDrupalExtensionDeployGitHooksTask;
 use Drush\marvin\Robo\Task\ManagedDrupalExtensionListTask;
-use League\Container\ContainerAwareInterface;
-use Robo\Contract\OutputAwareInterface;
 
 trait ManagedDrupalExtensionTaskLoader {
 
@@ -14,14 +12,8 @@ trait ManagedDrupalExtensionTaskLoader {
    */
   protected function taskManagedDrupalExtensionList(array $options = []) {
     /** @var \Drush\marvin\Robo\Task\ManagedDrupalExtensionListTask $task */
-    $task = $this->task(ManagedDrupalExtensionListTask::class, $options);
-    if ($this instanceof ContainerAwareInterface) {
-      $task->setContainer($this->getContainer());
-    }
-
-    if ($this instanceof OutputAwareInterface) {
-      $task->setOutput($this->output());
-    }
+    $task = $this->task(ManagedDrupalExtensionListTask::class);
+    $task->setOptions($options);
 
     return $task;
   }
@@ -31,14 +23,8 @@ trait ManagedDrupalExtensionTaskLoader {
    */
   protected function taskManagedDrupalExtensionDeployGitHooks(array $options = []) {
     /** @var \Drush\marvin\Robo\Task\ManagedDrupalExtensionDeployGitHooksTask $task */
-    $task = $this->task(ManagedDrupalExtensionDeployGitHooksTask::class, $options);
-    if ($this instanceof ContainerAwareInterface) {
-      $task->setContainer($this->getContainer());
-    }
-
-    if ($this instanceof OutputAwareInterface) {
-      $task->setOutput($this->output());
-    }
+    $task = $this->task(ManagedDrupalExtensionDeployGitHooksTask::class);
+    $task->setOptions($options);
 
     return $task;
   }

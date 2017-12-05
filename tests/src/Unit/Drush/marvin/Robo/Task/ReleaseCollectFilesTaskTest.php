@@ -41,26 +41,30 @@ class ReleaseCollectFilesTaskTest extends TestCase {
       ],
     ]);
 
-    $task = new ReleaseCollectFilesTask([
-      'composerJsonFileName' => 'composer.json',
-      'packagePath' => $vfs->url(),
-    ]);
-    $task->setLogger($container->get('logger'));
+    $task = new ReleaseCollectFilesTask();
+    $task
+      ->setOptions([
+        'composerJsonFileName' => 'composer.json',
+        'packagePath' => $vfs->url(),
+      ])
+      ->setLogger($container->get('logger'));
 
     $result = $task
       ->setConfig($config)
       ->setOutput($mainStdOutput)
       ->run();
 
-    $files = [];
+    $actual = [];
     /** @var \Symfony\Component\Finder\SplFileInfo $file */
-    foreach ($result['files'] as $file) {
-      $files[] = $file->getRelativePathname();
+    foreach ($result['files'] as $files) {
+      foreach ($files as $file) {
+        $actual[] = $file->getRelativePathname();
+      }
     }
 
     sort($expected);
-    sort($files);
-    $this->assertEquals($expected, $files);
+    sort($actual);
+    $this->assertEquals($expected, $actual);
   }
 
   protected function getDrupalExtensionFiles(string $name, string $type): array {

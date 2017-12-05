@@ -81,10 +81,6 @@ abstract class BaseTask extends RoboBaseTask implements
    */
   protected $actionStdError = '';
 
-  public function __construct(array $options = []) {
-    $this->setOptions($options);
-  }
-
   public function getTaskName(): string {
     return $this->taskName ?: TaskInfo::formatTaskName($this);
   }

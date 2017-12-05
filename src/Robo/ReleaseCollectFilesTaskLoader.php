@@ -3,8 +3,6 @@
 namespace Drush\marvin\Robo;
 
 use Drush\marvin\Robo\Task\ReleaseCollectFilesTask;
-use League\Container\ContainerAwareInterface;
-use Robo\Contract\OutputAwareInterface;
 
 trait ReleaseCollectFilesTaskLoader {
 
@@ -13,14 +11,8 @@ trait ReleaseCollectFilesTaskLoader {
    */
   protected function taskMarvinReleaseCollectFiles(array $options = []) {
     /** @var \Drush\marvin\Robo\Task\ReleaseCollectFilesTask $task */
-    $task = $this->task(ReleaseCollectFilesTask::class, $options);
-    if ($this instanceof ContainerAwareInterface) {
-      $task->setContainer($this->getContainer());
-    }
-
-    if ($this instanceof OutputAwareInterface) {
-      $task->setOutput($this->output());
-    }
+    $task = $this->task(ReleaseCollectFilesTask::class);
+    $task->setOptions($options);
 
     return $task;
   }

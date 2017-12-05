@@ -83,6 +83,8 @@ class ReleaseCollectFilesTask extends BaseTask {
    * {@inheritdoc}
    */
   protected function runAction() {
+    // @todo The configuration what to copy should come from outside instead of
+    // the hard-coded file patterns.
     // @todo Add extra exclude dirs configuration.
     // This task should be independent from the $this->getConfig().
     $buildDir = $this->getConfig()->get('command.marvin.settings.buildDir');
@@ -130,9 +132,21 @@ class ReleaseCollectFilesTask extends BaseTask {
             ->notPath('themes/contrib');
         }
 
-        $this->assets['files'] = $files;
-        break;
+        $this->assets['files'][] = $files;
 
+        if (file_exists("$packagePath/gitHooks/self")) {
+          $this->assets['files'][] = (new Finder())
+            ->in($packagePath)
+            ->notPath($buildDir)
+            ->files()
+            ->path('@^gitHooks/self/@')
+            ->filter(
+              function (\SplFileInfo $file) {
+                return $file->isExecutable();
+              }
+            );
+        }
+        break;
     }
 
     return $this;

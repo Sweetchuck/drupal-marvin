@@ -3,6 +3,7 @@
 namespace Drush\marvin\Robo\Task;
 
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Webmozart\PathUtil\Path;
 
 class CopyFilesTask extends BaseTask {
@@ -76,9 +77,7 @@ class CopyFilesTask extends BaseTask {
     return $this;
   }
 
-  public function __construct(array $options = [], Filesystem $fs = NULL) {
-    parent::__construct($options);
-
+  public function __construct(Filesystem $fs = NULL) {
     $this->fs = $fs ?: new Filesystem();
   }
 
@@ -109,26 +108,54 @@ class CopyFilesTask extends BaseTask {
   }
 
   protected function runAction() {
+    foreach ($this->getFiles() as $file) {
+      $this->runActionCopy($file);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param string|string[]|\Symfony\Component\Finder\Finder|\Symfony\Component\Finder\Finder[]|\Symfony\Component\Finder\SplFileInfo|\Symfony\Component\Finder\SplFileInfo[] $file
+   *
+   * @return $this
+   */
+  protected function runActionCopy($file) {
+    // @todo Check fo other kind of containers.
+    if ($file instanceof Finder || is_array($file)) {
+      foreach ($file as $splFileInfo) {
+        $this->runActionCopy($splFileInfo);
+      }
+    }
+    else {
+      $this->runActionCopySingle($file);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param string|\Symfony\Component\Finder\SplFileInfo $file
+   *
+   * @return $this
+   */
+  protected function runActionCopySingle($file) {
     $srcDir = $this->getSrcDir();
     $dstDir = $this->getDstDir();
+    $isString = is_string($file);
+    $relativeFileName = $isString ? $file : $file->getRelativePathname();
+    $srcFileName = $isString ? Path::join($srcDir, $file) : $file->getPathname();
+    $dstFileName = Path::join($dstDir, $relativeFileName);
 
-    /** @var string|\Symfony\Component\Finder\SplFileInfo $file */
-    foreach ($this->getFiles() as $file) {
-      $isString = is_string($file);
-      $relativeFileName = $isString ? $file : $file->getRelativePathname();
-      $srcFileName = $isString ? Path::join($srcDir, $file) : $file->getPathname();
-      $dstFileName = Path::join($dstDir, $relativeFileName);
-
-      $this->printTaskDebug(
-        "copy: {srcDir} {dstDir} {file}",
-        [
-          'srcDir' => $srcDir,
-          'file' => $relativeFileName,
-          'dstDir' => $dstDir,
-        ]
-      );
-      $this->fs->copy($srcFileName, $dstFileName);
-    }
+    $this->printTaskDebug(
+      "copy: {srcDir} {dstDir} {file}",
+      [
+        'srcDir' => $srcDir,
+        'file' => $relativeFileName,
+        'dstDir' => $dstDir,
+      ]
+    );
+    $this->fs->copy($srcFileName, $dstFileName);
 
     return $this;
   }

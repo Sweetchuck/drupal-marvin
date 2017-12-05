@@ -75,7 +75,7 @@ class ReleaseCommands extends CommandsBase {
       return $cb;
     }
 
-    return $this->getTaskReleaseBuildPackage('.', $buildDir);
+    return $this->getTaskReleaseBuildPackage('.', "$buildDir/{$this->composerInfo->packageName}");
   }
 
   protected function getTaskReleaseBuildPackage(string $packagePath, string $dstDir): CollectionBuilder {
