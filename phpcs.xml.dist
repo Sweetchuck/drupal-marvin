@@ -9,7 +9,7 @@
     name="extensions"
     value="inc/PHP,install/PHP,module/PHP,php/PHP,profile/PHP,test/PHP,theme/PHP"/>
 
-  <rule ref="vendor/drupal/coder/coder_sniffer/Drupal">
+  <rule ref="Drupal">
     <exclude name="Drupal.Commenting.ClassComment.Missing"/>
     <exclude name="Drupal.Commenting.FunctionComment.Missing"/>
     <exclude name="Drupal.Commenting.DocComment.MissingShort"/>
@@ -17,5 +17,5 @@
     <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment"/>
   </rule>
 
-  <rule ref="vendor/drupal/coder/coder_sniffer/DrupalPractice" />
+  <rule ref="DrupalPractice" />
 </ruleset>

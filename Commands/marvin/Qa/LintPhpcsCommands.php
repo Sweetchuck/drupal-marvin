@@ -3,8 +3,7 @@
 namespace Drush\Commands\marvin\Qa;
 
 use Consolidation\AnnotatedCommand\CommandData;
-use Drush\marvin\ArrayUtils\FileSystemArrayUtils;
-use Drush\marvin\ComposerInfo;
+use Drush\marvin\Robo\PhpcsConfigFallbackTaskLoader;
 use Robo\Contract\TaskInterface;
 use Sweetchuck\Robo\Git\GitTaskLoader;
 use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
@@ -14,6 +13,7 @@ use Webmozart\PathUtil\Path;
 class LintPhpcsCommands extends LintCommandsBase {
 
   use PhpcsTaskLoader;
+  use PhpcsConfigFallbackTaskLoader;
   use GitTaskLoader;
 
   /**
@@ -31,6 +31,8 @@ class LintPhpcsCommands extends LintCommandsBase {
   }
 
   /**
+   * Runs PHP_CodeSniffer.
+   *
    * @command marvin:qa:lint:phpcs
    * @bootstrap none
    */
@@ -92,31 +94,41 @@ class LintPhpcsCommands extends LintCommandsBase {
     $options['lintReporters'] += $this->getLintReporters();
 
     if ($gitHook === 'pre-commit') {
-      // @todo Get file paths from the drush.yml configuration.
-      $paths = $phpcsXml ? $this->getFilePathsFromXml($phpcsXml)
-        : $paths = $this->getFilePathsByProjectType($workingDirectory);
-
       return $this
         ->collectionBuilder()
         ->addTask($this
+          ->taskPhpcsParseXml()
+          ->setWorkingDirectory($workingDirectory)
+          ->setFailOnXmlFileNotExists(FALSE)
+          ->setAssetNamePrefix('phpcsXml.'))
+        ->addTask($this
+          ->taskMarvinPhpcsConfigFallback()
+          ->setWorkingDirectory($workingDirectory)
+          ->setAssetNamePrefix('phpcsXml.'))
+        ->addTask($this
           ->taskGitReadStagedFiles()
           ->setCommandOnly(TRUE)
-          ->setPaths($paths['files']))
+          ->deferTaskConfiguration('setPaths', 'phpcsXml.files'))
         ->addTask($this
           ->taskPhpcsLintInput($options)
-          ->setIgnore($paths['exclude-patterns'])
-          ->deferTaskConfiguration('setFiles', 'files'));
+          ->deferTaskConfiguration('setFiles', 'files')
+          ->deferTaskConfiguration('setIgnore', 'phpcsXml.exclude-patterns'));
     }
 
-    $task = $this->taskPhpcsLintFiles($options);
     if (!$phpcsXml) {
-      $filePaths = $this->getFilePathsByProjectType($workingDirectory);
-      $task
-        ->setFiles($filePaths['files'])
-        ->setIgnore($filePaths['exclude-patterns']);
+      return $this
+        ->collectionBuilder()
+        ->addTask($this
+          ->taskMarvinPhpcsConfigFallback()
+          ->setWorkingDirectory($workingDirectory)
+          ->setAssetNamePrefix('phpcsXml.'))
+        ->addTask($this
+          ->taskPhpcsLintFiles($options)
+          ->deferTaskConfiguration('setFiles', 'phpcsXml.files')
+          ->deferTaskConfiguration('setIgnore', 'phpcsXml.exclude-patterns'));
     }
 
-    return $task;
+    return $this->taskPhpcsLintFiles($options);
   }
 
   protected function getPhpcsConfigurationFileName(string $directory): string {
@@ -134,61 +146,6 @@ class LintPhpcsCommands extends LintCommandsBase {
     }
 
     return '';
-  }
-
-  protected function getFilePathsByProjectType(string $workingDirectory): array {
-    $workingDirectory = $workingDirectory ?? '.';
-    $filePaths = [
-      'files' => [],
-      'exclude-patterns' => [],
-    ];
-
-    $composerInfo = ComposerInfo::create("$workingDirectory/composer.json");
-    switch ($composerInfo['type']) {
-      case 'project':
-      case 'drupal-project':
-        break;
-
-      case 'drupal-module':
-      case 'drupal-theme':
-      case 'drupal-drush':
-        // @todo Autodetect PHP files.
-        $filePaths['files']['Commands/'] = TRUE;
-        $filePaths['files']['src/'] = TRUE;
-        $filePaths['files']['tests/'] = TRUE;
-        break;
-
-      case 'drupal-profile':
-        break;
-
-    }
-
-    $arrayUtils = new FileSystemArrayUtils(NULL, ['baseDir' => $workingDirectory]);
-    array_walk($filePaths['files'], [$arrayUtils, 'walkExists']);
-
-    return $filePaths;
-  }
-
-  protected function getFilePathsFromXml(string $phpcsXmlFileName): array {
-    $xml = new \DOMDocument();
-    $xml->loadXML(file_get_contents($phpcsXmlFileName));
-    $xpath = new \DOMXPath($xml);
-
-    $xpathQueries = [
-      'files' => '/ruleset/file',
-      'exclude-patterns' => '/ruleset/exclude-pattern',
-    ];
-
-    $paths = array_fill_keys(array_keys($xpathQueries), []);
-    foreach ($xpathQueries as $key => $query) {
-      $elements = $xpath->query($query);
-      /** @var \DOMNode $element */
-      foreach ($elements as $element) {
-        $paths[$key][$element->textContent] = TRUE;
-      }
-    }
-
-    return $paths;
   }
 
 }

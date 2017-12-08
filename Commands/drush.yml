@@ -12,6 +12,7 @@ command:
       gitHook: null
       ci: null
       composerExecutable: 'composer'
+      yarnExecutable: 'yarn'
 
       # Only relevant if the "type" in the composer.json is equal to "project" or "drupal-project".
       # Allowed values:
