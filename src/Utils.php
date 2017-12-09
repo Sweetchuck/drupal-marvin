@@ -2,6 +2,7 @@
 
 namespace Drush\marvin;
 
+use Stringy\StaticStringy;
 use Stringy\Stringy;
 use Webmozart\PathUtil\Path;
 
@@ -54,10 +55,10 @@ class Utils {
     $managedExtensions = [];
     foreach ($packagePaths as $packageName => $packagePath) {
       foreach (['packages', 'packages-dev'] as $lockKey) {
-        // @todo Do we need a package without ".git" dir?
-        if (isset($composerLock[$lockKey][$packageName])
+        if (file_exists("$packagePath/.git")
+          && isset($composerLock[$lockKey][$packageName])
           && static::isDrupalPackage($composerLock[$lockKey][$packageName])
-          && mb_strpos($packagePath, $rootProjectDir) !== 0
+          && !StaticStringy::startsWith($packagePath, $rootProjectDir)
         ) {
           $managedExtensions[$packageName] = $packagePath;
         }

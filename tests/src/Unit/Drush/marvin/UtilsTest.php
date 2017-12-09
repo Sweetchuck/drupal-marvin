@@ -42,34 +42,88 @@ class UtilsTest extends TestCase {
   }
 
   public function casesCollectManagedDrupalExtensions(): array {
+    $vfsRoot = 'vfs://testCollectManagedDrupalExtensions';
+
     return [
       'empty' => [
         [],
-        '/a/b',
+        "$vfsRoot/dir/inside",
+        [],
         [],
         [],
       ],
       'basic' => [
         [
-          'v1/a' => '/a/c',
-          'v2/a' => '/a/c/c',
+          'v1/profile_01_outside_git' => "$vfsRoot/dir/outside/v1/profile_01",
+          'v1/module_01_outside_git' => "$vfsRoot/dir/outside/v1/module_01",
+          'v1/theme_01_outside_git' => "$vfsRoot/dir/outside/v1/theme_01",
+          'v1/drush_01_outside_git' => "$vfsRoot/dir/outside/v1/drush_01",
         ],
-        '/a/b',
+        "$vfsRoot/dir/inside",
         [
           'packages' => [
-            'v1/a' => [
+            'v1/profile_01_outside_git' => [
+              'type' => 'drupal-profile',
+            ],
+            'v1/module_01_outside_git' => [
               'type' => 'drupal-module',
             ],
-            'v2/a' => [
+            'v1/theme_01_outside_git' => [
+              'type' => 'drupal-theme',
+            ],
+            'v1/drush_01_outside_git' => [
               'type' => 'drupal-drush',
+            ],
+            'v1/library_01_outside_git' => [
+              'type' => 'library',
+            ],
+            'v1/module_02_inside_git' => [
+              'type' => 'drupal-module',
+            ],
+            'v1/module_03_outside_zip' => [
+              'type' => 'drupal-module',
             ],
           ],
         ],
         [
-          'v1/a' => '/a/c',
-          'v1/b' => '/a/b',
-          'v1/c' => '/a/b/c',
-          'v2/a' => '/a/c/c',
+          'v1/profile_01_outside_git' => "$vfsRoot/dir/outside/v1/profile_01",
+          'v1/module_01_outside_git' => "$vfsRoot/dir/outside/v1/module_01",
+          'v1/theme_01_outside_git' => "$vfsRoot/dir/outside/v1/theme_01",
+          'v1/drush_01_outside_git' => "$vfsRoot/dir/outside/v1/drush_01",
+          'v1/library_01_outside_git' => "$vfsRoot/dir/outside/v1/library_01",
+          'v1/module_02_inside_git' => "$vfsRoot/dir/inside/modules/module_02",
+          'v1/module_03_outside_zip' => "$vfsRoot/dir/outside/modules/module_03",
+        ],
+        [
+          'dir' => [
+            'inside' => [
+              'modules' => [
+                'module_02' => [
+                  '.git' => [],
+                ],
+              ],
+            ],
+            'outside' => [
+              'v1' => [
+                'profile_01' => [
+                  '.git' => [],
+                ],
+                'module_01' => [
+                  '.git' => [],
+                ],
+                'theme_01' => [
+                  '.git' => [],
+                ],
+                'drush_01' => [
+                  '.git' => [],
+                ],
+                'library_01' => [
+                  '.git' => [],
+                ],
+                'module_03' => [],
+              ],
+            ],
+          ],
         ],
       ],
     ];
@@ -84,8 +138,11 @@ class UtilsTest extends TestCase {
     array $expected,
     string $rootProjectDir,
     array $composerLock,
-    array $packagePaths
+    array $packagePaths,
+    array $vfsStructure
   ): void {
+    vfsStream::setup(__FUNCTION__, NULL, $vfsStructure);
+
     $this->assertEquals(
       $expected,
       Utils::collectManagedDrupalExtensions($rootProjectDir, $composerLock, $packagePaths)
@@ -159,8 +216,8 @@ class UtilsTest extends TestCase {
   /**
    * @dataProvider casesFindFileUpward
    */
-  public function testFindFileUpward($expected, string $fileName, string $relativeDirectory, array $structure): void {
-    $vfs = vfsStream::setup(__FUNCTION__, NULL, $structure);
+  public function testFindFileUpward($expected, string $fileName, string $relativeDirectory, array $vfsStructure): void {
+    $vfs = vfsStream::setup(__FUNCTION__, NULL, $vfsStructure);
     $absoluteDirectory = Path::join($vfs->url(), $relativeDirectory);
 
     $this->assertEquals($expected, Utils::findFileUpward($fileName, $absoluteDirectory));
