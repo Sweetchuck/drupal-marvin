@@ -1,70 +1,175 @@
 
-drush:
-  paths:
-    include:
-      - '.'
-
 command:
   marvin:
     settings:
+      ##
+      # Name of the directory where every build log should be stored.
+      #
+      # Relative directory path from the project root.
+      #
+      # @var string
+      ##
       reportsDir: 'reports'
-      environment: 'dev'
-      gitHook: null
-      ci: null
-      composerExecutable: 'composer'
-      yarnExecutable: 'yarn'
 
-      # Only relevant if the "type" in the composer.json is equal to "project" or "drupal-project".
-      # Allowed values:
-      #   incubator
-      #   customer
-      projectType: 'incubator'
-      autodetectManagedDrupalExtensions: true
-      managedDrupalExtension:
-        package:
-          drupal/marvin:
-            ignored: true
-      buildDir: 'build'
-    qa:
-      lint:
-        settings:
-          reporterCombination:
-            dev:
-              verboseStdOutput: true
-            devPreCommit:
-              verboseStdOutput: true
-            watch:
-              verboseStdOutput: true
-            ci:
-              # @todo summaryStdOutput.
-              # @todo checkstyleFile.
-              verboseStdOutput: true
-          reporterConfig:
-            verboseStdOutput:
-              service: 'lintVerboseReporter'
-              options: {}
-        phpcs:
-          defaultPreset:
-            dev: 'default'
-            devPreCommit: 'default'
-            watch: 'default'
-            ci: 'default'
-            ciJenkins: 'default'
-          preset:
-            default:
-              failOn: 'warning'
-              standards:
-                Drupal: true
-                DrupalPractice: true
-            ciJenkins:
-              failOn: 'never'
+      ##
+      # Name of the current environment.
+      #
+      # Allowed values: "dev", "prod", "ci".
+      # @todo Check that this config is really used somewhere or not.
+      #
+      # @var string
+      ##
+      environment: 'dev'
+
+      ##
+      # Name of the git hook which triggered the drush command.
+      # For example "pre-commit".
+      #
+      # @var null|string
+      ##
+      gitHook: null
+
+      ##
+      # @todo
+      #
+      # @var string
+      ##
+      ci: null
+
+      ##
+      # @var string
+      ##
+      composerExecutable: 'composer'
+
+      php:
+        extension:
+          profile: true
+          module: true
+          theme: true
+          engine: true
+          install: true
+          php: true
+
+        ##
+        # Keys are custom.
+        #
+        # @var array
+        ##
+        variant: {}
+          #70203:
+
+            ##
+            # @todo
+            #
+            # @var bool
+            ##
+            #enabled: true
+
+            ##
+            # @todo
+            #
+            # @var string
+            ##
+            #binDir: '${env.home}/.phpbrew/php/70203/bin'
+
+            ##
+            # @todo
+            #
+            # @var string
+            ##
+            #phpExecutable: ''
+
+            ##
+            # @todo
+            #
+            # @var string
+            ##
+            #phpdbgExecutable: ''
+
+            ##
+            # Path to php.ini file to use.
+            #
+            # @var string
+            ##
+            #phpIni: ''
+
+      ##
+      # Path to a directory where every release artifact should be stored.
+      #
+      # @var string
+      ##
+      buildDir: '../../../artifact'
+
+    lint:
+      settings:
+        ##
+        # Keys are custom.
+        #
+        # @var array
+        ##
+        reporterCombination:
+          ##
+          # Keys are come from "../reporterConfig" configuration.
+          #
+          # @var bool[]
+          ##
+          dev:
+            verboseStdOutput: true
+          devPreCommit:
+            verboseStdOutput: true
+          watch:
+            verboseStdOutput: true
+          ci:
+            # @todo summaryStdOutput.
+            # @todo checkstyleFile.
+            verboseStdOutput: true
+        reporterConfig:
+          verboseStdOutput:
+            service: 'lintVerboseReporter'
+            options:
+              filePathStyle: 'relative'
+      phpcs:
+        ##
+        # Keys are environment names.
+        #
+        # The values come from the "./preset" configuration.
+        #
+        # @var string[]
+        ##
+        defaultPreset:
+          dev: 'default'
+          devPreCommit: 'default'
+          watch: 'default'
+          ci: 'default'
+          ciJenkins: 'default'
+        preset:
+          default:
+            failOn: 'warning'
+            standards:
+              Drupal: true
+              DrupalPractice: true
+          ciJenkins:
+            failOn: 'never'
+
+    test:
       phpunit:
+        ##
+        # Keys are environment names.
+        #
+        # @var array
+        ##
         testSuite:
-          # @var null|bool|bool[]
+          ##
           #   - null Run all.
           #   - true Run all.
           #   - false Run none
-          #   - array Run all "true" test suite.
+          #   - bool[] Run all "true" test suite.
           #           If all of them is "false" then run none.
+          #
+          # @var null|bool|bool[]
+          ##
           devPreCommit:
             Unit: true
+#    release:
+#      options:
+#        releaseDir: '../../../vendor.release'

@@ -3,9 +3,11 @@
 namespace Drush\marvin\Robo\Task;
 
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Webmozart\PathUtil\Path;
 
+/**
+ * @todo Move this task out into an individual package.
+ */
 class CopyFilesTask extends BaseTask {
 
   /**
@@ -57,7 +59,7 @@ class CopyFilesTask extends BaseTask {
   /**
    * @var string[]|\Symfony\Component\Finder\SplFileInfo[]|\Symfony\Component\Finder\Finder
    */
-  protected $files = NULL;
+  protected $files = [];
 
   /**
    * @return string[]|\Symfony\Component\Finder\Finder|\Symfony\Component\Finder\SplFileInfo[]
@@ -87,26 +89,24 @@ class CopyFilesTask extends BaseTask {
   public function setOptions(array $options) {
     parent::setOptions($options);
 
-    foreach ($options as $name => $value) {
-      switch ($name) {
-        case 'srcDir':
-          $this->setSrcDir($value);
-          break;
+    if (array_key_exists('srcDir', $options)) {
+      $this->setSrcDir($options['srcDir']);
+    }
 
-        case 'dstDir':
-          $this->setDstDir($value);
-          break;
+    if (array_key_exists('dstDir', $options)) {
+      $this->setDstDir($options['dstDir']);
+    }
 
-        case 'files':
-          $this->setFiles($value);
-          break;
-
-      }
+    if (array_key_exists('files', $options)) {
+      $this->setFiles($options['files']);
     }
 
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function runAction() {
     foreach ($this->getFiles() as $file) {
       $this->runActionCopy($file);
@@ -121,15 +121,15 @@ class CopyFilesTask extends BaseTask {
    * @return $this
    */
   protected function runActionCopy($file) {
-    // @todo Check fo other kind of containers.
-    if ($file instanceof Finder || is_array($file)) {
+    if (is_iterable($file)) {
       foreach ($file as $splFileInfo) {
         $this->runActionCopy($splFileInfo);
       }
+
+      return $this;
     }
-    else {
-      $this->runActionCopySingle($file);
-    }
+
+    $this->runActionCopySingle($file);
 
     return $this;
   }
@@ -148,11 +148,11 @@ class CopyFilesTask extends BaseTask {
     $dstFileName = Path::join($dstDir, $relativeFileName);
 
     $this->printTaskDebug(
-      "copy: {srcDir} {dstDir} {file}",
+      'copy: {srcDir} {dstDir} {file}',
       [
         'srcDir' => $srcDir,
-        'file' => $relativeFileName,
         'dstDir' => $dstDir,
+        'file' => $relativeFileName,
       ]
     );
     $this->fs->copy($srcFileName, $dstFileName);

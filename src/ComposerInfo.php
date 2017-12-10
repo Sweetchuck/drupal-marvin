@@ -7,6 +7,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Webmozart\PathUtil\Path;
 
 /**
+ * @property-read string $name
  * @property-read string $packageVendor
  * @property-read string $packageName
  */
@@ -150,6 +151,9 @@ class ComposerInfo implements \ArrayAccess {
     }
 
     switch ($name) {
+      case 'name':
+        return $this->json['name'] ?? NULL;
+
       case 'packageVendor':
       case 'packageName':
         if (!isset($this->json['name'])) {
@@ -159,7 +163,6 @@ class ComposerInfo implements \ArrayAccess {
         list($packageVendor, $packageName) = explode('/', $this->json['name']) + [1 => ''];
 
         return $name === 'packageVendor' ? $packageVendor : $packageName;
-
     }
 
     $pattern = 'Undefined property via __get(): "%s" in "%s" on line "%d"';

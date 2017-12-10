@@ -40,9 +40,8 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
   public function setOptions(array $options) {
     parent::setOptions($options);
 
-    $key = 'workingDirectory';
-    if (array_key_exists($key, $options)) {
-      $this->setWorkingDirectory($options[$key]);
+    if (array_key_exists('workingDirectory', $options)) {
+      $this->setWorkingDirectory($options['workingDirectory']);
     }
 
     return $this;
@@ -57,7 +56,7 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
 
     $assetNamePrefix = $this->getAssetNamePrefix();
     if (isset($state["{$assetNamePrefix}files"]) || isset($state["{$assetNamePrefix}exclude-patterns"])) {
-      $this->printTaskDebug('The PHPCS config is already available from as state data.');
+      $this->printTaskDebug('The PHPCS config is already available from state data.');
 
       return $this;
     }
@@ -70,7 +69,7 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
 
   protected function getFilePathsByProjectType(string $workingDirectory): array {
     // @todo Get file paths from the drush.yml configuration.
-    $composerInfo = ComposerInfo::create("$workingDirectory/composer.json");
+    $composerInfo = ComposerInfo::create($workingDirectory);
     $filePaths = [
       'files' => [],
       'exclude-patterns' => [],

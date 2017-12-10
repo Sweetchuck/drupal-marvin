@@ -1,4 +1,0 @@
-#!/usr/bin/env php
-<?php
-
-require dirname($GLOBALS['argv'][0]) . '/_common.php';

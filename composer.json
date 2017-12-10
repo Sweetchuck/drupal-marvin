@@ -2,28 +2,158 @@
     "name": "drupal/marvin",
     "description": "Set of developer helper Drush commands",
     "type": "drupal-drush",
-    "license": "GPL-2.0",
+    "license": "GPL-2.0-or-later",
     "config": {
         "bin-dir": "bin",
         "optimize-autoloader": true,
-        "preferred-install": "dist",
         "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "repositories": {
+        "sweetchuck/git-hooks-stdinput-reader": {
+            "type": "path",
+            "url": "../../sweetchuck/git-hooks-stdinput-reader",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/lint-report": {
+            "type": "path",
+            "url": "../../sweetchuck/lint-report",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-bundler": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-bundler",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-cdd": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-cdd",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-compass": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-compass",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-composer": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-composer",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-drush": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-drush",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-git": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-git",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-nvm": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-nvm",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-phpcs": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-phpcs",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-phpmd": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-phpmd",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-phpunit": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-phpunit",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-rvm": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-rvm",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-sass": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-sass",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-scss-lint": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-scss-lint",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-tslint": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-tslint",
+            "options": {
+                "symlink": true
+            }
+        },
+        "sweetchuck/robo-yarn": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-yarn",
+            "options": {
+                "symlink": true
+            }
+        }
+    },
     "require": {
         "php": ">=7.1",
         "ext-mbstring": "*",
+        "cweagans/composer-patches": "^1.6",
         "danielstjules/stringy": "^3.1",
         "drupal/coder": "^8.2",
-        "drush/drush": "^9.0",
-        "sweetchuck/robo-composer": "^0.0",
-        "sweetchuck/robo-git": "^0.0",
-        "sweetchuck/robo-phpcs": "^0.0",
-        "sweetchuck/robo-yarn": "^0.0",
+        "drush/drush": "^9.1",
+        "sweetchuck/git-hooks-stdinput-reader": "*",
+        "sweetchuck/robo-bundler": "*",
+        "sweetchuck/robo-compass": "*",
+        "sweetchuck/robo-composer": "*",
+        "sweetchuck/robo-git": "*",
+        "sweetchuck/robo-nvm": "dev-master",
+        "sweetchuck/robo-phpcs": "*",
+        "sweetchuck/robo-phpunit": "*",
+        "sweetchuck/robo-rvm": "dev-master",
+        "sweetchuck/robo-scss-lint": "*",
+        "sweetchuck/robo-yarn": "*",
+        "symfony/yaml": "^3.4 || ^4.0",
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
+        "ext-json": "*",
         "mikey179/vfsStream": "^1.6",
         "phpunit/phpunit": "^5.5",
         "sweetchuck/git-hooks": "^0.0"
@@ -36,19 +166,21 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Drush\\Commands\\Marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/marvin/",
             "Drush\\marvin\\Tests\\Unish\\marvin\\": "tests/src/Unish/",
+            "Drush\\Commands\\marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/Commands/marvin/",
             "Drush\\marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/marvin/"
         }
     },
     "extra": {
-        "sweetchuck/git-hooks": {
-            "core.hooksPath": "gitHooks/self",
-            "symlink": true
-        }
-    },
-    "scripts": {
-        "post-install-cmd": "\\Drush\\marvin\\Composer\\Scripts::selfPostInstallCmd",
-        "post-update-cmd": "\\Drush\\marvin\\Composer\\Scripts::selfPostUpdateCmd"
+        "branch-alias": {
+            "dev-1.x": "8.x-1.x"
+        },
+        "drush": {
+            "services": {
+                "drush.services.yml": "^9"
+            }
+        },
+        "enable-patching": true,
+        "composer-exit-on-patch-failure": true
     }
 }

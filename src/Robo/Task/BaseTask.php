@@ -31,6 +31,11 @@ abstract class BaseTask extends RoboBaseTask implements
   protected $assets = [];
 
   /**
+   * @var array
+   */
+  protected $options = [];
+
+  /**
    * @var string
    */
   protected $assetNamePrefix = '';
@@ -85,21 +90,26 @@ abstract class BaseTask extends RoboBaseTask implements
     return $this->taskName ?: TaskInfo::formatTaskName($this);
   }
 
-  protected function getOptions(): array {
-    return [];
+  /**
+   * @return $this
+   */
+  protected function initOptions() {
+    $this->options = [
+      'assetNamePrefix' => [
+        'type' => 'other',
+        'value' => $this->getAssetNamePrefix(),
+      ],
+    ];
+
+    return $this;
   }
 
   /**
    * @return $this
    */
   public function setOptions(array $options) {
-    foreach ($options as $name => $value) {
-      switch ($name) {
-        case 'assetNamePrefix':
-          $this->setAssetNamePrefix($value);
-          break;
-
-      }
+    if (array_key_exists('assetNamePrefix', $options)) {
+      $this->setAssetNamePrefix($options['assetNamePrefix']);
     }
 
     return $this;
@@ -112,6 +122,7 @@ abstract class BaseTask extends RoboBaseTask implements
     return $this
       ->runPrepare()
       ->runHeader()
+      ->runValidate()
       ->runAction()
       ->runProcessOutputs()
       ->runReturn();
@@ -121,6 +132,8 @@ abstract class BaseTask extends RoboBaseTask implements
    * @return $this
    */
   protected function runPrepare() {
+    $this->initOptions();
+
     return $this;
   }
 
@@ -130,6 +143,13 @@ abstract class BaseTask extends RoboBaseTask implements
   protected function runHeader() {
     $this->printTaskInfo('');
 
+    return $this;
+  }
+
+  /**
+   * @return $this
+   */
+  protected function runValidate() {
     return $this;
   }
 
@@ -146,23 +166,26 @@ abstract class BaseTask extends RoboBaseTask implements
   }
 
   protected function runReturn(): Result {
-    $assetNamePrefix = $this->getAssetNamePrefix();
-    if ($assetNamePrefix === '') {
-      $data = $this->assets;
-    }
-    else {
-      $data = [];
-      foreach ($this->assets as $key => $value) {
-        $data["{$assetNamePrefix}{$key}"] = $value;
-      }
-    }
-
     return new Result(
       $this,
       $this->actionExitCode,
       $this->actionStdError,
-      $data
+      $this->getAssetsWithPrefixedNames()
     );
+  }
+
+  protected function getAssetsWithPrefixedNames(): array {
+    $prefix = $this->getAssetNamePrefix();
+    if (!$prefix) {
+      return $this->assets;
+    }
+
+    $assets = [];
+    foreach ($this->assets as $key => $value) {
+      $assets["{$prefix}{$key}"] = $value;
+    }
+
+    return $assets;
   }
 
   protected function runCallback(string $type, string $data): void {

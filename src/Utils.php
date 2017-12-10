@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\marvin;
 
+use Consolidation\AnnotatedCommand\CommandError;
 use Stringy\StaticStringy;
 use Stringy\Stringy;
+use Symfony\Component\Yaml\Yaml;
 use Webmozart\PathUtil\Path;
 
 class Utils {
@@ -21,6 +25,9 @@ class Utils {
     'drupal-theme' => TRUE,
   ];
 
+  /**
+   * @todo https://packagist.org/packages/mindplay/composer-locator
+   */
   public static function marvinRootDir(): string {
     return Path::getDirectory(__DIR__);
   }
@@ -29,9 +36,10 @@ class Utils {
     return (string) (new Stringy($className))
       ->regexReplace('^\\\\?Drush\\\\Commands\\\\', '')
       ->regexReplace('Commands$', '')
+      ->regexReplace('^marvin_([^\\\\]+)', 'marvin')
       ->replace('\\', '.')
       ->underscored()
-      ->regexReplace('(?<=\.)((qa\.lint)_)(?=[^\.]+$)', '\\2.');
+      ->regexReplace('(?<=\.)((lint\.lint)_)(?=[^\.]+$)', 'lint.');
   }
 
   /**
@@ -91,6 +99,89 @@ class Utils {
     }
 
     return '';
+  }
+
+  /**
+   * @var string
+   */
+  public static function getDrupalExtensionVersionNumberPattern(): string {
+    return implode('', [
+      '/^',
+      '(?P<coreMajor>\d+)',
+      '\.',
+      'x',
+      '-',
+      '(?P<extensionMajor>\d+)',
+      '\.',
+      '(?P<extensionMinor>\d+)',
+      '(-(?P<extensionPreType>alpha|beta|rc)(?P<extensionPreMajor>\d+)){0,1}',
+      '(\+(?P<extensionBuild>.+)){0,1}',
+      '$/u',
+    ]);
+  }
+
+  /**
+   * @todo Support for "+" sign.
+   */
+  public static function isValidDrupalExtensionVersionNumber(string $versionNumber): bool {
+    return (bool) preg_match(static::getDrupalExtensionVersionNumberPattern(), $versionNumber);
+  }
+
+  public static function parseDrupalExtensionVersionNumber(string $versionNumber): array {
+    $pattern = static::getDrupalExtensionVersionNumberPattern();
+    $matches = [];
+    preg_match($pattern, $versionNumber, $matches);
+    if (!$matches) {
+      throw new \InvalidArgumentException('@todo');
+    }
+
+    $default = [
+      'coreMajor' => 0,
+      'extensionMajor' => 0,
+      'extensionMinor' => 0,
+      'extensionPreType' => '',
+      'extensionPreMajor' => 0,
+      'extensionBuild' => '',
+    ];
+
+    $matches += $default;
+
+    settype($matches['coreMajor'], 'int');
+    settype($matches['extensionMajor'], 'int');
+    settype($matches['extensionMinor'], 'int');
+    settype($matches['extensionPreMajor'], 'int');
+
+    return array_intersect_key($matches, $default);
+  }
+
+  public static function escapeYamlValueString(string $text): string {
+    return rtrim(mb_substr(Yaml::dump(['a' => $text]), 3));
+  }
+
+  public static function ensureTrailingEol(string &$text): void {
+    if (!preg_match('/[\r\n]$/', $text)) {
+      $text .= PHP_EOL;
+    }
+  }
+
+  /**
+   *
+   * @param \Consolidation\AnnotatedCommand\CommandError[] $commandErrors
+   */
+  public static function aggregateCommandErrors(array $commandErrors): ?CommandError {
+    $errorCode = 0;
+    $messages = [];
+    /** @var \Consolidation\AnnotatedCommand\CommandError $commandError */
+    foreach (array_filter($commandErrors) as $commandError) {
+      $messages[] = $commandError->getOutputData();
+      $errorCode = max($errorCode, $commandError->getExitCode());
+    }
+
+    if ($errorCode || $messages) {
+      return new CommandError(implode(PHP_EOL, $messages), $errorCode);
+    }
+
+    return NULL;
   }
 
 }

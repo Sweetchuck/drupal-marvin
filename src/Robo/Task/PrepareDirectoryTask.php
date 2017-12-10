@@ -50,13 +50,9 @@ class PrepareDirectoryTask extends BaseTask {
 
   public function setOptions(array $options) {
     parent::setOptions($options);
-    foreach ($options as $name => $value) {
-      switch ($name) {
-        case 'workingDirectory':
-          $this->setWorkingDirectory($value);
-          break;
 
-      }
+    if (array_key_exists('workingDirectory', $options)) {
+      $this->setWorkingDirectory($options['workingDirectory']);
     }
 
     return $this;
@@ -64,9 +60,9 @@ class PrepareDirectoryTask extends BaseTask {
 
   protected function runHeader() {
     $this->printTaskInfo(
-      '{directory}',
+      '{workingDirectory}',
       [
-        'directory' => $this->getWorkingDirectory(),
+        'workingDirectory' => $this->getWorkingDirectory(),
       ]
     );
 

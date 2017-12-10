@@ -2,7 +2,7 @@
 
 namespace Drush\Commands\marvin\Tests\Unit\Robo\Task;
 
-use Drush\marvin\Robo\Task\ReleaseCollectFilesTask;
+use Drush\marvin\Robo\Task\ArtifactCollectFilesTask;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Robo\Config\Config;
@@ -41,7 +41,7 @@ class ReleaseCollectFilesTaskTest extends TestCase {
       ],
     ]);
 
-    $task = new ReleaseCollectFilesTask();
+    $task = new ArtifactCollectFilesTask();
     $task
       ->setOptions([
         'composerJsonFileName' => 'composer.json',
