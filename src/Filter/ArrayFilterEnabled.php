@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Drush\marvin\Composer;
+namespace Drupal\marvin\Filter;
 
 class ArrayFilterEnabled extends ArrayFilterBase {
 

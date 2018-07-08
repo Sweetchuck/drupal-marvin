@@ -1,8 +1,8 @@
 <?php
 
-namespace Drush\marvin\Robo\Task;
+namespace Drupal\marvin\Robo\Task;
 
-use Drush\marvin\Utils;
+use Drupal\marvin\Utils;
 use Robo\State\StateAwareInterface;
 use Robo\State\StateAwareTrait;
 

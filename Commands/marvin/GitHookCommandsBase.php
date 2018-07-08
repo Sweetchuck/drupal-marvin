@@ -21,9 +21,19 @@ class GitHookCommandsBase extends CommandsBase implements CustomEventAwareInterf
   protected function delegatePrepareCollectionBuilder(CollectionBuilder $cb, string $eventBaseName, array $args) {
     $cb
       ->getState()
-      ->offsetSet('gitHooks.stdInputReader', ReaderFactory::createInstance($eventBaseName, STDIN));
+      ->offsetSet(
+        'gitHooks.stdInputReader',
+        ReaderFactory::createInstance($eventBaseName, $this->getStdInputFileHandler())
+      );
 
     return $this;
+  }
+
+  /**
+   * @return resource
+   */
+  protected function getStdInputFileHandler() {
+    return STDIN;
   }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\marvin\Composer;
+namespace Drupal\marvin\Composer;
 
 use Composer\Script\Event;
 use Symfony\Component\Process\Process;

@@ -3,9 +3,9 @@
 namespace Drush\Commands\marvin\Artifact;
 
 use Drush\Commands\marvin\CommandsBase;
-use Drush\marvin\Robo\CopyFilesTaskLoader;
-use Drush\marvin\Robo\PrepareDirectoryTaskLoader;
-use Drush\marvin\Robo\ArtifactCollectFilesTaskLoader;
+use Drupal\marvin\Robo\CopyFilesTaskLoader;
+use Drupal\marvin\Robo\PrepareDirectoryTaskLoader;
+use Drupal\marvin\Robo\ArtifactCollectFilesTaskLoader;
 
 class ArtifactCommandsBase extends CommandsBase {
 

@@ -5,9 +5,9 @@ namespace Drush\Commands\marvin;
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareTrait;
 use Drush\Drush;
-use Drush\marvin\CommandDelegatorTrait;
-use Drush\marvin\ComposerInfo;
-use Drush\marvin\Utils;
+use Drupal\marvin\CommandDelegatorTrait;
+use Drupal\marvin\ComposerInfo;
+use Drupal\marvin\Utils;
 use Robo\Common\ConfigAwareTrait;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Tasks;
@@ -33,7 +33,7 @@ class CommandsBase extends Tasks implements ConfigAwareInterface, CustomEventAwa
   }
 
   /**
-   * @var \Drush\marvin\ComposerInfo
+   * @var \Drupal\marvin\ComposerInfo
    */
   protected $composerInfo;
 

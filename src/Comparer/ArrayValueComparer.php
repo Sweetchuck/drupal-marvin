@@ -1,7 +1,12 @@
 <?php
 
-namespace Drush\marvin\Comparer;
+declare(strict_types = 1);
 
+namespace Drupal\marvin\Comparer;
+
+/**
+ * @todo Individual package.
+ */
 class ArrayValueComparer extends BaseComparer {
 
   /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace Drush\marvin;
+namespace Drupal\marvin;
 
-use Drush\marvin\Comparer\ArrayValueComparer;
+use Drupal\marvin\Comparer\ArrayValueComparer;
 use Robo\Collection\CollectionBuilder;
 use Robo\Contract\TaskInterface;
 

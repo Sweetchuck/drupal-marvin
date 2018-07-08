@@ -1,0 +1,13 @@
+
+drush:
+  paths:
+    config:
+      - 'drush/contrib/marvin/Commands'
+    include:
+      - 'drush/contrib/marvin'
+      - 'web/modules/custom/dummy_m1'
+
+command:
+  marvin:
+    settings:
+      projectType: 'unish'

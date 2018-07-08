@@ -1,40 +1,44 @@
 <phpunit
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+  bootstrap="tests/src/bootstrap.php"
   colors="true">
 
   <php>
     <!-- These variables may alternatively be set as environment variables. -->
 
     <!-- Drupal major version to run tests over -->
-    <var name="UNISH_DRUPAL_MAJOR_VERSION" value="8"/>
+    <const name="UNISH_DRUPAL_MAJOR_VERSION" value="8"/>
 
     <!--Uncomment and edit one of the lines below depending on DB platform.-->
     <!--DB User must have create/drop permissions-->
-    <!--<var name="UNISH_DB_URL" value="mysql://root:@127.0.0.1"/> -->
-    <!--<var name="UNISH_DB_URL" value="pgsql://postgres:@localhost"/>-->
-    <!--<var name="UNISH_DB_URL" value="sqlite://none/of/this/matters"/>-->
+    <!--<env name="UNISH_DB_URL" value="mysql://root:@127.0.0.1"/> -->
+    <!--<env name="UNISH_DB_URL" value="pgsql://postgres:@localhost"/>-->
+    <!--<env name="UNISH_DB_URL" value="sqlite://none/of/this/matters"/>-->
 
     <!--User must have write permissions to this directory.-->
     <!--If not supplied, defaults to sys_get_temp_dir().-->
-    <!--<const name="UNISH_TMP" value="/tmp" />-->
+    <!--<env name="UNISH_TMP" value="/tmp" />-->
 
     <!--Uncomment the line below if your path to drush differs from `which drush`. Use absolute path.-->
-    <!--<var name="UNISH_DRUSH" value="./bin/drush"/>-->
+    <!--<env name="UNISH_DRUSH" value="./bin/drush"/>-->
 
     <!--Uncomment to provide a group the user running the tests belong to. This is needed for some filesystem tests. -->
-    <!--<var name="UNISH_USERGROUP" value="staff"/>-->
+    <!--<env name="UNISH_USERGROUP" value="staff"/>-->
 
     <!-- Uncomment to disable the total runtime and output timeouts for commands run through CommandUnishTestCase::execute().  -->
     <env name="UNISH_NO_TIMEOUTS" value="y"/>
 
-    <!-- See _drush_preflight_columns() -->
-    <env name="COLUMNS" value="180"/>
+    <!--<env name="COLUMNS" value="180"/>-->
   </php>
 
   <testsuites>
-    <testsuite name="Unish">
-      <directory>tests/src/Unish/</directory>
+    <testsuite name="DrushUnish">
+      <directory>tests/src/DrushUnish/</directory>
+    </testsuite>
+
+    <testsuite name="DrushUnit">
+      <directory>tests/src/DrushUnit/</directory>
     </testsuite>
 
     <testsuite name="Unit">

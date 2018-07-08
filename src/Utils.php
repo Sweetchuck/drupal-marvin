@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Drush\marvin;
+namespace Drupal\marvin;
 
 use Consolidation\AnnotatedCommand\CommandError;
 use Stringy\StaticStringy;

@@ -1,16 +1,16 @@
 <?php
 
-namespace Drush\marvin\Robo;
+namespace Drupal\marvin\Robo;
 
-use Drush\marvin\Robo\Task\RubyAndBundleDetectorTask;
+use Drupal\marvin\Robo\Task\RubyAndBundleDetectorTask;
 
 trait RubyAndBundleDetectorLoader {
 
   /**
-   * @return \Robo\Collection\CollectionBuilder|\Drush\marvin\Robo\Task\RubyAndBundleDetectorTask
+   * @return \Robo\Collection\CollectionBuilder|\Drupal\marvin\Robo\Task\RubyAndBundleDetectorTask
    */
   protected function taskMarvinRubyAndBundleDetector(array $options = []) {
-    /** @var \Drush\marvin\Robo\Task\RubyAndBundleDetectorTask $task */
+    /** @var \Drupal\marvin\Robo\Task\RubyAndBundleDetectorTask $task */
     $task = $this->task(RubyAndBundleDetectorTask::class);
     $task->setOptions($options);
 

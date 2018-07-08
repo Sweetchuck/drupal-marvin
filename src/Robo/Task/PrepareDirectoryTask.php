@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\marvin\Robo\Task;
+namespace Drupal\marvin\Robo\Task;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -10,6 +10,8 @@ use Symfony\Component\Finder\Finder;
  *
  * If the given directory isn't exists then creates it, otherwise deletes
  * everything in that directory.
+ *
+ * @todo Move this task out into an individual package.
  */
 class PrepareDirectoryTask extends BaseTask {
 
@@ -81,17 +83,21 @@ class PrepareDirectoryTask extends BaseTask {
     if (!$this->fs->exists($dir)) {
       $this->printTaskDebug('Create directory: {workingDirectory}', $context);
       $this->fs->mkdir($dir);
-    }
-    else {
-      $this->printTaskDebug('Delete all content from directory {workingDirectory}', $context);
-      $directDescendants = (new Finder())
-        ->in($dir)
-        ->depth('== 0')
-        ->ignoreDotFiles(TRUE);
-      $this->fs->remove($directDescendants);
+
+      return $this;
     }
 
+    $this->printTaskDebug('Delete all content from directory "{workingDirectory}"', $context);
+    $this->fs->remove($this->getDirectDescendants($dir));
+
     return $this;
+  }
+
+  protected function getDirectDescendants(string $dir): Finder {
+    return (new Finder())
+      ->in($dir)
+      ->depth('== 0')
+      ->ignoreDotFiles(TRUE);
   }
 
 }

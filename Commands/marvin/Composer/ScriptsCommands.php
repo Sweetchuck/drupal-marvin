@@ -14,6 +14,8 @@ class ScriptsCommands extends CommandsBase {
   }
 
   /**
+   * Do something on Composer post-install-cmd event.
+   *
    * @command marvin:composer:post-install-cmd
    * @hidden
    */
@@ -22,6 +24,8 @@ class ScriptsCommands extends CommandsBase {
   }
 
   /**
+   * Do something on Composer post-update-cmd event.
+   *
    * @command marvin:composer:post-update-cmd
    * @hidden
    */

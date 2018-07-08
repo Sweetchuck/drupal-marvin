@@ -2,8 +2,8 @@
 
 namespace Drush\Commands\marvin\Lint;
 
-use Drush\marvin\ComposerInfo;
-use Drush\marvin\Robo\PhpcsConfigFallbackTaskLoader;
+use Drupal\marvin\ComposerInfo;
+use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
 use Robo\Contract\TaskInterface;
 use Sweetchuck\Robo\Git\GitTaskLoader;
 use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;

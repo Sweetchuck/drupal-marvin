@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Drush\marvin\Comparer;
+namespace Drupal\marvin\Comparer;
 
 abstract class BaseComparer implements ComparerInterface {
 

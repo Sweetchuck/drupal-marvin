@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Drush\Commands\marvin\Build;
 
-use Drush\marvin\Robo\RubyAndBundleDetectorLoader;
+use Drupal\marvin\Robo\RubyAndBundleDetectorLoader;
 use Robo\Collection\CollectionBuilder;
 use Sweetchuck\Robo\Bundler\BundlerTaskLoader;
 use Sweetchuck\Robo\Git\GitTaskLoader;

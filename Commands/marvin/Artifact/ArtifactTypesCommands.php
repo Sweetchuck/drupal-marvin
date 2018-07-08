@@ -6,7 +6,7 @@ namespace Drush\Commands\marvin\Artifact;
 
 use Consolidation\AnnotatedCommand\CommandData;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
-use Drush\marvin\Comparer\ArrayValueComparer;
+use Drupal\marvin\Comparer\ArrayValueComparer;
 
 class ArtifactTypesCommands extends ArtifactCommandsBase {
 
@@ -44,7 +44,7 @@ class ArtifactTypesCommands extends ArtifactCommandsBase {
   /**
    * @hook alter marvin:artifact:types
    */
-  public function hookAlterArtifactTypes($result, CommandData $commandData) {
+  public function hookAlterMarvinArtifactTypes($result, CommandData $commandData) {
     $expectedFormat = $commandData->input()->getOption('format');
     if ($expectedFormat === 'table' && is_array($result)) {
       return $this->convertArtifactTypesToRowsOfFields($result);
@@ -96,8 +96,8 @@ class ArtifactTypesCommands extends ArtifactCommandsBase {
 
   protected function getArtifactTypesComparerConfig(): array {
     return [
-        'weight' => 0,
-        'label' => '',
+      'weight' => 0,
+      'label' => '',
     ];
   }
 

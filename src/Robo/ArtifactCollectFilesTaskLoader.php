@@ -1,16 +1,16 @@
 <?php
 
-namespace Drush\marvin\Robo;
+namespace Drupal\marvin\Robo;
 
-use Drush\marvin\Robo\Task\ArtifactCollectFilesTask;
+use Drupal\marvin\Robo\Task\ArtifactCollectFilesTask;
 
 trait ArtifactCollectFilesTaskLoader {
 
   /**
-   * @return \Robo\Collection\CollectionBuilder|\Drush\marvin\Robo\Task\ArtifactCollectFilesTask
+   * @return \Robo\Collection\CollectionBuilder|\Drupal\marvin\Robo\Task\ArtifactCollectFilesTask
    */
   protected function taskMarvinArtifactCollectFiles(array $options = []) {
-    /** @var \Drush\marvin\Robo\Task\ArtifactCollectFilesTask $task */
+    /** @var \Drupal\marvin\Robo\Task\ArtifactCollectFilesTask $task */
     $task = $this->task(ArtifactCollectFilesTask::class);
     $task->setOptions($options);
 

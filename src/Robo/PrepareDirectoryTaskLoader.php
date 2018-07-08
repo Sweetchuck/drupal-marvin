@@ -1,16 +1,16 @@
 <?php
 
-namespace Drush\marvin\Robo;
+namespace Drupal\marvin\Robo;
 
-use Drush\marvin\Robo\Task\PrepareDirectoryTask;
+use Drupal\marvin\Robo\Task\PrepareDirectoryTask;
 
 trait PrepareDirectoryTaskLoader {
 
   /**
-   * @return \Robo\Collection\CollectionBuilder|\Drush\marvin\Robo\Task\PrepareDirectoryTask
+   * @return \Robo\Collection\CollectionBuilder|\Drupal\marvin\Robo\Task\PrepareDirectoryTask
    */
   protected function taskMarvinPrepareDirectory(array $options = []) {
-    /** @var \Drush\marvin\Robo\Task\PrepareDirectoryTask $task */
+    /** @var \Drupal\marvin\Robo\Task\PrepareDirectoryTask $task */
     $task = $this->task(PrepareDirectoryTask::class);
     $task->setOptions($options);
 

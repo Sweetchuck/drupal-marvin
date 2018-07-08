@@ -1,5 +1,18 @@
 
 /bin/
-/build/
 /reports/
+
+/tests/fixtures/drush-sut/drush/contrib/
+/tests/fixtures/drush-sut/vendor/
+/tests/fixtures/drush-sut/web/core/
+/tests/fixtures/drush-sut/web/modules/contrib/
+/tests/fixtures/drush-sut/web/profiles/contrib/
+/tests/fixtures/drush-sut/web/themes/contrib/
+/tests/fixtures/drush-sut/web/sites/
+
+/tests/fixtures/drush_coverage*
+/tests/fixtures/extensions/marvin/
+
 /vendor/
+
+/phpunit.xml

@@ -1,9 +1,9 @@
 <?php
 
-namespace Drush\marvin\Robo\Task;
+namespace Drupal\marvin\Robo\Task;
 
-use Drush\marvin\ArrayUtils\FileSystemArrayUtils;
-use Drush\marvin\ComposerInfo;
+use Drupal\marvin\ArrayUtils\FileSystemArrayUtils;
+use Drupal\marvin\ComposerInfo;
 use Robo\State\StateAwareInterface;
 use Robo\State\StateAwareTrait;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\marvin\Robo\Task;
+namespace Drupal\marvin\Robo\Task;
 
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;

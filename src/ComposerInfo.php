@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\marvin;
+namespace Drupal\marvin;
 
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;

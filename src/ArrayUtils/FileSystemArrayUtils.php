@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\marvin\ArrayUtils;
+namespace Drupal\marvin\ArrayUtils;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Webmozart\PathUtil\Path;

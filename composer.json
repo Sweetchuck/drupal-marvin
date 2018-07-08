@@ -133,11 +133,13 @@
     },
     "require": {
         "php": ">=7.1",
+        "ext-json": "*",
+        "ext-pcre": "*",
         "ext-mbstring": "*",
         "cweagans/composer-patches": "^1.6",
         "danielstjules/stringy": "^3.1",
         "drupal/coder": "^8.2",
-        "drush/drush": "^9.1",
+        "drush/drush": "^9.3",
         "sweetchuck/git-hooks-stdinput-reader": "*",
         "sweetchuck/robo-bundler": "*",
         "sweetchuck/robo-compass": "*",
@@ -153,22 +155,25 @@
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
-        "ext-json": "*",
         "mikey179/vfsStream": "^1.6",
-        "phpunit/phpunit": "^5.5",
+        "phpunit/phpunit": "^6.3",
         "sweetchuck/git-hooks": "^0.0"
     },
     "autoload": {
         "psr-4": {
             "Drush\\Commands\\marvin\\": "Commands/marvin/",
-            "Drush\\marvin\\": "src/"
+            "Drupal\\marvin\\": "src/"
         }
     },
     "autoload-dev": {
+        "psr-0": {
+            "Unish": "vendor/drush/drush/tests/"
+        },
         "psr-4": {
-            "Drush\\marvin\\Tests\\Unish\\marvin\\": "tests/src/Unish/",
-            "Drush\\Commands\\marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/Commands/marvin/",
-            "Drush\\marvin\\Tests\\Unit\\": "tests/src/Unit/Drush/marvin/"
+            "Drupal\\Dev\\marvin\\Composer\\": "src-dev/Composer/",
+            "Drush\\Commands\\Tests\\marvin\\Unish\\": "tests/src/DrushUnish/",
+            "Drush\\Commands\\Tests\\marvin\\Unit\\": "tests/src/DrushUnit/",
+            "Drupal\\Tests\\marvin\\Unit\\": "tests/src/Unit/"
         }
     },
     "extra": {
@@ -177,10 +182,18 @@
         },
         "drush": {
             "services": {
-                "drush.services.yml": "^9"
+                "drush9.services.yml": "^9"
             }
         },
         "enable-patching": true,
         "composer-exit-on-patch-failure": true
+    },
+    "scripts": {
+        "post-install-cmd": "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postInstallCmd",
+        "post-update-cmd": "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postUpdateCmd",
+        "unish:env:echo": [
+            "echo 'export UNISH_TMP=\"$PWD/tests/fixtures\"'",
+            "echo 'export UNISH_DRUSH=\"$PWD/bin/drush\"'"
+        ]
     }
 }

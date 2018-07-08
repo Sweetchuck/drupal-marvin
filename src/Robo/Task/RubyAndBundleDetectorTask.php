@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Drush\marvin\Robo\Task;
+namespace Drupal\marvin\Robo\Task;
 
 use Robo\Common\BuilderAwareTrait;
 use Robo\Contract\BuilderAwareInterface;

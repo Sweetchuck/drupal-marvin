@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace Drush\marvin\Robo\Task;
+namespace Drupal\marvin\Robo\Task;
 
-use Drush\marvin\Utils;
+use Drupal\marvin\Utils;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
@@ -149,7 +149,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
    */
   protected $fs;
 
-  public function __construct(?Filesystem $fs = null) {
+  public function __construct(?Filesystem $fs = NULL) {
     $this->fs = $fs ?: new Filesystem();
   }
 

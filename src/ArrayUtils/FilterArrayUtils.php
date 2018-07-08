@@ -1,12 +1,12 @@
 <?php
 
-namespace Drush\marvin\ArrayUtils;
+namespace Drupal\marvin\ArrayUtils;
 
 class FilterArrayUtils {
 
   /**
    * @deprecated
-   * @see \Drush\marvin\Composer\ArrayFilterEnabled
+   * @see \Drupal\marvin\Composer\ArrayFilterEnabled
    */
   public static function filterEnabled(array $items, string $property = 'enabled', bool $default = TRUE): array {
     $filtered = [];

@@ -1,8 +1,8 @@
 <?php
 
-namespace Drush\marvin\Robo\Task;
+namespace Drupal\marvin\Robo\Task;
 
-use Drush\marvin\ComposerInfo;
+use Drupal\marvin\ComposerInfo;
 use Symfony\Component\Finder\Finder;
 
 class ArtifactCollectFilesTask extends BaseTask {

@@ -1,0 +1,155 @@
+{
+    "name": "drupal/marvin_test",
+    "description": "@todo",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true
+    },
+    "repositories": {
+        "sweetchuck/git-hooks-stdinput-reader": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/git-hooks-stdinput-reader"
+        },
+        "sweetchuck/lint-report": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/lint-report"
+        },
+        "sweetchuck/robo-bundler": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-bundler"
+        },
+        "sweetchuck/robo-cdd": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-cdd"
+        },
+        "sweetchuck/robo-compass": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-compass"
+        },
+        "sweetchuck/robo-composer": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-composer"
+        },
+        "sweetchuck/robo-drush": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-drush"
+        },
+        "sweetchuck/robo-git": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-git"
+        },
+        "sweetchuck/robo-nvm": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-nvm"
+        },
+        "sweetchuck/robo-phpcs": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-phpcs"
+        },
+        "sweetchuck/robo-phpmd": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-phpmd"
+        },
+        "sweetchuck/robo-phpunit": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-phpunit"
+        },
+        "sweetchuck/robo-rvm": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-rvm"
+        },
+        "sweetchuck/robo-sass": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-sass"
+        },
+        "sweetchuck/robo-scss-lint": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-scss-lint"
+        },
+        "sweetchuck/robo-tslint": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-tslint"
+        },
+        "sweetchuck/robo-yarn": {
+            "type": "path",
+            "url": "../../../../../sweetchuck/robo-yarn"
+        },
+        "drupal/marvin": {
+            "type": "path",
+            "url": "../extensions/marvin"
+        },
+        "drupal-8": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    },
+    "require": {
+        "composer/installers": "^1.2",
+        "cweagans/composer-patches": "^1.6",
+        "drupal-composer/drupal-scaffold": "^2.2",
+        "drupal/core": "^8.5",
+        "drupal/marvin": "*",
+        "webflo/drupal-finder": "^1.0.0",
+        "webmozart/path-util": "^2.3"
+    },
+    "require-dev": {
+        "mikey179/vfsstream": "~1.2",
+        "phpunit/phpunit": "^6.5"
+    },
+    "conflict": {
+        "drupal/drupal": "*"
+    },
+    "autoload": {
+        "psr-4":    {
+            "DrushSut\\": "scripts/",
+            "Drush\\Commands\\dummy_m1\\": "web/modules/custom/dummy_m1/Commands/dummy_m1/"
+        }
+    },
+    "scripts": {
+        "drupal-scaffold": "\\DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "pre-install-cmd": [
+            "\\DrushSut\\Composer\\ScriptHandler::checkComposerVersion"
+        ],
+        "pre-update-cmd": [
+            "\\DrushSut\\Composer\\ScriptHandler::checkComposerVersion"
+        ],
+        "post-install-cmd": [
+            "\\DrushSut\\Composer\\ScriptHandler::createRequiredFiles"
+        ],
+        "post-update-cmd": [
+            "\\DrushSut\\Composer\\ScriptHandler::createRequiredFiles"
+        ]
+    },
+    "extra": {
+        "drush": {
+            "services": {
+                "web/modules/custom/dummy_m1/drush9.services.yml": "^9"
+            }
+        },
+        "drupal-scaffold": {
+            "excludes": [
+                ".csslintrc",
+                ".editorconfig",
+                ".eslintignore",
+                ".eslintrc.json",
+                ".gitattributes",
+                ".ht.router.php",
+                ".htaccess",
+                "web.config"
+            ]
+        },
+        "installer-paths": {
+            "web/core": ["type:drupal-core"],
+            "web/libraries/{$name}": ["type:drupal-library"],
+            "web/modules/contrib/{$name}": ["type:drupal-module"],
+            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "web/themes/contrib/{$name}": ["type:drupal-theme"],
+            "drush/contrib/{$name}": ["type:drupal-drush"]
+        }
+    }
+}

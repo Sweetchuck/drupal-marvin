@@ -1,0 +1,13 @@
+
+services:
+  marvin.artifact_types.commands:
+    class: '\Drush\Commands\marvin\Artifact\ArtifactTypesCommands'
+    tags:
+      -
+        name: 'drush.command'
+
+  marvin.composer_scripts.commands:
+    class: '\Drush\Commands\marvin\Composer\ScriptsCommands'
+    tags:
+      -
+        name: 'drush.command'

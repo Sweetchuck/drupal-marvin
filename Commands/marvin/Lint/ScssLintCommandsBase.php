@@ -2,8 +2,8 @@
 
 namespace Drush\Commands\marvin\Lint;
 
-use Drush\marvin\Robo\ScssLintConfigFallbackTaskLoader;
-use Drush\marvin\Utils;
+use Drupal\marvin\Robo\ScssLintConfigFallbackTaskLoader;
+use Drupal\marvin\Utils;
 use Robo\Collection\CollectionBuilder;
 use Robo\State\Data as RoboStateData;
 use Sweetchuck\Robo\Bundler\BundlerTaskLoader;

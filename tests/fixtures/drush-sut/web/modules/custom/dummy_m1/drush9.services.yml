@@ -1,0 +1,9 @@
+
+services:
+  dummy_m1.marvin_artifact.commands:
+    class: '\Drush\Commands\dummy_m1\MarvinArtifactCommands'
+    arguments:
+      - '@config.factory'
+    tags:
+      -
+        name: 'drush.command'
