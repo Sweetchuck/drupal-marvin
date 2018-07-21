@@ -12,6 +12,9 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Debug\BufferingLogger;
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * @todo Individual package
+ */
 class CopyFilesTaskTest extends TestCase {
 
   public function casesRunSuccess(): array {

@@ -2,7 +2,7 @@
 
 namespace Drupal\marvin;
 
-use Drupal\marvin\Comparer\ArrayValueComparer;
+use Sweetchuck\Utils\Comparer\ArrayValueComparer;
 use Robo\Collection\CollectionBuilder;
 use Robo\Contract\TaskInterface;
 

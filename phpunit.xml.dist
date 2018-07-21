@@ -12,7 +12,7 @@
 
     <!--Uncomment and edit one of the lines below depending on DB platform.-->
     <!--DB User must have create/drop permissions-->
-    <!--<env name="UNISH_DB_URL" value="mysql://root:@127.0.0.1"/> -->
+    <!--<env name="UNISH_DB_URL" value="mysql://root:@127.0.0.1"/>-->
     <!--<env name="UNISH_DB_URL" value="pgsql://postgres:@localhost"/>-->
     <!--<env name="UNISH_DB_URL" value="sqlite://none/of/this/matters"/>-->
 
@@ -33,16 +33,16 @@
   </php>
 
   <testsuites>
-    <testsuite name="DrushUnish">
-      <directory>tests/src/DrushUnish/</directory>
+    <testsuite name="Unit">
+      <directory>tests/src/Unit/</directory>
     </testsuite>
 
     <testsuite name="DrushUnit">
       <directory>tests/src/DrushUnit/</directory>
     </testsuite>
 
-    <testsuite name="Unit">
-      <directory>tests/src/Unit/</directory>
+    <testsuite name="DrushUnish">
+      <directory>tests/src/DrushUnish/</directory>
     </testsuite>
   </testsuites>
 

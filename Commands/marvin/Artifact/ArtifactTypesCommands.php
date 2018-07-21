@@ -6,7 +6,7 @@ namespace Drush\Commands\marvin\Artifact;
 
 use Consolidation\AnnotatedCommand\CommandData;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
-use Drupal\marvin\Comparer\ArrayValueComparer;
+use Sweetchuck\Utils\Comparer\ArrayValueComparer;
 
 class ArtifactTypesCommands extends ArtifactCommandsBase {
 

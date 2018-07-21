@@ -5,7 +5,7 @@
  * Phpunit bootstrap.
  */
 
-use PHPUnit\Runner\Version;
+use PHPUnit\Runner\Version as PHPUnitRunnerVersion;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../vendor/drush/drush/tests/unish.inc';
@@ -13,7 +13,7 @@ require_once __DIR__ . '/../../vendor/drush/drush/tests/unish.inc';
 call_user_func(function () {
   $phpunitVersion = class_exists('\PHPUnit_Runner_Version') ?
     \PHPUnit_Runner_Version::id()
-    : Version::id();
+    : PHPUnitRunnerVersion::id();
 
   if (version_compare($phpunitVersion, '6.1', '>=')) {
     class_alias('\PHPUnit\Framework\AssertionFailedError', '\PHPUnit_Framework_AssertionFailedError');
@@ -25,6 +25,7 @@ call_user_func(function () {
     class_alias('\PHPUnit\Framework\MockObject\Matcher\InvokedRecorder', '\PHPUnit_Framework_MockObject_Matcher_InvokedRecorder');
     class_alias('\PHPUnit\Framework\SkippedTestError', '\PHPUnit_Framework_SkippedTestError');
     class_alias('\PHPUnit\Framework\TestCase', '\PHPUnit_Framework_TestCase');
+    class_alias('\PHPUnit\Framework\TestResult', '\PHPUnit_Framework_TestResult');
     class_alias('\PHPUnit\Util\Test', '\PHPUnit_Util_Test');
     class_alias('\PHPUnit\Util\XML', '\PHPUnit_Util_XML');
   }

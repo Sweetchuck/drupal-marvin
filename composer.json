@@ -129,16 +129,18 @@
             "options": {
                 "symlink": true
             }
+        },
+        "sweetchuck/utils": {
+            "type": "path",
+            "url": "../../sweetchuck/utils"
         }
     },
     "require": {
         "php": ">=7.1",
         "ext-json": "*",
-        "ext-pcre": "*",
         "ext-mbstring": "*",
-        "cweagans/composer-patches": "^1.6",
+        "ext-pcre": "*",
         "danielstjules/stringy": "^3.1",
-        "drupal/coder": "^8.2",
         "drush/drush": "^9.3",
         "sweetchuck/git-hooks-stdinput-reader": "*",
         "sweetchuck/robo-bundler": "*",
@@ -151,10 +153,14 @@
         "sweetchuck/robo-rvm": "dev-master",
         "sweetchuck/robo-scss-lint": "*",
         "sweetchuck/robo-yarn": "*",
+        "sweetchuck/utils": "*",
         "symfony/yaml": "^3.4 || ^4.0",
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
+        "composer/installers": "^1.5",
+        "drupal-composer/drupal-scaffold": "^2.5",
+        "drupal/core": "^8.5",
         "mikey179/vfsStream": "^1.6",
         "phpunit/phpunit": "^6.3",
         "sweetchuck/git-hooks": "^0.0"
@@ -186,14 +192,40 @@
             }
         },
         "enable-patching": true,
-        "composer-exit-on-patch-failure": true
+        "composer-exit-on-patch-failure": true,
+        "drupal-scaffold": {
+            "excludes": [
+                ".csslintrc",
+                ".editorconfig",
+                ".eslintignore",
+                ".eslintrc.json",
+                ".gitattributes",
+                ".ht.router.php",
+                ".htaccess",
+                "web.config"
+            ]
+        },
+        "installer-paths": {
+            "tests/fixtures/drush-sut/web/core": ["type:drupal-core"],
+            "tests/fixtures/drush-sut/web/libraries/{$name}": ["type:drupal-library"],
+            "tests/fixtures/drush-sut/web/modules/contrib/{$name}": ["type:drupal-module"],
+            "tests/fixtures/drush-sut/web/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "tests/fixtures/drush-sut/web/themes/contrib/{$name}": ["type:drupal-theme"],
+            "tests/fixtures/drush-sut/drush/contrib/{$name}": ["type:drupal-drush"]
+        }
     },
     "scripts": {
-        "post-install-cmd": "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postInstallCmd",
-        "post-update-cmd": "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postUpdateCmd",
-        "unish:env:echo": [
-            "echo 'export UNISH_TMP=\"$PWD/tests/fixtures\"'",
-            "echo 'export UNISH_DRUSH=\"$PWD/bin/drush\"'"
+        "pre-install-cmd": [
+            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::preInstallCmd"
+        ],
+        "post-install-cmd": [
+            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postInstallCmd"
+        ],
+        "pre-update-cmd": [
+            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::preUpdateCmd"
+        ],
+        "post-update-cmd": [
+            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postUpdateCmd"
         ]
     }
 }

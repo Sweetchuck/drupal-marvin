@@ -2,16 +2,11 @@
 /bin/
 /reports/
 
-/tests/fixtures/drush-sut/drush/contrib/
-/tests/fixtures/drush-sut/vendor/
-/tests/fixtures/drush-sut/web/core/
-/tests/fixtures/drush-sut/web/modules/contrib/
-/tests/fixtures/drush-sut/web/profiles/contrib/
-/tests/fixtures/drush-sut/web/themes/contrib/
-/tests/fixtures/drush-sut/web/sites/
-
+/tests/fixtures/drush-sandbox/
+/tests/fixtures/drush-sut/*
+!/tests/fixtures/drush-sut/web/modules/custom/
+!/tests/fixtures/drush-sut/drush/drush.yml
 /tests/fixtures/drush_coverage*
-/tests/fixtures/extensions/marvin/
 
 /vendor/
 
