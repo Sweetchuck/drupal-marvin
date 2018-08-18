@@ -5,11 +5,14 @@ declare(strict_types = 1);
 namespace Drupal\marvin;
 
 use Consolidation\AnnotatedCommand\CommandError;
-use Stringy\StaticStringy;
 use Stringy\Stringy;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\PathUtil\Path;
 
+/**
+ * @todo Make a service out of this class.
+ */
 class Utils {
 
   /**
@@ -23,6 +26,15 @@ class Utils {
     'drupal-module' => TRUE,
     'drupal-profile' => TRUE,
     'drupal-theme' => TRUE,
+  ];
+
+  public static $drupalPhpExtensions = [
+    'engine' => TRUE,
+    'install' => TRUE,
+    'module' => TRUE,
+    'php' => TRUE,
+    'profile' => TRUE,
+    'theme' => TRUE,
   ];
 
   /**
@@ -43,37 +55,16 @@ class Utils {
   }
 
   /**
-   * Check that a composer package is Drupal related or not.
+   * Checks that a composer package is Drupal related or not.
    *
    * @param array $package
    *   Composer package definition.
    *
    * @return bool
-   *   Return TRUE is the $package is Drupal related.
+   *   Return TRUE if the $package is Drupal related.
    */
   public static function isDrupalPackage(array $package): bool {
     return !empty(static::$drupalPackageTypes[$package['type']]);
-  }
-
-  public static function collectManagedDrupalExtensions(
-    string $rootProjectDir,
-    array $composerLock,
-    array $packagePaths
-  ): array {
-    $managedExtensions = [];
-    foreach ($packagePaths as $packageName => $packagePath) {
-      foreach (['packages', 'packages-dev'] as $lockKey) {
-        if (file_exists("$packagePath/.git")
-          && isset($composerLock[$lockKey][$packageName])
-          && static::isDrupalPackage($composerLock[$lockKey][$packageName])
-          && !StaticStringy::startsWith($packagePath, $rootProjectDir)
-        ) {
-          $managedExtensions[$packageName] = $packagePath;
-        }
-      }
-    }
-
-    return $managedExtensions;
   }
 
   public static function getComposerJsonFileName(): string {
@@ -101,9 +92,31 @@ class Utils {
     return '';
   }
 
-  /**
-   * @var string
-   */
+  public static function getDirectDescendantDrupalPhpFiles(string $dir): array {
+    $extensions = [];
+    foreach (array_keys(static::$drupalPhpExtensions, TRUE) as $extension) {
+      $extensions[] = preg_quote($extension);
+    }
+
+    if (!$extensions) {
+      return [];
+    }
+
+    $namePattern = '/\.(' . implode('|', $extensions) . ')$/u';
+    $files = (new Finder())
+      ->depth('== 0')
+      ->in($dir)
+      ->name($namePattern);
+
+    $fileNames = [];
+    /** @var \Symfony\Component\Finder\SplFileInfo $file */
+    foreach ($files as $file) {
+      $fileNames[] = $file->getBasename();
+    }
+
+    return $fileNames;
+  }
+
   public static function getDrupalExtensionVersionNumberPattern(): string {
     return implode('', [
       '/^',
@@ -120,9 +133,6 @@ class Utils {
     ]);
   }
 
-  /**
-   * @todo Support for "+" sign.
-   */
   public static function isValidDrupalExtensionVersionNumber(string $versionNumber): bool {
     return (bool) preg_match(static::getDrupalExtensionVersionNumberPattern(), $versionNumber);
   }
@@ -159,25 +169,23 @@ class Utils {
   }
 
   public static function ensureTrailingEol(string &$text): void {
-    if (!preg_match('/[\r\n]$/', $text)) {
+    if (!preg_match('/[\r\n]$/u', $text)) {
       $text .= PHP_EOL;
     }
   }
 
   /**
-   *
    * @param \Consolidation\AnnotatedCommand\CommandError[] $commandErrors
    */
   public static function aggregateCommandErrors(array $commandErrors): ?CommandError {
     $errorCode = 0;
     $messages = [];
-    /** @var \Consolidation\AnnotatedCommand\CommandError $commandError */
     foreach (array_filter($commandErrors) as $commandError) {
       $messages[] = $commandError->getOutputData();
       $errorCode = max($errorCode, $commandError->getExitCode());
     }
 
-    if ($errorCode || $messages) {
+    if ($messages) {
       return new CommandError(implode(PHP_EOL, $messages), $errorCode);
     }
 

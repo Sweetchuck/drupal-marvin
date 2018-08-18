@@ -46,6 +46,7 @@ class PhpcsCommandsBase extends CommandsBase {
           ->setAssetNamePrefix('phpcsXml.'))
         ->addTask($this
           ->taskMarvinPhpcsConfigFallback()
+          ->setContainer($this->getContainer())
           ->setWorkingDirectory($workingDirectory)
           ->setAssetNamePrefix('phpcsXml.'))
         ->addTask($this
@@ -63,6 +64,7 @@ class PhpcsCommandsBase extends CommandsBase {
         ->collectionBuilder()
         ->addTask($this
           ->taskMarvinPhpcsConfigFallback()
+          ->setContainer($this->getContainer())
           ->setWorkingDirectory($workingDirectory)
           ->setAssetNamePrefix('phpcsXml.'))
         ->addTask($this

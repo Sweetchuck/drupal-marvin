@@ -13,122 +13,71 @@
     "repositories": {
         "sweetchuck/git-hooks-stdinput-reader": {
             "type": "path",
-            "url": "../../sweetchuck/git-hooks-stdinput-reader",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/git-hooks-stdinput-reader"
         },
         "sweetchuck/lint-report": {
             "type": "path",
-            "url": "../../sweetchuck/lint-report",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/lint-report"
         },
         "sweetchuck/robo-bundler": {
             "type": "path",
-            "url": "../../sweetchuck/robo-bundler",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-bundler"
         },
         "sweetchuck/robo-cdd": {
             "type": "path",
-            "url": "../../sweetchuck/robo-cdd",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-cdd"
         },
         "sweetchuck/robo-compass": {
             "type": "path",
-            "url": "../../sweetchuck/robo-compass",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-compass"
         },
         "sweetchuck/robo-composer": {
             "type": "path",
-            "url": "../../sweetchuck/robo-composer",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-composer"
         },
         "sweetchuck/robo-drush": {
             "type": "path",
-            "url": "../../sweetchuck/robo-drush",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-drush"
         },
         "sweetchuck/robo-git": {
             "type": "path",
-            "url": "../../sweetchuck/robo-git",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-git"
         },
         "sweetchuck/robo-nvm": {
             "type": "path",
-            "url": "../../sweetchuck/robo-nvm",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-nvm"
         },
         "sweetchuck/robo-phpcs": {
             "type": "path",
-            "url": "../../sweetchuck/robo-phpcs",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-phpcs"
         },
         "sweetchuck/robo-phpmd": {
             "type": "path",
-            "url": "../../sweetchuck/robo-phpmd",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-phpmd"
         },
         "sweetchuck/robo-phpunit": {
             "type": "path",
-            "url": "../../sweetchuck/robo-phpunit",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-phpunit"
         },
         "sweetchuck/robo-rvm": {
             "type": "path",
-            "url": "../../sweetchuck/robo-rvm",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-rvm"
         },
         "sweetchuck/robo-sass": {
             "type": "path",
-            "url": "../../sweetchuck/robo-sass",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-sass"
         },
         "sweetchuck/robo-scss-lint": {
             "type": "path",
-            "url": "../../sweetchuck/robo-scss-lint",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-scss-lint"
         },
         "sweetchuck/robo-tslint": {
             "type": "path",
-            "url": "../../sweetchuck/robo-tslint",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-tslint"
         },
         "sweetchuck/robo-yarn": {
             "type": "path",
-            "url": "../../sweetchuck/robo-yarn",
-            "options": {
-                "symlink": true
-            }
+            "url": "../../sweetchuck/robo-yarn"
         },
         "sweetchuck/utils": {
             "type": "path",
@@ -160,6 +109,7 @@
     "require-dev": {
         "composer/installers": "^1.5",
         "drupal-composer/drupal-scaffold": "^2.5",
+        "drupal/coder": "^8.2",
         "drupal/core": "^8.5",
         "mikey179/vfsStream": "^1.6",
         "phpunit/phpunit": "^6.3",
@@ -212,6 +162,13 @@
             "tests/fixtures/drush-sut/web/profiles/contrib/{$name}": ["type:drupal-profile"],
             "tests/fixtures/drush-sut/web/themes/contrib/{$name}": ["type:drupal-theme"],
             "tests/fixtures/drush-sut/drush/contrib/{$name}": ["type:drupal-drush"]
+        },
+        "marvin": {
+            "drushUnish": {
+                "filesToSymlink": {
+                    "etc": true
+                }
+            }
         }
     },
     "scripts": {

@@ -1,5 +1,8 @@
 
 services:
+  marvin.utils:
+    class: '\Drupal\marvin\Utils'
+
   marvin.artifact_types.commands:
     class: '\Drush\Commands\marvin\Artifact\ArtifactTypesCommands'
     tags:

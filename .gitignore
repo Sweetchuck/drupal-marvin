@@ -10,4 +10,5 @@
 
 /vendor/
 
+/phpcs.xml
 /phpunit.xml

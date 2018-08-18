@@ -2,6 +2,7 @@
 
 namespace Drupal\marvin;
 
+use Stringy\StaticStringy;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Webmozart\PathUtil\Path;
@@ -255,6 +256,20 @@ class ComposerInfo implements \ArrayAccess {
     return $this
       ->initLock()
       ->lock;
+  }
+
+  public function getDrupalExtensionInstallDir(string $type): ?string {
+    $type = StaticStringy::ensureLeft($type, 'drupal-');
+    $json = $this->getJson();
+    $installerPaths = $json['extra']['installer-paths'] ?? [];
+
+    foreach ($installerPaths as $dir => $conditions) {
+      if (in_array("type:$type", $conditions)) {
+        return $dir;
+      }
+    }
+
+    return NULL;
   }
 
   /**

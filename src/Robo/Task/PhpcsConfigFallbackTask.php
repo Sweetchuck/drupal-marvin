@@ -2,10 +2,12 @@
 
 namespace Drupal\marvin\Robo\Task;
 
-use Drupal\marvin\ArrayUtils\FileSystemArrayUtils;
 use Drupal\marvin\ComposerInfo;
+use Drupal\marvin\Utils as MarvinUtils;
+use League\Container\ContainerInterface;
 use Robo\State\StateAwareInterface;
 use Robo\State\StateAwareTrait;
+use Sweetchuck\Utils\Walker\FileSystemExistsWalker;
 
 class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
 
@@ -15,6 +17,25 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
    * {@inheritdoc}
    */
   protected $taskName = 'Marvin - PHP_CodeSniffer config fallback';
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setContainer(ContainerInterface $container) {
+    parent::setContainer($container);
+
+    $pairs = [
+      'marvin.file_system_exists_walker' => FileSystemExistsWalker::class,
+    ];
+
+    foreach ($pairs as $alias => $class) {
+      if (!$container->has($alias)) {
+        $container->add($alias, $class);
+      }
+    }
+
+    return $this;
+  }
 
   /**
    * @var string
@@ -83,19 +104,31 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
       case 'drupal-module':
       case 'drupal-theme':
       case 'drupal-drush':
-        // @todo Autodetect PHP files.
         $filePaths['files']['Commands/'] = TRUE;
         $filePaths['files']['src/'] = TRUE;
         $filePaths['files']['tests/'] = TRUE;
+        $filePaths['files'] += array_fill_keys(
+          MarvinUtils::getDirectDescendantDrupalPhpFiles($workingDirectory),
+          TRUE
+        );
         break;
 
       case 'drupal-profile':
-        // @todo
+        $filePaths['files']['Commands/'] = TRUE;
+        $filePaths['files']['src/'] = TRUE;
+        $filePaths['files']['tests/'] = TRUE;
+        $filePaths['files']['modules/custom/'] = TRUE;
+        $filePaths['files']['themes/custom/'] = TRUE;
+        $filePaths['files'] += array_fill_keys(
+          MarvinUtils::getDirectDescendantDrupalPhpFiles($workingDirectory),
+          TRUE
+        );
         break;
     }
 
-    $arrayUtils = new FileSystemArrayUtils(NULL, ['baseDir' => $workingDirectory]);
-    array_walk($filePaths['files'], [$arrayUtils, 'walkExists']);
+    $walker = $this->getContainer()->get('marvin.file_system_exists_walker');
+    $walker->setBaseDir($workingDirectory);
+    array_walk($filePaths['files'], $walker);
 
     return $filePaths;
   }

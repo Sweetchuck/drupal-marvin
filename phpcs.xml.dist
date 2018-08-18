@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <ruleset name="DrupalCustom">
   <file>Commands/</file>
-  <file>gitHooks/</file>
   <file>src/</file>
-  <file>tests/</file>
+  <file>src-dev/Composer/</file>
+  <file>tests/src/</file>
 
   <arg
     name="extensions"

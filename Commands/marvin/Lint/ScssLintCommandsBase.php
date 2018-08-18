@@ -21,7 +21,8 @@ class ScssLintCommandsBase extends CommandsBase {
   use ScssLintConfigFallbackTaskLoader;
 
   protected function getTaskLintScssExtension(string $workingDirectory): CollectionBuilder {
-    $gitHook = $this->getConfig()->get('command.marvin.settings.gitHook');
+    $config = $this->getConfig();
+    $gitHook = $config->get('command.marvin.settings.gitHook');
     $presetName = $this->getPresetNameByEnvironmentVariant();
 
     $marvinRootDir = Utils::marvinRootDir();
@@ -47,6 +48,16 @@ class ScssLintCommandsBase extends CommandsBase {
       ->setWorkingDirectory($relativeDirFromCwdToMarvinEtcScssLint)
       ->setBundleGemFile($bundleGemFileName)
       ->setAssetNamePrefix('ruby-version.');
+
+    $rubyExecutable = $config->get('command.marvin.settings.rubyExecutable');
+    if ($rubyExecutable) {
+      $taskBundlePlatformRubyVersion->setRubyExecutable($rubyExecutable);
+    }
+
+    $bundleExecutable = $config->get('command.marvin.settings.bundleExecutable');
+    if ($rubyExecutable) {
+      $taskBundlePlatformRubyVersion->setBundleExecutable($bundleExecutable);
+    }
 
     $taskRvmInfo = $this
       ->taskRvmInfo()

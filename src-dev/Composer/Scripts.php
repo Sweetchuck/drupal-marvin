@@ -5,9 +5,11 @@ namespace Drupal\Dev\marvin\Composer;
 use Composer\IO\IOInterface;
 use Composer\Semver\Comparator;
 use Composer\Script\Event;
+use DrupalComposer\DrupalScaffold\Handler as DrupalScaffoldHandler;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Sweetchuck\GitHooks\Composer\Scripts as GitHooks;
+use Sweetchuck\Utils\Filter\ArrayFilterFileSystemExists;
 
 class Scripts {
 
@@ -47,8 +49,8 @@ class Scripts {
    */
   public static function postInstallCmd(Event $event): int {
     static::init($event);
-    //static::gitHooksDeploy();
-    //static::phpcsConfigSet();
+    static::gitHooksDeploy();
+    static::phpcsConfigSet();
     static::prepareDrushSut();
 
     return 0;
@@ -66,8 +68,8 @@ class Scripts {
    */
   public static function postUpdateCmd(Event $event): int {
     static::init($event);
-    //static::gitHooksDeploy();
-    //static::phpcsConfigSet();
+    static::gitHooksDeploy();
+    static::phpcsConfigSet();
     static::prepareDrushSut();
 
     return 0;
@@ -99,10 +101,17 @@ class Scripts {
 
     /** @var \Composer\Config $config */
     $config = static::$event->getComposer()->getConfig();
+
+    $phpcsExecutable = $config->get('bin-dir') . '/phpcs';
+    $rulesDir = $config->get('vendor-dir') . '/drupal/coder/coder_sniffer';
+    if (!static::$fs->exists($phpcsExecutable) || !static::$fs->exists($rulesDir)) {
+      return;
+    }
+
     $cmdPattern = '%s --config-set installed_paths %s';
     $cmdArgs = [
-      escapeshellcmd($config->get('bin-dir') . '/phpcs'),
-      escapeshellarg($config->get('vendor-dir') . '/drupal/coder/coder_sniffer'),
+      escapeshellcmd($phpcsExecutable),
+      escapeshellcmd($rulesDir),
     ];
 
     static::processRun('.', vsprintf($cmdPattern, $cmdArgs));
@@ -152,12 +161,13 @@ class Scripts {
       return;
     }
 
-    static::prepareDrushSutMarvin();
+    static::prepareDrushSutSelf();
     static::prepareDrushSutDirs();
+    static::prepareDrushSutScaffold();
   }
 
-  protected static function prepareDrushSutMarvin(): void {
-    $dstDir = 'tests/fixtures/drush-sut/drush/custom/marvin';
+  protected static function prepareDrushSutSelf(): void {
+    $dstDir = static::getDrushSutSelfDestination();
 
     $relative = implode(
       '/',
@@ -168,23 +178,10 @@ class Scripts {
       )
     );
 
-    $filesToSymLink = [
-      'Commands',
-      'etc',
-      'src',
-      'composer.json',
-      'drush9.services.yml',
-    ];
-
-    if (!static::$fs->exists($dstDir)) {
-      static::$fs->mkdir($dstDir);
-    }
-
-    foreach ($filesToSymLink as $fileToSymLink) {
-      $target = "$dstDir/$fileToSymLink";
-      if (!static::$fs->exists($target)) {
-        static::$fs->symlink("$relative/$fileToSymLink", $target);
-      }
+    $filesToSymlink = static::getDrushSutSelfFilesToSymlink();
+    static::$fs->mkdir($dstDir);
+    foreach ($filesToSymlink as $fileToSymlink) {
+      static::$fs->symlink("$relative/$fileToSymlink", "$dstDir/$fileToSymlink");
     }
   }
 
@@ -197,6 +194,23 @@ class Scripts {
       "$drushSutRoot/web/themes",
     ];
     static::$fs->mkdir($dirs, 0777 - umask());
+  }
+
+  protected static function prepareDrushSutScaffold(): void {
+    $indexPhp = static::$drushSutRoot . '/web/index.php';
+    $io = static::$event->getIO();
+    if (static::$fs->exists($indexPhp)) {
+      $io->write(
+        "File '<info>$indexPhp</info>' already exists.",
+        IOInterface::VERBOSE
+      );
+
+      return;
+    }
+
+    $handler = new DrupalScaffoldHandler(static::$event->getComposer(), $io);
+    $handler->downloadScaffold();
+    $handler->generateAutoload();
   }
 
   /**
@@ -241,6 +255,42 @@ class Scripts {
     }
 
     $io->write("Composer version <info>$version</info> is fine", TRUE, IOInterface::VERBOSE);
+  }
+
+  protected static function getDrushSutSelfDestination(): string {
+    return static::$drushSutRoot . '/drush/custom/' . static::getComposerPackageName();
+  }
+
+  protected static function getComposerPackageName(): string {
+    $parts = explode('/', static::$event->getComposer()->getPackage()->getName(), 2);
+    if (empty($parts[1])) {
+      throw new \Exception('Invalid package name', 1);
+    }
+
+    return $parts[1];
+  }
+
+  /**
+   * @return string[]
+   */
+  protected static function getDrushSutSelfFilesToSymlink(): array {
+    $extra = static::$event->getComposer()->getPackage()->getExtra();
+    $filesToSymLink = $extra['marvin']['drushUnish']['filesToSymlink'] ?? [];
+    $filesToSymLink += static::getDrushSutSelfFilesToSymlinkDefaults();
+
+    $filesToSymLink = array_keys($filesToSymLink, TRUE, TRUE);
+
+    return array_filter($filesToSymLink, new ArrayFilterFileSystemExists());
+  }
+
+  protected static function getDrushSutSelfFilesToSymlinkDefaults(): array {
+    return [
+      'Commands' => TRUE,
+      'src' => TRUE,
+      'composer.json' => TRUE,
+      'drush9.services.yml' => TRUE,
+      'drush.services.yml' => TRUE,
+    ];
   }
 
   protected static function processRun(string $workingDirectory, string $command): Process {

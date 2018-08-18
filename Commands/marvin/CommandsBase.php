@@ -82,7 +82,7 @@ class CommandsBase extends Tasks implements ConfigAwareInterface, CustomEventAwa
       return './' . $this->composerInfo['config']['bin-dir'];
     }
 
-    $projectRoot = $this->getConfig()->get('env.cwd');
+    $projectRoot = $this->getProjectRootDir();
 
     return Path::makeRelative(
       Path::join($projectRoot, $this->composerInfo['config']['bin-dir']),

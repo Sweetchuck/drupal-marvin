@@ -2,6 +2,7 @@
 
 namespace Drush\Commands\Tests\marvin\Unish;
 
+use Symfony\Component\Finder\Finder;
 use Unish\CommandUnishTestCase;
 use Webmozart\PathUtil\Path;
 
@@ -10,21 +11,96 @@ abstract class CommandsTestBase extends CommandUnishTestCase {
   /**
    * @var string
    */
-  protected static $marvinDir = '';
+  protected static $selfDir = '';
+
+  /**
+   * @var string
+   */
+  protected static $binDir = 'bin';
 
   /**
    * {@inheritdoc}
    */
   public static function getDrush() {
-    return Path::join(static::getMarvinDir(), 'bin', 'drush');
+    return Path::join(static::getSelfDir(), 'bin', 'drush');
+  }
+
+  protected static function getSelfDir(): string {
+    if (static::$selfDir === '') {
+      static::$selfDir = Path::canonicalize(Path::join(__DIR__, '..', '..', '..'));
+    }
+
+    return static::$selfDir;
+  }
+
+  protected static function getExtensionsDir(): string {
+    return static::getTmp() . '/extensions';
+  }
+
+  /**
+   * @return \Symfony\Component\Finder\Finder|\Symfony\Component\Finder\SplFileInfo[]
+   */
+  protected static function getExtensionDirs(): Finder {
+    return (new Finder())
+      ->in(static::getExtensionsDir())
+      ->directories()
+      ->depth('== 0');
+  }
+
+  public function installDrupal($env = 'dev', $install = FALSE, $withCoverage = FALSE) {
+    $root = $this->webroot();
+    $uri = $env;
+    $site = "$root/sites/$uri";
+
+    // If specified, install Drupal as a multi-site.
+    if ($install) {
+      $options = [
+        'root' => $root,
+        'db-url' => $this->dbUrl($env),
+        'sites-subdir' => $uri,
+        'yes' => NULL,
+        'quiet' => NULL,
+      ];
+      $this->drush(
+        'site-install',
+        ['testing', 'install_configure_form.enable_update_status_emails=NULL'],
+        $options,
+        NULL,
+        NULL,
+        self::EXIT_SUCCESS,
+        NULL,
+        [],
+        $withCoverage
+      );
+      // Give us our write perms back.
+      chmod($site, 0777);
+    }
+    else {
+      $this->mkdir($site);
+      touch("$site/settings.php");
+    }
   }
 
   /**
    * {@inheritdoc}
    *
    * Replace self::getDrush() with static::getDrush().
+   * Support array values for --include.
+   * Use the same PHP executable.
    */
-  public function drush($command, array $args = [], array $options = [], $site_specification = NULL, $cd = NULL, $expected_return = self::EXIT_SUCCESS, $suffix = NULL, $env = []) {
+  public function drush(
+    $command,
+    array $args = [],
+    array $options = [],
+    $site_specification = NULL,
+    $cd = NULL,
+    $expected_return = self::EXIT_SUCCESS,
+    $suffix = NULL,
+    $env = [],
+    $withCoverage = TRUE
+  ) {
+    $sites = static::getSites();
+
     // Cd is added for the benefit of siteSshTest which tests a strict command.
     $global_option_list = [
       'simulate',
@@ -38,10 +114,11 @@ abstract class CommandsTestBase extends CommandUnishTestCase {
       'cd',
     ];
 
-    $options += ['uri' => 'dev'];
+    $options += ['uri' => 'http://' . key($sites)];
     $hide_stderr = FALSE;
     $cmd = [
-      self::getDrush(),
+      $this->getPhpExecutable(),
+      static::getDrush(),
     ];
 
     // Insert global options.
@@ -61,7 +138,13 @@ abstract class CommandsTestBase extends CommandUnishTestCase {
           $cmd[] = "--$key";
         }
         else {
-          $cmd[] = "--$key=" . self::escapeshellarg($value);
+          if (!is_array($value)) {
+            $value = [$value];
+          }
+
+          foreach ($value as $v) {
+            $cmd[] = "--$key=" . static::escapeshellarg($v);
+          }
         }
       }
     }
@@ -75,7 +158,7 @@ abstract class CommandsTestBase extends CommandUnishTestCase {
     // parsed as a global option. This matters for commands like ssh and rsync
     // where options after the command are passed along to external commands.
     $result = $this->getTestResultObject();
-    if ($result->getCollectCodeCoverageInformation()) {
+    if ($withCoverage && $result->getCollectCodeCoverageInformation()) {
       $coverage_file = tempnam($this->getTmp(), 'drush_coverage');
       if ($coverage_file) {
         $cmd[] = "--drush-coverage=" . $coverage_file;
@@ -85,14 +168,13 @@ abstract class CommandsTestBase extends CommandUnishTestCase {
     // Insert site specification and drush command.
     $cmd[] = empty($site_specification)
       ? NULL
-      : self::escapeshellarg(
-        $site_specification
-      );
+      : static::escapeshellarg($site_specification);
+
     $cmd[] = $command;
 
     // Insert drush command arguments.
     foreach ($args as $arg) {
-      $cmd[] = self::escapeshellarg($arg);
+      $cmd[] = static::escapeshellarg($arg);
     }
 
     // Insert drush command options.
@@ -101,7 +183,7 @@ abstract class CommandsTestBase extends CommandUnishTestCase {
         $cmd[] = "--$key";
       }
       else {
-        $cmd[] = "--$key=" . self::escapeshellarg($value);
+        $cmd[] = "--$key=" . static::escapeshellarg($value);
       }
     }
 
@@ -140,11 +222,15 @@ abstract class CommandsTestBase extends CommandUnishTestCase {
    */
   protected function setUp() {
     if (!$this->getSites()) {
-      $this->setUpDrupal(1, TRUE);
+      $this->setUpDrupal(1, $this->setUpDrupalNeedsToBeInstalled());
     }
 
     parent::setUp();
     $this->deleteTestArtifacts();
+  }
+
+  protected function setUpDrupalNeedsToBeInstalled(): bool {
+    return FALSE;
   }
 
   /**
@@ -156,20 +242,10 @@ abstract class CommandsTestBase extends CommandUnishTestCase {
   }
 
   /**
-   * Clean .phpstorm.meta.php directory.
+   * @return $this
    */
   protected function deleteTestArtifacts() {
     return $this;
-  }
-
-  protected static function getMarvinDir(): string {
-    if (static::$marvinDir === '') {
-      static::$marvinDir = Path::canonicalize(
-        Path::join(__DIR__, '..', '..', '..')
-      );
-    }
-
-    return static::$marvinDir;
   }
 
   protected function getDefaultDrushCommandOptions(): array {
@@ -180,6 +256,11 @@ abstract class CommandsTestBase extends CommandUnishTestCase {
       'no-ansi' => NULL,
       'config' => Path::join(static::getSut(), 'drush'),
     ];
+  }
+
+  protected function getPhpExecutable(): string {
+    // @todo Make it configurable through environment variable.
+    return PHP_BINDIR . '/php';
   }
 
 }
