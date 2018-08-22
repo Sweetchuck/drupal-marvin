@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace Drupal\marvin;
 
 use Consolidation\AnnotatedCommand\CommandError;
+use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
+use Drupal\marvin\StatusReport\StatusReportInterface;
 use Stringy\Stringy;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
@@ -190,6 +192,61 @@ class Utils {
     }
 
     return NULL;
+  }
+
+  public static function convertStatusReportToRowsOfFields(StatusReportInterface $statusReport): RowsOfFields {
+    $data = $statusReport->jsonSerialize();
+    $severityNames = RfcLogLevel::getLevels();
+    foreach (array_keys($data) as $id) {
+      $severity = $data[$id]['severity'];
+      $severityName = $severityNames[$severity];
+      $data[$id]['title'] = static::formatTextBySeverity($severity, $data[$id]['title']);
+      $data[$id]['severity'] = static::formatTextBySeverity($severity, (string) $severity);
+      $data[$id]['severityName'] = static::formatTextBySeverity($severity, $severityName);
+    }
+
+    return new RowsOfFields($data);
+  }
+
+  public static function formatTextBySeverity(int $severity, string $text): string {
+    switch ($severity) {
+      case RfcLogLevel::EMERGENCY:
+      case RfcLogLevel::ALERT:
+      case RfcLogLevel::CRITICAL:
+      case RfcLogLevel::ERROR:
+        return "<fg=red>$text</>";
+
+      case RfcLogLevel::WARNING:
+        return "<fg=yellow>$text</>";
+    }
+
+    return $text;
+  }
+
+  /**
+   * @return string[]
+   */
+  public static function getGitHookNames(): array {
+    return [
+      'applypatch-msg',
+      'commit-msg',
+      'post-applypatch',
+      'post-checkout',
+      'post-commit',
+      'post-merge',
+      'post-receive',
+      'post-rewrite',
+      'post-update',
+      'pre-applypatch',
+      'pre-auto-gc',
+      'pre-commit',
+      'pre-push',
+      'pre-rebase',
+      'pre-receive',
+      'prepare-commit-msg',
+      'push-to-checkout',
+      'update',
+    ];
   }
 
 }
