@@ -14,16 +14,15 @@ class PhpunitCommandsBase extends CommandsBase {
   /**
    * @return \Sweetchuck\Robo\PHPUnit\Task\RunTask|\Robo\Collection\CollectionBuilder
    */
-  protected function getTaskPhpUnit(string $packagePath, array $testSuiteNames): CollectionBuilder {
-    $packagePath = $packagePath ?: '.';
-
-    $binDir = $this->composerInfo['config']['bin-dir'];
+  protected function getTaskPhpUnit(array $testSuiteNames, array $groupNames, array $phpVariant): CollectionBuilder {
     $task = $this
       ->taskPHPUnitRun()
-      ->setPhpunitExecutable("$binDir/phpunit")
-      ->setTestSuite($testSuiteNames)
+      ->setPhpExecutable("{$phpVariant['phpdbgExecutable']} -qrr")
+      ->setPhpunitExecutable($this->getPhpUnitExecutable())
+      ->setProcessTimeout(NULL)
       ->setColors('always')
-      ->addArgument("$packagePath/tests/src");
+      ->setTestSuite($testSuiteNames)
+      ->setGroup($groupNames);
 
     $gitHook = $this->getConfig()->get('command.marvin.settings.gitHook');
     if ($gitHook === 'pre-commit') {
@@ -32,6 +31,10 @@ class PhpunitCommandsBase extends CommandsBase {
     }
 
     return $task;
+  }
+
+  protected function getPhpUnitExecutable(): string {
+    return $this->composerInfo['config']['bin-dir'] . '/phpunit';
   }
 
   protected function getTestSuiteNamesByEnvironmentVariant(): ?array {

@@ -160,6 +160,22 @@ class UtilsTest extends TestCase {
     );
   }
 
+  public function casesPhpUnitSuiteNameToNamespace(): array {
+    return [
+      'unit' => ['Unit', 'unit'],
+      'kernel' => ['Kernel', 'kernel'],
+      'functional' => ['Functional', 'functional'],
+      'functional-javascript' => ['FunctionalJavascript', 'functional-javascript'],
+    ];
+  }
+
+  /**
+   * @dataProvider casesPhpUnitSuiteNameToNamespace
+   */
+  public function testPhpUnitSuiteNameToNamespace($expected, string $suiteName): void {
+    $this->assertSame($expected, Utils::phpUnitSuiteNameToNamespace($suiteName));
+  }
+
   public function casesParseDrupalExtensionVersionNumber(): array {
     return [
       'minimum' => [
@@ -214,6 +230,95 @@ class UtilsTest extends TestCase {
    */
   public function testParseDrupalExtensionVersionNumber($expected, $versionNumber): void {
     $this->assertEquals($expected, Utils::parseDrupalExtensionVersionNumber($versionNumber));
+  }
+
+  public function casesDbUrl(): array {
+    return [
+      'sqlite - basic' => [
+        'sqlite:///default__default.sqlite',
+        [
+          'driver' => 'sqlite',
+          'database' => '/default__default.sqlite',
+        ],
+      ],
+      'mysql - full' => [
+        'mysql://a:b@c:d/e#f',
+        [
+          'driver' => 'mysql',
+          'username' => 'a',
+          'password' => 'b',
+          'host' => 'c',
+          'port' => 'd',
+          'database' => 'e',
+          'prefix' => 'f',
+        ],
+      ],
+      'mysql - no-port;' => [
+        'mysql://a:b@c/e#f',
+        [
+          'driver' => 'mysql',
+          'username' => 'a',
+          'password' => 'b',
+          'host' => 'c',
+          'database' => 'e',
+          'prefix' => 'f',
+        ],
+      ],
+      'mysql - no-password;' => [
+        'mysql://a@c:d/e#f',
+        [
+          'driver' => 'mysql',
+          'username' => 'a',
+          'host' => 'c',
+          'port' => 'd',
+          'database' => 'e',
+          'prefix' => 'f',
+        ],
+      ],
+      'mysql - no-prefix;' => [
+        'mysql://a@c:d/e',
+        [
+          'driver' => 'mysql',
+          'username' => 'a',
+          'host' => 'c',
+          'port' => 'd',
+          'database' => 'e',
+        ],
+      ],
+      'mysql - no-all;' => [
+        'mysql://c/e',
+        [
+          'driver' => 'mysql',
+          'host' => 'c',
+          'database' => 'e',
+        ],
+      ],
+      'mysql - prefix array default;' => [
+        'mysql://c/e#f',
+        [
+          'driver' => 'mysql',
+          'host' => 'c',
+          'database' => 'e',
+          'prefix' => ['default' => 'f'],
+        ],
+      ],
+      'mysql - prefix array no-default;' => [
+        'mysql://c/e',
+        [
+          'driver' => 'mysql',
+          'host' => 'c',
+          'database' => 'e',
+          'prefix' => ['foo' => 'f'],
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesDbUrl
+   */
+  public function testDbUrl($expected, array $connection): void {
+    $this->assertSame($expected, Utils::dbUrl($connection));
   }
 
 }

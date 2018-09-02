@@ -7,6 +7,7 @@ namespace Drupal\marvin;
 use Consolidation\AnnotatedCommand\CommandError;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 use Drupal\marvin\StatusReport\StatusReportInterface;
+use Stringy\StaticStringy;
 use Stringy\Stringy;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
@@ -177,6 +178,13 @@ class Utils {
   }
 
   /**
+   * @todo Probably this method is not necessary any more.
+   */
+  public static function phpUnitSuiteNameToNamespace(string $suitName): string {
+    return StaticStringy::upperCamelize($suitName);
+  }
+
+  /**
    * @param \Consolidation\AnnotatedCommand\CommandError[] $commandErrors
    */
   public static function aggregateCommandErrors(array $commandErrors): ?CommandError {
@@ -247,6 +255,81 @@ class Utils {
       'push-to-checkout',
       'update',
     ];
+  }
+
+  public static function splitPackageName(string $packageName): array {
+    $parts = explode('/', $packageName, 2);
+    if (count($parts) === 1) {
+      array_unshift($parts, 'drupal');
+    }
+
+    return [
+      'vendor' => $parts[0],
+      'name' => $parts[1],
+    ];
+  }
+
+  public static function phpErrorAll(string $phpVersion): int {
+    if (mb_strpos($phpVersion, '.') !== FALSE) {
+      $phpVersionParts = explode('.', $phpVersion) + [1 => '0'];
+      if (count($phpVersionParts) > 2) {
+        $phpVersion = $phpVersionParts[0] . '.' . $phpVersionParts[1];
+      }
+    }
+    else {
+      $phpVersion = StaticStringy::ensureLeft($phpVersion, '0');
+      $phpVersion = mb_substr($phpVersion, 0, 4);
+    }
+
+    switch ($phpVersion) {
+      case '0701':
+      case '7.1':
+      case '0702':
+      case '7.2':
+      case '0703':
+      case '7.3':
+        return 32767;
+    }
+
+    return E_ALL;
+  }
+
+  public static function dbUrl(array $connection): string {
+    if ($connection['driver'] === 'sqlite') {
+      return 'sqlite://' . $connection['database'];
+    }
+
+    $url = $connection['driver'] . '://';
+
+    if (!empty($connection['username'])) {
+      $url .= urlencode($connection['username']);
+
+      if (!empty($connection['password'])) {
+        $url .= ':' . urlencode($connection['password']);
+      }
+
+      $url .= '@';
+    }
+
+    $url .= $connection['host'];
+    if (!empty($connection['port'])) {
+      $url .= ':' . $connection['port'];
+    }
+
+    if (!empty($connection['database'])) {
+      $url .= '/' . $connection['database'];
+    }
+
+    if (!empty($connection['prefix'])) {
+      if (!empty($connection['prefix']['default'])) {
+        $url .= '#' . $connection['prefix']['default'];
+      }
+      elseif (is_string($connection['prefix'])) {
+        $url .= '#' . $connection['prefix'];
+      }
+    }
+
+    return $url;
   }
 
 }

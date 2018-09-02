@@ -99,44 +99,57 @@ class RubyAndBundleDetectorTask extends BaseTask implements BuilderAwareInterfac
     $this->assets['rubyExecutable'] = '';
     $this->assets['bundleExecutable'] = 'bundle';
 
-    $bundlePlatformRubyVersionResult = $this
+    $rubyVersionBase = $this->getRubyVersionBaseWithBundlePlatform();
+    if (!$rubyVersionBase) {
+      $rubyVersionBase = $this->getRubyVersionBaseWithRvmDetect();
+    }
+
+    if (!$rubyVersionBase) {
+      return $this;
+    }
+
+    $rvmInfo = $this->getRvmInfo([$rubyVersionBase]);
+    $firstInstance = reset($rvmInfo);
+    if ($firstInstance) {
+      $this->assets['rubyExecutable'] = $firstInstance['binaries']['ruby'] ?? '';
+      $this->assets['bundleExecutable'] = !empty($firstInstance['homes']['gem']) ?
+        "{$firstInstance['homes']['gem']}/bin/bundle"
+        : 'bundle';
+    }
+
+    return $this;
+  }
+
+  protected function getRubyVersionBaseWithBundlePlatform(): string {
+    $result = $this
       ->taskBundlePlatformRubyVersion()
       ->setWorkingDirectory($this->options['workingDirectory']['value'])
       ->setAssetNamePrefix('ruby-version.')
       ->run()
       ->stopOnFail();
 
-    $rubyVersionOriginal = $bundlePlatformRubyVersionResult['ruby-version.original'] ?? '';
-    if (!$rubyVersionOriginal) {
-      $rvmDetectRubyVersionResult = $this
-        ->taskRvmDetectRubyVersion()
-        ->setWorkingDirectory($this->options['workingDirectory']['value'])
-        ->setRootDirectory($this->options['rootDirectory']['value'])
-        ->run()
-        ->stopOnFail();
+    return $result['ruby-version.base'] ?? '';
+  }
 
-      $rubyVersionOriginal = $rvmDetectRubyVersionResult['ruby-version'] ?? '';
-    }
-
-    if (!$rubyVersionOriginal) {
-      return $this;
-    }
-
-    $rvmInfoResult = $this
-      ->taskRvmInfo()
-      ->setRubyStrings([$rubyVersionOriginal])
+  protected function getRubyVersionBaseWithRvmDetect(): string {
+    $result = $this
+      ->taskRvmDetectRubyVersion()
+      ->setWorkingDirectory($this->options['workingDirectory']['value'])
+      ->setRootDirectory($this->options['rootDirectory']['value'])
       ->run()
       ->stopOnFail();
 
-    if (!empty($rvmInfoResult['rvm.info'])) {
-      $firstInstance = reset($rvmInfoResult['rvm.info']);
-      $this->assets['rubyExecutable'] = $firstInstance['binaries']['ruby'] ?? '';
-      $this->assets['bundleExecutable'] = !empty($firstInstance['homes']['gem']) ?
-        $firstInstance['homes']['gem'] . '/bin/bundle'
-        : 'bundle';
-    }
+    return $result['ruby-version'] ?? '';
+  }
 
-    return $this;
+  protected function getRvmInfo(array $rubyStrings): array {
+    $rvmInfoResult = $this
+      ->taskRvmInfo()
+      ->setRubyStrings($rubyStrings)
+      ->run()
+      ->stopOnFail();
+
+    return $rvmInfoResult['rvm.info'] ?? [];
   }
 
 }
