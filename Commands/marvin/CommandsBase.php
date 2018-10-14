@@ -66,6 +66,7 @@ class CommandsBase extends Tasks implements ConfigAwareInterface, CustomEventAwa
 
   /**
    * @todo This is not bullet proof, but good enough.
+   * @todo Cache.
    */
   protected function getProjectRootDir(): string {
     // This method called from the __constructor() and the $this->config is not

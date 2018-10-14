@@ -269,25 +269,27 @@ class Utils {
     ];
   }
 
-  public static function phpErrorAll(string $phpVersion): int {
-    if (mb_strpos($phpVersion, '.') !== FALSE) {
-      $phpVersionParts = explode('.', $phpVersion) + [1 => '0'];
-      if (count($phpVersionParts) > 2) {
-        $phpVersion = $phpVersionParts[0] . '.' . $phpVersionParts[1];
-      }
-    }
-    else {
-      $phpVersion = StaticStringy::ensureLeft($phpVersion, '0');
-      $phpVersion = mb_substr($phpVersion, 0, 4);
+  public static function phpVersionToPhpVersionId(string $phpVersion): string {
+    if (mb_strpos($phpVersion, '.') === FALSE) {
+      return $phpVersion;
     }
 
-    switch ($phpVersion) {
+    $phpVersionParts = explode('.', $phpVersion) + [1 => '0', 2 => 0];
+
+    return sprintf(
+      '%02d%02d%02d',
+      $phpVersionParts[0],
+      $phpVersionParts[1],
+      $phpVersionParts[2]
+    );
+  }
+
+  public static function phpErrorAll(string $phpVersion): int {
+    $phpVersionMajorMinor = mb_substr(static::phpVersionToPhpVersionId($phpVersion), 0, 4);
+    switch ($phpVersionMajorMinor) {
       case '0701':
-      case '7.1':
       case '0702':
-      case '7.2':
       case '0703':
-      case '7.3':
         return 32767;
     }
 
