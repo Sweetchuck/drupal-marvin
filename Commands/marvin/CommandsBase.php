@@ -37,8 +37,22 @@ class CommandsBase extends Tasks implements ConfigAwareInterface, CustomEventAwa
    */
   protected $composerInfo;
 
-  public function __construct() {
-    $this->composerInfo = ComposerInfo::create($this->getProjectRootDir());
+  public function __construct(?ComposerInfo $composerInfo = NULL) {
+    $this->composerInfo = $composerInfo;
+  }
+
+  protected function initComposerInfo() {
+    if (!$this->composerInfo) {
+      $this->composerInfo = ComposerInfo::create($this->getProjectRootDir());
+    }
+
+    return $this;
+  }
+
+  protected function getComposerInfo(): ComposerInfo {
+    return $this
+      ->initComposerInfo()
+      ->composerInfo;
   }
 
   protected static function getClassKey(string $key): string {
@@ -79,14 +93,16 @@ class CommandsBase extends Tasks implements ConfigAwareInterface, CustomEventAwa
   }
 
   protected function makeRelativePathToComposerBinDir(string $fromDirectory): string {
+    $composerInfo = $this->getComposerInfo();
+
     if ($fromDirectory === '.') {
-      return './' . $this->composerInfo['config']['bin-dir'];
+      return './' . $composerInfo['config']['bin-dir'];
     }
 
     $projectRoot = $this->getProjectRootDir();
 
     return Path::makeRelative(
-      Path::join($projectRoot, $this->composerInfo['config']['bin-dir']),
+      Path::join($projectRoot, $composerInfo['config']['bin-dir']),
       $fromDirectory
     );
   }
