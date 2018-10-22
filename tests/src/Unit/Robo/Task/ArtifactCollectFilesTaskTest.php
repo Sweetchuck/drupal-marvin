@@ -10,7 +10,7 @@ use Robo\Robo;
 use Stringy\StaticStringy;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class ReleaseCollectFilesTaskTest extends TestCase {
+class ArtifactCollectFilesTaskTest extends TestCase {
 
   public function casesRunSuccess(): array {
     $cases = [];

@@ -122,13 +122,11 @@
         }
     },
     "autoload-dev": {
-        "psr-0": {
-            "Unish": "vendor/drush/drush/tests/"
-        },
         "psr-4": {
             "Drupal\\Dev\\marvin\\Composer\\": "src-dev/Composer/",
             "Drush\\Commands\\Tests\\marvin\\Unish\\": "tests/src/DrushUnish/",
             "Drush\\Commands\\Tests\\marvin\\Unit\\": "tests/src/DrushUnit/",
+            "Drupal\\Tests\\marvin\\Helper\\": "tests/src/Helper/",
             "Drupal\\Tests\\marvin\\Unit\\": "tests/src/Unit/"
         }
     },

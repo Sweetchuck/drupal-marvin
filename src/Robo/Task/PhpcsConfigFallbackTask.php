@@ -82,7 +82,7 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
       return $this;
     }
 
-    $workingDirectory = $this->getWorkingDirectory() ?? '.';
+    $workingDirectory = $this->getWorkingDirectory() ?: '.';
     $this->assets = $this->getFilePathsByProjectType($workingDirectory);
 
     return $this;

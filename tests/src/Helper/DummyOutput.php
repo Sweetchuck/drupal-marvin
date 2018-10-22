@@ -1,9 +1,14 @@
 <?php
 
-namespace Drush\Commands\Tests\marvin\Helper;
+declare(strict_types = 1);
+
+namespace Drupal\Tests\marvin\Helper;
 
 use Symfony\Component\Console\Output\ConsoleOutput;
 
+/**
+ * @method $this getErrorOutput()
+ */
 class DummyOutput extends ConsoleOutput {
 
   /**
