@@ -2,6 +2,10 @@
 
 namespace Drupal\Tests\marvin\Unit;
 
+use Consolidation\AnnotatedCommand\CommandError;
+use Drupal\marvin\RfcLogLevel;
+use Drupal\marvin\StatusReport\StatusReport;
+use Drupal\marvin\StatusReport\StatusReportEntry;
 use Drupal\marvin\Utils;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
@@ -11,6 +15,47 @@ use Webmozart\PathUtil\Path;
  * @coversDefaultClass \Drupal\marvin\Utils
  */
 class UtilsTest extends TestCase {
+
+  public function casesIsDrupalPackage(): array {
+    return [
+      'module' => [
+        TRUE,
+        [
+          'type' => 'drupal-module',
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesIsDrupalPackage
+   */
+  public function testIsDrupalPackage(bool $expected, array $package): void {
+    $this->assertSame($expected, Utils::isDrupalPackage($package));
+  }
+
+  /**
+   * @backupGlobals
+   */
+  public function testGetComposerJsonFileName(): void {
+    $this->assertSame('composer.json', Utils::getComposerJsonFileName());
+
+    putenv('COMPOSER=foo.json');
+    $this->assertSame('foo.json', Utils::getComposerJsonFileName());
+  }
+
+  public function casesIsValidDrupalExtensionVersionNumber(): array {
+    return [
+      '8.x-1.0' => [TRUE, '8.x-1.0'],
+    ];
+  }
+
+  /**
+   * @dataProvider casesIsValidDrupalExtensionVersionNumber
+   */
+  public function testIsValidDrupalExtensionVersionNumber(bool $expected, string $versionNumber): void {
+    $this->assertSame($expected, Utils::isValidDrupalExtensionVersionNumber($versionNumber));
+  }
 
   public function casesCommandClassNameToConfigIdentifier(): array {
     return [
@@ -160,6 +205,34 @@ class UtilsTest extends TestCase {
     );
   }
 
+  public function casesEscapeYamlValueString(): array {
+    return [
+      'basic' => ["' foo bar '", ' foo bar '],
+    ];
+  }
+
+  /**
+   * @dataProvider casesEscapeYamlValueString
+   */
+  public function testEscapeYamlValueString(string $expected, string $text): void {
+    $this->assertSame($expected, Utils::escapeYamlValueString($text));
+  }
+
+  public function casesEnsureTrailingEol(): array {
+    return [
+      'missing' => ['a' . PHP_EOL, 'a'],
+      'already there' => ['a' . PHP_EOL, 'a' . PHP_EOL],
+    ];
+  }
+
+  /**
+   * @dataProvider casesEnsureTrailingEol
+   */
+  public function testEnsureTrailingEol(string $expected, string $text): void {
+    Utils::ensureTrailingEol($text);
+    $this->assertSame($expected, $text);
+  }
+
   public function casesPhpUnitSuiteNameToNamespace(): array {
     return [
       'unit' => ['Unit', 'unit'],
@@ -174,6 +247,98 @@ class UtilsTest extends TestCase {
    */
   public function testPhpUnitSuiteNameToNamespace($expected, string $suiteName): void {
     $this->assertSame($expected, Utils::phpUnitSuiteNameToNamespace($suiteName));
+  }
+
+  public function casesAggregateCommandErrors(): array {
+    return [
+      'empty' => [
+        NULL,
+        [],
+      ],
+      'basic' => [
+        [
+          'exitCode' => 3,
+          'outputData' => implode(PHP_EOL, ['a', 'b', 'c']),
+        ],
+        [
+          new CommandError('a', 1),
+          new CommandError('b', 3),
+          new CommandError('c', 2),
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesAggregateCommandErrors
+   */
+  public function testAggregateCommandErrors(?array $expected, array $commandErrors): void {
+    $commandError = Utils::aggregateCommandErrors($commandErrors);
+    if ($commandError === NULL) {
+      $this->assertSame($expected, $commandError);
+
+      return;
+    }
+
+    $this->assertSame($expected['exitCode'], $commandError->getExitCode());
+    $this->assertSame($expected['outputData'], $commandError->getOutputData());
+  }
+
+  public function testConvertStatusReportToRowsOfFields(): void {
+    $statusReport = new StatusReport();
+    $expected = [];
+    $actualRowsOfFields = Utils::convertStatusReportToRowsOfFields($statusReport);
+    $this->assertSame($expected, $actualRowsOfFields->getArrayCopy());
+
+    $statusReport->addEntries(
+      (new StatusReportEntry())
+        ->setId('a')
+        ->setSeverity(RfcLogLevel::ERROR)
+        ->setTitle('a-title')
+        ->setDescription('a-description')
+        ->setValue('a-value'),
+      (new StatusReportEntry())
+        ->setId('b')
+        ->setSeverity(RfcLogLevel::WARNING)
+        ->setTitle('b-title')
+        ->setDescription('b-description')
+        ->setValue('b-value')
+    );
+    $expected = [
+      'a' => [
+        'id' => 'a',
+        'title' => '<fg=red>a-title</>',
+        'value' => 'a-value',
+        'description' => 'a-description',
+        'severity' => '<fg=red>3</>',
+        'severityName' => '<fg=red>Error</>',
+      ],
+      'b' => [
+        'id' => 'b',
+        'title' => '<fg=yellow>b-title</>',
+        'value' => 'b-value',
+        'description' => 'b-description',
+        'severity' => '<fg=yellow>4</>',
+        'severityName' => '<fg=yellow>Warning</>',
+      ],
+    ];
+    $actualRowsOfFields = Utils::convertStatusReportToRowsOfFields($statusReport);
+    $this->assertSame($expected, $actualRowsOfFields->getArrayCopy());
+  }
+
+  public function casesFormatTextBySeverity(): array {
+    return [
+      'warning' => ['<fg=yellow>a</>', RfcLogLevel::WARNING, 'a'],
+      'error' => ['<fg=red>b</>', RfcLogLevel::ERROR, 'b'],
+      'unknown' => ['c', 42, 'c'],
+    ];
+  }
+
+  /**
+   * @dataProvider casesFormatTextBySeverity
+   */
+  public function testFormatTextBySeverity(string $expected, int $severity, string $text): void {
+    $this->assertSame($expected, Utils::formatTextBySeverity($severity, $text));
   }
 
   public function casesParseDrupalExtensionVersionNumber(): array {
@@ -319,6 +484,50 @@ class UtilsTest extends TestCase {
    */
   public function testDbUrl($expected, array $connection): void {
     $this->assertSame($expected, Utils::dbUrl($connection));
+  }
+
+  public function casesSplitPackageName(): array {
+    return [
+      'basic' => [
+        [
+          'vendor' => 'a',
+          'name' => 'b',
+        ],
+        'a/b',
+      ],
+      'only name' => [
+        [
+          'vendor' => 'drupal',
+          'name' => 'b',
+        ],
+        'b',
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesSplitPackageName
+   */
+  public function testSplitPackageName($expected, string $packageName): void {
+    $this->assertSame($expected, Utils::splitPackageName($packageName));
+  }
+
+  public function casesPhpErrorAll(): array {
+    return [
+      '7.1' => [E_ALL, '7.1'],
+      '7.2' => [E_ALL, '7.2'],
+      '7.3' => [E_ALL, '7.3'],
+      '701' => [E_ALL, '701'],
+      '702' => [E_ALL, '702'],
+      '703' => [E_ALL, '703'],
+    ];
+  }
+
+  /**
+   * @dataProvider casesPhpErrorAll
+   */
+  public function testPhpErrorAll(int $expected, string $phpVersion) {
+    $this->assertSame($expected, Utils::phpErrorAll($phpVersion));
   }
 
 }
