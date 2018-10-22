@@ -4,11 +4,14 @@ namespace Drupal\marvin\Tests\Unit;
 
 use Drupal\marvin\ComposerInfo;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Error\Error as PHPUnitFrameworkError;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
+use Webmozart\PathUtil\Path;
 
 /**
- * @coversDefaultClass \Drupal\marvin\ComposerInfo<extends>
+ * @covers \Drupal\marvin\ComposerInfo<extended>
  */
 class ComposerInfoTest extends TestCase {
 
@@ -59,7 +62,7 @@ class ComposerInfoTest extends TestCase {
   /**
    * @dataProvider casesGetLockFileName
    */
-  public function testGetLockFileName(string $expected, string $jsonFileName) {
+  public function testGetLockFileName(string $expected, string $jsonFileName): void {
     $baseDir = $this->rootDir->url();
     $ci = ComposerInfo::create($baseDir, $jsonFileName);
     $this->assertEquals(
@@ -88,7 +91,7 @@ class ComposerInfoTest extends TestCase {
   /**
    * @dataProvider casesGetWorkingDirectory
    */
-  public function testGetWorkingDirectory(string $expected, string $jsonFileName) {
+  public function testGetWorkingDirectory(string $expected, string $jsonFileName): void {
     $baseDir = $this->rootDir->url();
     $ci = ComposerInfo::create($baseDir, $jsonFileName);
     $this->assertEquals("vfs:/$expected", $ci->getWorkingDirectory());
@@ -105,7 +108,6 @@ class ComposerInfoTest extends TestCase {
               'bin-dir' => 'vendor/bin',
               'vendor-dir' => 'vendor',
             ],
-
           ],
           'lock' => [
             'packages' => [
@@ -148,28 +150,45 @@ class ComposerInfoTest extends TestCase {
           ],
         ],
       ],
+      'without lock' => [
+        [
+          'json' => [
+            'name' => 'aa/bb',
+            'type' => 'library',
+            'config' => [
+              'bin-dir' => 'vendor/bin',
+              'vendor-dir' => 'vendor',
+            ],
+          ],
+          'lock' => [],
+        ],
+        [
+          'name' => 'aa/bb',
+        ],
+        NULL,
+      ],
     ];
   }
 
   /**
    * @dataProvider casesCreate
    */
-  public function testCreate(array $expected, array $json, array $lock): void {
-    $baseDir = $this->rootDir->url();
-    mkdir("$baseDir/real");
+  public function testCreate(array $expected, array $json, ?array $lock): void {
+    $baseDir = Path::join($this->rootDir->url(), __FUNCTION__, $this->dataName());
+    mkdir($baseDir);
 
-    $jsonFileName = 'real/composer.json';
-    $this->fs->dumpFile("$baseDir/$jsonFileName", json_encode($json));
+    $baseName = 'composer';
+    $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
+    if ($lock !== NULL) {
+      $this->fs->dumpFile("$baseDir/$baseName.lock", json_encode($lock));
+    }
 
-    $lockFileName = 'real/composer.lock';
-    $this->fs->dumpFile("$baseDir/$lockFileName", json_encode($lock));
-
-    $ci = ComposerInfo::create($baseDir, $jsonFileName);
+    $ci = ComposerInfo::create($baseDir, "$baseName.json");
     $this->assertEquals($expected['json'], $ci->getJson());
     $this->assertEquals($expected['lock'], $ci->getLock());
   }
 
-  public function testInstances() {
+  public function testInstances(): void {
     $vfs = vfsStream::setup(
       'instances',
       NULL,
@@ -187,6 +206,112 @@ class ComposerInfoTest extends TestCase {
     $p2 = ComposerInfo::create($vfs->url() . '/p2');
     $this->assertEquals('a', $p1['type']);
     $this->assertEquals('b', $p2['type']);
+  }
+
+  public function casesGetDrupalExtensionInstallDir(): array {
+    return [
+      'empty' => [
+        NULL,
+        'module',
+        [],
+      ],
+      'basic' => [
+        'web/modules/contrib/{name}',
+        'module',
+        [
+          'extra' => [
+            'installer-paths' => [
+              'web/modules/contrib/{name}' => ['type:drupal-module'],
+            ],
+          ],
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesGetDrupalExtensionInstallDir
+   */
+  public function testGetDrupalExtensionInstallDir(?string $expected, string $type, array $json): void {
+    $baseDir = $this->rootDir->url() . '/' . __FUNCTION__ . '/' . $this->dataName();
+    mkdir($baseDir);
+
+    $baseName = 'composer';
+    $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
+
+    $ci = ComposerInfo::create($baseDir, "$baseName.json");
+    $this->assertEquals($expected, $ci->getDrupalExtensionInstallDir($type));
+  }
+
+  public function testOffsetUnset(): void {
+    $json = [
+      'name' => 'a/b',
+    ];
+
+    $baseDir = Path::join($this->rootDir->url(), __FUNCTION__, $this->dataName());
+    mkdir($baseDir);
+
+    $baseName = 'composer';
+    $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
+    $ci = ComposerInfo::create($baseDir, "$baseName.json");
+    $this->assertSame('a/b', $ci['name']);
+    unset($ci['name']);
+    $this->assertNull($ci->name);
+  }
+
+  public function testMagicGet(): void {
+    $json = [];
+
+    $baseDir = Path::join($this->rootDir->url(), __FUNCTION__, $this->dataName());
+    mkdir($baseDir);
+
+    $baseName = 'composer';
+    $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
+    $ci = ComposerInfo::create($baseDir, "$baseName.json");
+
+    $this->assertFalse(isset($ci['name']));
+
+    $this->assertSame(NULL, $ci->name);
+    $this->assertSame(NULL, $ci->packageVendor);
+    $this->assertSame(NULL, $ci->packageName);
+
+    $json['name'] = 'c/d';
+    $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
+    $this->assertSame(NULL, $ci->name);
+    $ci->invalidate();
+    $this->assertSame('c/d', $ci->name);
+    $this->assertSame('c', $ci->packageVendor);
+    $this->assertSame('d', $ci->packageName);
+
+    $ci['name'] = 'e/f';
+    $this->assertSame('e/f', $ci->name);
+    $this->assertSame('e', $ci->packageVendor);
+    $this->assertSame('f', $ci->packageName);
+  }
+
+  public function testMagicGetUnknown(): void {
+    $json = [
+      'name' => 'a/b',
+    ];
+
+    $baseDir = Path::join($this->rootDir->url(), __FUNCTION__, $this->dataName());
+    mkdir($baseDir);
+
+    $baseName = 'composer';
+    $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
+    $ci = ComposerInfo::create($baseDir, "$baseName.json");
+
+    $this->expectException(PHPUnitFrameworkError::class);
+    $this->expectExceptionCode(E_USER_NOTICE);
+    $this->assertNull($ci->{'notExists'});
+  }
+
+  public function testCheckJsonExists(): void {
+    $baseDir = Path::join($this->rootDir->url(), __FUNCTION__, $this->dataName());
+    $ci = ComposerInfo::create($baseDir, "not-exists.json");
+    $this->expectException(FileNotFoundException::class);
+    $this->expectExceptionCode(1);
+    $ci->getJson();
   }
 
 }

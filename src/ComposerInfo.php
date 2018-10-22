@@ -67,7 +67,6 @@ class ComposerInfo implements \ArrayAccess {
    * @var array
    */
   protected $jsonDefault = [
-    'name' => '',
     'type' => 'library',
     'config' => [
       'bin-dir' => 'vendor/bin',
@@ -204,15 +203,16 @@ class ComposerInfo implements \ArrayAccess {
    * @return $this
    */
   protected function initLockReadFile() {
-    if ($this->fs->exists($this->lockFileName)) {
-      $changedTime = filectime($this->lockFileName);
-      if ($changedTime > $this->lockChangedTime) {
-        $this->lock = json_decode(file_get_contents($this->lockFileName), TRUE);
-        $this->lockChangedTime = $changedTime;
-      }
-    }
-    else {
+    if (!$this->fs->exists($this->lockFileName)) {
       $this->lock = [];
+
+      return $this;
+    }
+
+    $changedTime = filectime($this->lockFileName);
+    if ($changedTime > $this->lockChangedTime) {
+      $this->lock = json_decode(file_get_contents($this->lockFileName), TRUE);
+      $this->lockChangedTime = $changedTime;
     }
 
     return $this;
