@@ -44,9 +44,6 @@ class StatusReport implements StatusReportInterface {
    * {@inheritdoc}
    */
   public function getExitCode() {
-    // @todo
-    return 0;
-
     $severity = $this->getHighestSeverity();
 
     return $severity === NULL || $severity > RfcLogLevel::ERROR ? 0 : $severity + 1;
@@ -79,8 +76,6 @@ class StatusReport implements StatusReportInterface {
 
         continue;
       }
-
-      throw new \InvalidArgumentException('@todo', 1);
     }
 
     return $this;
