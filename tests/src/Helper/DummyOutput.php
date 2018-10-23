@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Helper;
 
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
@@ -29,16 +30,11 @@ class DummyOutput extends ConsoleOutput {
   /**
    * {@inheritdoc}
    */
-  public function __construct($config) {
-    parent::__construct($config);
+  public function __construct($verbosity = self::VERBOSITY_NORMAL, $decorated = NULL, OutputFormatterInterface $formatter = NULL, $isStdError = FALSE) {
+    parent::__construct($verbosity, $decorated, $formatter);
     $this->instanceId = static::$instanceCounter++;
 
-    $errorOutput = $this;
-    if (empty($config['stdErr'])) {
-      $config['stdErr'] = TRUE;
-      $errorOutput = new static($config);
-    }
-
+    $errorOutput = $isStdError ? $this : new static($verbosity, $decorated, $formatter, TRUE);
     $this->setErrorOutput($errorOutput);
   }
 

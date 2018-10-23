@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class RfcLogLevelTest extends TestCase {
 
   public function testGetLevels(): void {
-    $this->assertCount(8, RfcLogLevel::getLevels());
+    static::assertCount(8, RfcLogLevel::getLevels());
   }
 
 }

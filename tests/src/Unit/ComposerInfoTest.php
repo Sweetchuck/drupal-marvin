@@ -65,7 +65,7 @@ class ComposerInfoTest extends TestCase {
   public function testGetLockFileName(string $expected, string $jsonFileName): void {
     $baseDir = $this->rootDir->url();
     $ci = ComposerInfo::create($baseDir, $jsonFileName);
-    $this->assertEquals(
+    static::assertEquals(
       "vfs:/$expected",
       $ci->getLockFileName()
     );
@@ -94,7 +94,7 @@ class ComposerInfoTest extends TestCase {
   public function testGetWorkingDirectory(string $expected, string $jsonFileName): void {
     $baseDir = $this->rootDir->url();
     $ci = ComposerInfo::create($baseDir, $jsonFileName);
-    $this->assertEquals("vfs:/$expected", $ci->getWorkingDirectory());
+    static::assertEquals("vfs:/$expected", $ci->getWorkingDirectory());
   }
 
   public function casesCreate(): array {
@@ -184,8 +184,8 @@ class ComposerInfoTest extends TestCase {
     }
 
     $ci = ComposerInfo::create($baseDir, "$baseName.json");
-    $this->assertEquals($expected['json'], $ci->getJson());
-    $this->assertEquals($expected['lock'], $ci->getLock());
+    static::assertEquals($expected['json'], $ci->getJson());
+    static::assertEquals($expected['lock'], $ci->getLock());
   }
 
   public function testInstances(): void {
@@ -204,8 +204,8 @@ class ComposerInfoTest extends TestCase {
 
     $p1 = ComposerInfo::create($vfs->url() . '/p1');
     $p2 = ComposerInfo::create($vfs->url() . '/p2');
-    $this->assertEquals('a', $p1['type']);
-    $this->assertEquals('b', $p2['type']);
+    static::assertEquals('a', $p1['type']);
+    static::assertEquals('b', $p2['type']);
   }
 
   public function casesGetDrupalExtensionInstallDir(): array {
@@ -240,7 +240,7 @@ class ComposerInfoTest extends TestCase {
     $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
 
     $ci = ComposerInfo::create($baseDir, "$baseName.json");
-    $this->assertEquals($expected, $ci->getDrupalExtensionInstallDir($type));
+    static::assertEquals($expected, $ci->getDrupalExtensionInstallDir($type));
   }
 
   public function testOffsetUnset(): void {
@@ -254,9 +254,9 @@ class ComposerInfoTest extends TestCase {
     $baseName = 'composer';
     $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
     $ci = ComposerInfo::create($baseDir, "$baseName.json");
-    $this->assertSame('a/b', $ci['name']);
+    static::assertSame('a/b', $ci['name']);
     unset($ci['name']);
-    $this->assertNull($ci->name);
+    static::assertNull($ci->name);
   }
 
   public function testMagicGet(): void {
@@ -269,24 +269,24 @@ class ComposerInfoTest extends TestCase {
     $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
     $ci = ComposerInfo::create($baseDir, "$baseName.json");
 
-    $this->assertFalse(isset($ci['name']));
+    static::assertFalse(isset($ci['name']));
 
-    $this->assertSame(NULL, $ci->name);
-    $this->assertSame(NULL, $ci->packageVendor);
-    $this->assertSame(NULL, $ci->packageName);
+    static::assertSame(NULL, $ci->name);
+    static::assertSame(NULL, $ci->packageVendor);
+    static::assertSame(NULL, $ci->packageName);
 
     $json['name'] = 'c/d';
     $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
-    $this->assertSame(NULL, $ci->name);
+    static::assertSame(NULL, $ci->name);
     $ci->invalidate();
-    $this->assertSame('c/d', $ci->name);
-    $this->assertSame('c', $ci->packageVendor);
-    $this->assertSame('d', $ci->packageName);
+    static::assertSame('c/d', $ci->name);
+    static::assertSame('c', $ci->packageVendor);
+    static::assertSame('d', $ci->packageName);
 
     $ci['name'] = 'e/f';
-    $this->assertSame('e/f', $ci->name);
-    $this->assertSame('e', $ci->packageVendor);
-    $this->assertSame('f', $ci->packageName);
+    static::assertSame('e/f', $ci->name);
+    static::assertSame('e', $ci->packageVendor);
+    static::assertSame('f', $ci->packageName);
   }
 
   public function testMagicGetUnknown(): void {
@@ -303,7 +303,7 @@ class ComposerInfoTest extends TestCase {
 
     $this->expectException(PHPUnitFrameworkError::class);
     $this->expectExceptionCode(E_USER_NOTICE);
-    $this->assertNull($ci->{'notExists'});
+    static::assertNull($ci->{'notExists'});
   }
 
   public function testCheckJsonExists(): void {

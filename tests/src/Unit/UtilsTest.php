@@ -31,17 +31,17 @@ class UtilsTest extends TestCase {
    * @dataProvider casesIsDrupalPackage
    */
   public function testIsDrupalPackage(bool $expected, array $package): void {
-    $this->assertSame($expected, Utils::isDrupalPackage($package));
+    static::assertSame($expected, Utils::isDrupalPackage($package));
   }
 
   /**
    * @backupGlobals
    */
   public function testGetComposerJsonFileName(): void {
-    $this->assertSame('composer.json', Utils::getComposerJsonFileName());
+    static::assertSame('composer.json', Utils::getComposerJsonFileName());
 
     putenv('COMPOSER=foo.json');
-    $this->assertSame('foo.json', Utils::getComposerJsonFileName());
+    static::assertSame('foo.json', Utils::getComposerJsonFileName());
   }
 
   public function casesIsValidDrupalExtensionVersionNumber(): array {
@@ -54,7 +54,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesIsValidDrupalExtensionVersionNumber
    */
   public function testIsValidDrupalExtensionVersionNumber(bool $expected, string $versionNumber): void {
-    $this->assertSame($expected, Utils::isValidDrupalExtensionVersionNumber($versionNumber));
+    static::assertSame($expected, Utils::isValidDrupalExtensionVersionNumber($versionNumber));
   }
 
   public function casesCommandClassNameToConfigIdentifier(): array {
@@ -80,7 +80,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesCommandClassNameToConfigIdentifier
    */
   public function testCommandClassNameToConfigIdentifier(string $expected, string $className): void {
-    $this->assertEquals(
+    static::assertEquals(
       $expected,
       Utils::commandClassNameToConfigIdentifier($className)
     );
@@ -157,7 +157,7 @@ class UtilsTest extends TestCase {
     $vfs = vfsStream::setup(__FUNCTION__, NULL, $vfsStructure);
     $absoluteDirectory = Path::join($vfs->url(), $relativeDirectory);
 
-    $this->assertEquals($expected, Utils::findFileUpward($fileName, $absoluteDirectory));
+    static::assertEquals($expected, Utils::findFileUpward($fileName, $absoluteDirectory));
   }
 
   public function casesGetDirectDescendantDrupalPhpFiles(): array {
@@ -199,7 +199,7 @@ class UtilsTest extends TestCase {
     $vfs = vfsStream::setup(__FUNCTION__, NULL, $vfsStructure);
     $absoluteDirectory = Path::join($vfs->url(), $relativeDirectory);
 
-    $this->assertSame(
+    static::assertSame(
       $expected,
       Utils::getDirectDescendantDrupalPhpFiles($absoluteDirectory)
     );
@@ -215,7 +215,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesEscapeYamlValueString
    */
   public function testEscapeYamlValueString(string $expected, string $text): void {
-    $this->assertSame($expected, Utils::escapeYamlValueString($text));
+    static::assertSame($expected, Utils::escapeYamlValueString($text));
   }
 
   public function casesEnsureTrailingEol(): array {
@@ -230,7 +230,7 @@ class UtilsTest extends TestCase {
    */
   public function testEnsureTrailingEol(string $expected, string $text): void {
     Utils::ensureTrailingEol($text);
-    $this->assertSame($expected, $text);
+    static::assertSame($expected, $text);
   }
 
   public function casesPhpUnitSuiteNameToNamespace(): array {
@@ -246,7 +246,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesPhpUnitSuiteNameToNamespace
    */
   public function testPhpUnitSuiteNameToNamespace($expected, string $suiteName): void {
-    $this->assertSame($expected, Utils::phpUnitSuiteNameToNamespace($suiteName));
+    static::assertSame($expected, Utils::phpUnitSuiteNameToNamespace($suiteName));
   }
 
   public function casesAggregateCommandErrors(): array {
@@ -275,20 +275,20 @@ class UtilsTest extends TestCase {
   public function testAggregateCommandErrors(?array $expected, array $commandErrors): void {
     $commandError = Utils::aggregateCommandErrors($commandErrors);
     if ($commandError === NULL) {
-      $this->assertSame($expected, $commandError);
+      static::assertSame($expected, $commandError);
 
       return;
     }
 
-    $this->assertSame($expected['exitCode'], $commandError->getExitCode());
-    $this->assertSame($expected['outputData'], $commandError->getOutputData());
+    static::assertSame($expected['exitCode'], $commandError->getExitCode());
+    static::assertSame($expected['outputData'], $commandError->getOutputData());
   }
 
   public function testConvertStatusReportToRowsOfFields(): void {
     $statusReport = new StatusReport();
     $expected = [];
     $actualRowsOfFields = Utils::convertStatusReportToRowsOfFields($statusReport);
-    $this->assertSame($expected, $actualRowsOfFields->getArrayCopy());
+    static::assertSame($expected, $actualRowsOfFields->getArrayCopy());
 
     $statusReport->addEntries(
       (new StatusReportEntry())
@@ -323,7 +323,7 @@ class UtilsTest extends TestCase {
       ],
     ];
     $actualRowsOfFields = Utils::convertStatusReportToRowsOfFields($statusReport);
-    $this->assertSame($expected, $actualRowsOfFields->getArrayCopy());
+    static::assertSame($expected, $actualRowsOfFields->getArrayCopy());
   }
 
   public function casesFormatTextBySeverity(): array {
@@ -338,7 +338,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesFormatTextBySeverity
    */
   public function testFormatTextBySeverity(string $expected, int $severity, string $text): void {
-    $this->assertSame($expected, Utils::formatTextBySeverity($severity, $text));
+    static::assertSame($expected, Utils::formatTextBySeverity($severity, $text));
   }
 
   public function casesParseDrupalExtensionVersionNumber(): array {
@@ -394,7 +394,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesParseDrupalExtensionVersionNumber
    */
   public function testParseDrupalExtensionVersionNumber($expected, $versionNumber): void {
-    $this->assertEquals($expected, Utils::parseDrupalExtensionVersionNumber($versionNumber));
+    static::assertEquals($expected, Utils::parseDrupalExtensionVersionNumber($versionNumber));
   }
 
   public function casesDbUrl(): array {
@@ -483,7 +483,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesDbUrl
    */
   public function testDbUrl($expected, array $connection): void {
-    $this->assertSame($expected, Utils::dbUrl($connection));
+    static::assertSame($expected, Utils::dbUrl($connection));
   }
 
   public function casesSplitPackageName(): array {
@@ -509,7 +509,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesSplitPackageName
    */
   public function testSplitPackageName($expected, string $packageName): void {
-    $this->assertSame($expected, Utils::splitPackageName($packageName));
+    static::assertSame($expected, Utils::splitPackageName($packageName));
   }
 
   public function casesPhpErrorAll(): array {
@@ -527,7 +527,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesPhpErrorAll
    */
   public function testPhpErrorAll(int $expected, string $phpVersion) {
-    $this->assertSame($expected, Utils::phpErrorAll($phpVersion));
+    static::assertSame($expected, Utils::phpErrorAll($phpVersion));
   }
 
 }

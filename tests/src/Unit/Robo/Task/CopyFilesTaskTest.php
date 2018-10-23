@@ -4,18 +4,10 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Unit\Robo\Task;
 
-use Drupal\marvin\Robo\Task\CopyFilesTask;
 use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
-use Robo\Robo;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Debug\BufferingLogger;
 use Symfony\Component\Finder\SplFileInfo;
 
-/**
- * @todo Individual package
- */
-class CopyFilesTaskTest extends TestCase {
+class CopyFilesTaskTest extends TaskTestBase {
 
   public function casesRunSuccess(): array {
     $fileContent = 'a';
@@ -36,7 +28,7 @@ class CopyFilesTaskTest extends TestCase {
         [
           'exitCode' => 0,
           'stdOutput' => '',
-          'logs' => [
+          'logEntries' => [
             [
               'notice',
               '',
@@ -53,7 +45,7 @@ class CopyFilesTaskTest extends TestCase {
         [
           'exitCode' => 0,
           'stdOutput' => '',
-          'logs' => [
+          'logEntries' => [
             [
               'notice',
               '',
@@ -101,9 +93,6 @@ class CopyFilesTaskTest extends TestCase {
    * @dataProvider casesRunSuccess
    */
   public function testRunSuccess(array $expected, array $structure, array $options): void {
-    $container = Robo::createDefaultContainer();
-    Robo::setContainer($container);
-
     $vfs = vfsStream::setup(__FUNCTION__, NULL, $structure);
     $rootDir = $vfs->url();
     if (!empty($options['srcDir'])) {
@@ -122,42 +111,32 @@ class CopyFilesTaskTest extends TestCase {
       unset($options['filesSpl']);
     }
 
-    $mainStdOutput = new BufferedOutput();
-    $logger = new BufferingLogger();
-    $task = new CopyFilesTask();
-    $task->setLogger($logger);
+    $task = $this
+      ->taskBuilder
+      ->taskMarvinCopyFiles($options)
+      ->setContainer($this->container);
 
-    $result = $task
-      ->setOptions($options)
-      ->setOutput($mainStdOutput)
-      ->run();
+    $result = $task->run();
 
     if (array_key_exists('exitCode', $expected)) {
-      $this->assertSame($expected['exitCode'], $result->getExitCode());
+      static::assertSame($expected['exitCode'], $result->getExitCode());
     }
+
+    /** @var \Drupal\Tests\marvin\Helper\DummyOutput $stdOutput */
+    $stdOutput = $this->container->get('output');
 
     if (array_key_exists('stdOutput', $expected)) {
-      $this->assertSame($expected['stdOutput'], $mainStdOutput->fetch());
+      static::assertSame($expected['stdOutput'], $stdOutput->output);
     }
 
-    if (array_key_exists('logs', $expected)) {
-      $actualLogs = $logger->cleanLogs();
-      $this->assertSame(
-        count($expected['logs']),
-        count($actualLogs),
-        'Number of log messages'
-      );
-      for ($i = 0; $i < count($actualLogs); $i++) {
-        $log = $actualLogs[$i];
-        unset($log[2]['task']);
-        $this->assertSame($expected['logs'][$i], $log);
-      }
+    if (array_key_exists('logEntries', $expected)) {
+      static::assertRoboTaskLogEntries($expected['logEntries'], $task->logger()->cleanLogs());
     }
 
     if (!empty($expected['files'])) {
       foreach ($expected['files'] as $fileName => $exists) {
         $fileNameAbsolute = "{$options['dstDir']}/$fileName";
-        $this->assertSame(
+        static::assertSame(
           $exists,
           file_exists($fileNameAbsolute),
           sprintf('file exists: %s; file name: "%s";', var_export($exists), $fileNameAbsolute)

@@ -9,12 +9,12 @@ use Drupal\Tests\marvin\Helper\DummyOutput;
 use Drupal\Tests\marvin\Helper\TaskBuilder;
 use Drush\Config\DrushConfig;
 use Drush\Drush;
-use Drush\Log\Logger as DrushLogger;
 use League\Container\Container as LeagueContainer;
 use PHPUnit\Framework\TestCase;
 use Robo\Collection\CollectionBuilder;
 use Robo\Robo;
 use Symfony\Component\Console\Application as SymfonyApplication;
+use Symfony\Component\Debug\BufferingLogger;
 
 class TaskTestBase extends TestCase {
 
@@ -52,20 +52,28 @@ class TaskTestBase extends TestCase {
     $this->config = (new DrushConfig())
       ->set('drush.vendor-dir', '.');
     $input = NULL;
-    $outputConfig = [];
-    $output = new DummyOutput($outputConfig);
+    $output = new DummyOutput(DummyOutput::VERBOSITY_DEBUG, FALSE, NULL);
 
     $this->container->add('container', $this->container);
     $this->container->add('marvin.utils', MarvinUtils::class);
-    $this->container->add('logger', DrushLogger::class);
 
     Robo::configureContainer($this->container, $application, $this->config, $input, $output);
     Drush::setContainer($this->container);
+    $this->container->share('logger', BufferingLogger::class);
 
     $this->builder = CollectionBuilder::create($this->container, NULL);
     $this->taskBuilder = new TaskBuilder();
     $this->taskBuilder->setContainer($this->container);
     $this->taskBuilder->setBuilder($this->builder);
+  }
+
+  public static function assertRoboTaskLogEntries(array $expected, array $actual) {
+    static::assertSameSize($expected, $actual, 'Number of log messages');
+
+    foreach ($actual as $key => $log) {
+      unset($log[2]['task']);
+      static::assertSame($expected[$key], $log);
+    }
   }
 
 }

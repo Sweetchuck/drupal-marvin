@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Helper;
 
+use Drupal\marvin\Robo\CopyFilesTaskLoader;
 use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
@@ -19,6 +20,10 @@ class TaskBuilder implements BuilderAwareInterface, ContainerAwareInterface {
   use ContainerAwareTrait;
   use StateAwareTrait;
   use TaskIO;
+
+  use CopyFilesTaskLoader {
+    taskMarvinCopyFiles as public;
+  }
 
   use PhpcsConfigFallbackTaskLoader {
     taskMarvinPhpcsConfigFallback as public;

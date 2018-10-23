@@ -91,12 +91,12 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
       ->run();
 
     if (array_key_exists('exitCode', $expected)) {
-      $this->assertSame($expected['exitCode'], $result->getExitCode());
+      static::assertSame($expected['exitCode'], $result->getExitCode());
     }
 
     if (array_key_exists('assets', $expected)) {
       foreach ($expected['assets'] as $key => $value) {
-        $this->assertSame(
+        static::assertSame(
           $expected['assets'][$key],
           $result[$key],
           "result.assets.$key"
@@ -106,6 +106,27 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
   }
 
   public function testRunSuccessSkip(): void {
+    $expected = [
+      'exitCode' => 0,
+      'stdOutput' => '',
+      'logEntries' => [
+        [
+          'notice',
+          '',
+          [
+            'name' => 'Marvin - PHP_CodeSniffer config fallback',
+          ],
+        ],
+        [
+          'debug',
+          'The PHPCS config is already available from state data.',
+          [
+            'name' => 'Marvin - PHP_CodeSniffer config fallback',
+          ],
+        ],
+      ],
+    ];
+
     $stateData = [
       'my.files' => [
         'a.php' => TRUE,
@@ -125,16 +146,13 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
       ->setAssetNamePrefix('my.')
       ->run();
 
-    $this->assertSame(0, $result->getExitCode());
-    $this->assertSame($stateData['my.files'], $state['my.files']);
-    $this->assertSame($stateData['my.exclude-patterns'], $state['my.exclude-patterns']);
+    static::assertSame($expected['exitCode'], $result->getExitCode());
+    static::assertSame($stateData['my.files'], $state['my.files']);
+    static::assertSame($stateData['my.exclude-patterns'], $state['my.exclude-patterns']);
 
-    /** @var \Drupal\Tests\marvin\Helper\DummyOutput $output */
-    $output = $this->container->get('output');
-    $this->assertContains(
-      'The PHPCS config is already available from state data.',
-      $output->getErrorOutput()->output
-    );
+    if (array_key_exists('logEntries', $expected)) {
+      static::assertRoboTaskLogEntries($expected['logEntries'], $task->logger()->cleanLogs());
+    }
   }
 
 }

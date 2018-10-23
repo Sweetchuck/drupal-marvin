@@ -55,41 +55,41 @@ class StatusReportTest extends TestCase {
     $entryD = StatusReportEntry::__set_state($expected['d']);
 
     $sr = new StatusReport();
-    $this->assertSame([], $sr->jsonSerialize());
-    $this->assertSame(NULL, $sr->getHighestSeverity());
-    $this->assertSame(0, $sr->count());
+    static::assertSame([], $sr->jsonSerialize());
+    static::assertSame(NULL, $sr->getHighestSeverity());
+    static::assertSame(0, $sr->count());
 
     $sr->addEntries($entryA, $entryB, $entryC, $entryD);
     /** @var \Drupal\marvin\StatusReport\StatusReportEntryInterface $entry */
     foreach ($sr as $entryId => $entry) {
-      $this->assertSame($expected[$entryId], $entry->jsonSerialize());
+      static::assertSame($expected[$entryId], $entry->jsonSerialize());
     }
 
-    $this->assertSame($expected, $sr->jsonSerialize());
-    $this->assertSame($expected, $sr->getOutputData());
-    $this->assertSame(4, $sr->count());
-    $this->assertSame(3, $sr->getExitCode());
-    $this->assertSame(2, $sr->getHighestSeverity());
+    static::assertSame($expected, $sr->jsonSerialize());
+    static::assertSame($expected, $sr->getOutputData());
+    static::assertSame(4, $sr->count());
+    static::assertSame(3, $sr->getExitCode());
+    static::assertSame(2, $sr->getHighestSeverity());
 
     $sr->removeEntries('b');
     unset($expected['b']);
-    $this->assertSame($expected, $sr->jsonSerialize());
-    $this->assertSame(3, $sr->count());
-    $this->assertSame(3, $sr->getExitCode());
-    $this->assertSame(2, $sr->getHighestSeverity());
+    static::assertSame($expected, $sr->jsonSerialize());
+    static::assertSame(3, $sr->count());
+    static::assertSame(3, $sr->getExitCode());
+    static::assertSame(2, $sr->getHighestSeverity());
 
     $sr->removeEntries($entryC, 'd');
     unset($expected['c'], $expected['d']);
-    $this->assertSame($expected, $sr->jsonSerialize());
-    $this->assertSame(1, $sr->count());
-    $this->assertSame(0, $sr->getExitCode());
-    $this->assertSame(5, $sr->getHighestSeverity());
+    static::assertSame($expected, $sr->jsonSerialize());
+    static::assertSame(1, $sr->count());
+    static::assertSame(0, $sr->getExitCode());
+    static::assertSame(5, $sr->getHighestSeverity());
 
     $sr->removeAllEntries();
-    $this->assertSame([], $sr->jsonSerialize());
-    $this->assertSame(0, $sr->count());
-    $this->assertSame(0, $sr->getExitCode());
-    $this->assertSame(NULL, $sr->getHighestSeverity());
+    static::assertSame([], $sr->jsonSerialize());
+    static::assertSame(0, $sr->count());
+    static::assertSame(0, $sr->getExitCode());
+    static::assertSame(NULL, $sr->getHighestSeverity());
   }
 
 }

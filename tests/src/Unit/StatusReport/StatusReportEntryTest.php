@@ -29,10 +29,10 @@ class StatusReportEntryTest extends TestCase {
       ->setDescription('d')
       ->setSeverity(5);
 
-    $this->assertSame($expected, $entry->jsonSerialize());
+    static::assertSame($expected, $entry->jsonSerialize());
 
     $entry = StatusReportEntry::__set_state($expected);
-    $this->assertSame($expected, $entry->jsonSerialize());
+    static::assertSame($expected, $entry->jsonSerialize());
   }
 
 }

@@ -64,7 +64,7 @@ class ArtifactCollectFilesTaskTest extends TestCase {
 
     sort($expected);
     sort($actual);
-    $this->assertEquals($expected, $actual);
+    static::assertSame($expected, $actual);
   }
 
   protected function getDrupalExtensionFiles(string $name, string $type): array {
