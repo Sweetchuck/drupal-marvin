@@ -4,6 +4,9 @@ namespace Drupal\marvin\Robo;
 
 use Drupal\marvin\Robo\Task\ScssLintConfigFallbackTask;
 
+/**
+ * @deprecated Use a NodeJS based SCSS linter and compiler instead.
+ */
 trait ScssLintConfigFallbackTaskLoader {
 
   /**

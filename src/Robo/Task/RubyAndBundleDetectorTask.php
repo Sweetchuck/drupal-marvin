@@ -9,6 +9,9 @@ use Robo\Contract\BuilderAwareInterface;
 use Sweetchuck\Robo\Bundler\BundlerTaskLoader;
 use Sweetchuck\Robo\Rvm\RvmTaskLoader;
 
+/**
+ * @deprecated Use a NodeJS based SCSS linter and compiler instead.
+ */
 class RubyAndBundleDetectorTask extends BaseTask implements BuilderAwareInterface {
 
   use BuilderAwareTrait;

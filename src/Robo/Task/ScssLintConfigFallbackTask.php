@@ -6,6 +6,9 @@ use Drupal\marvin\Utils;
 use Robo\State\StateAwareInterface;
 use Robo\State\StateAwareTrait;
 
+/**
+ * @deprecated Use a NodeJS based SCSS linter and compiler instead.
+ */
 class ScssLintConfigFallbackTask extends BaseTask implements StateAwareInterface {
 
   use StateAwareTrait;

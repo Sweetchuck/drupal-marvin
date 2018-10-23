@@ -2,15 +2,10 @@
 
 namespace Drupal\Tests\marvin\Unit\Robo\Task;
 
-use Drupal\marvin\Robo\Task\ArtifactCollectFilesTask;
 use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
-use Robo\Config\Config;
-use Robo\Robo;
 use Stringy\StaticStringy;
-use Symfony\Component\Console\Output\BufferedOutput;
 
-class ArtifactCollectFilesTaskTest extends TestCase {
+class ArtifactCollectFilesTaskTest extends TaskTestBase {
 
   public function casesRunSuccess(): array {
     $cases = [];
@@ -26,33 +21,16 @@ class ArtifactCollectFilesTaskTest extends TestCase {
    * @dataProvider casesRunSuccess
    */
   public function testRunSuccess(array $expected, array $structure): void {
-    $container = Robo::createDefaultContainer();
-    Robo::setContainer($container);
-
     $vfs = vfsStream::setup(__FUNCTION__, NULL, $structure);
-    $mainStdOutput = new BufferedOutput();
-    $config = new Config([
-      'command' => [
-        'marvin' => [
-          'settings' => [
-            'buildDir' => 'build',
-          ],
-        ],
-      ],
-    ]);
+    $this->config->set('command.marvin.settings.buildDir', 'build');
 
-    $task = new ArtifactCollectFilesTask();
-    $task
-      ->setOptions([
-        'composerJsonFileName' => 'composer.json',
-        'packagePath' => $vfs->url(),
-      ])
-      ->setLogger($container->get('logger'));
+    $options = [
+      'composerJsonFileName' => 'composer.json',
+      'packagePath' => $vfs->url(),
+    ];
 
-    $result = $task
-      ->setConfig($config)
-      ->setOutput($mainStdOutput)
-      ->run();
+    $task = $this->taskBuilder->taskMarvinArtifactCollectFiles($options);
+    $result = $task->run();
 
     $actual = [];
     /** @var \Symfony\Component\Finder\SplFileInfo $file */

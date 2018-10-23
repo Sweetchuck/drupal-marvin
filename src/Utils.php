@@ -171,6 +171,25 @@ class Utils {
     return rtrim(mb_substr(Yaml::dump(['a' => $text]), 3));
   }
 
+  public static function changeVersionNumberInYaml(string $yamlString, string $versionNumber): string {
+    // Yaml::parse() and Yaml::dump() strips the comments.
+    $escapedVersionNumber = Utils::escapeYamlValueString($versionNumber);
+
+    $value = Yaml::parse($yamlString);
+    if (array_key_exists('version', $value)) {
+      // @todo This does not work with "version: |" and "version: >".
+      return preg_replace(
+        '/(?=version: ).+/sm',
+        $escapedVersionNumber . PHP_EOL,
+        $yamlString
+      );
+    }
+
+    static::ensureTrailingEol($yamlString);
+
+    return $yamlString . "version: $escapedVersionNumber" . PHP_EOL;
+  }
+
   public static function ensureTrailingEol(string &$text): void {
     if (!preg_match('/[\r\n]$/u', $text)) {
       $text .= PHP_EOL;

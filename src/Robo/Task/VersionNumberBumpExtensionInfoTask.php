@@ -4,10 +4,9 @@ declare(strict_types = 1);
 
 namespace Drupal\marvin\Robo\Task;
 
-use Drupal\marvin\Utils;
+use Drupal\marvin\Utils as MarvinUtils;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Yaml\Yaml;
 
 class VersionNumberBumpExtensionInfoTask extends BaseTask {
 
@@ -214,7 +213,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
       );
     }
 
-    if (!Utils::isValidDrupalExtensionVersionNumber($versionNumber)) {
+    if (!MarvinUtils::isValidDrupalExtensionVersionNumber($versionNumber)) {
       // @todo Give a hint what's the problem with given version number.
       throw new \InvalidArgumentException(
         sprintf('The version number "%s" is invalid.', $versionNumber),
@@ -234,6 +233,9 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
       ->runActionComposerJson();
   }
 
+  /**
+   * @return $this
+   */
   protected function runActionExtensionInfo() {
     if (!$this->options['bumpExtensionInfo']['value']) {
       $this->printTaskDebug('Skip version number bumping in *.info.yml files.');
@@ -250,13 +252,16 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     foreach ($files as $file) {
       $this->fs->dumpFile(
         $file->getPathname(),
-        $this->changeVersionNumberInYaml($file->getContents(), $this->options['versionNumber']['value'])
+        MarvinUtils::changeVersionNumberInYaml($file->getContents(), $this->options['versionNumber']['value'])
       );
     }
 
     return $this;
   }
 
+  /**
+   * @return $this
+   */
   protected function runActionComposerJson() {
     if (!$this->options['bumpComposerJson']['value']) {
       $this->printTaskDebug('Skip version number bumping in composer.json.');
@@ -265,36 +270,15 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     }
 
     $composerJsonFilePath = "{$this->options['packagePath']['value']}/composer.json";
-    $parts = Utils::parseDrupalExtensionVersionNumber($this->options['versionNumber']['value']);
+    $parts = MarvinUtils::parseDrupalExtensionVersionNumber($this->options['versionNumber']['value']);
     $composerInfo = json_decode(file_get_contents($composerJsonFilePath), TRUE);
     $composerInfo['version'] = "{$parts['extensionMajor']}.{$parts['extensionMinor']}.0";
 
     $jsonString = json_encode($composerInfo, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-    Utils::ensureTrailingEol($jsonString);
+    MarvinUtils::ensureTrailingEol($jsonString);
     $this->fs->dumpFile($composerJsonFilePath, $jsonString);
 
     return $this;
-  }
-
-  /**
-   * @todo Move to Utils.
-   */
-  protected function changeVersionNumberInYaml(string $yamlString, string $versionNumber): string {
-    // Yaml::parse() and Yaml::dump() strips the comments.
-    $escapedVersionNumber = Utils::escapeYamlValueString($versionNumber);
-
-    $value = Yaml::parse($yamlString);
-    if (array_key_exists('version', $value)) {
-      return preg_replace(
-        '/(?=version: ).+/sm',
-        $escapedVersionNumber . PHP_EOL,
-        $yamlString
-      );
-    }
-
-    Utils::ensureTrailingEol($yamlString);
-
-    return $yamlString . "version: $escapedVersionNumber" . PHP_EOL;
   }
 
 }

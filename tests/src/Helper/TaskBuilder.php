@@ -4,9 +4,11 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Helper;
 
+use Drupal\marvin\Robo\ArtifactCollectFilesTaskLoader;
 use Drupal\marvin\Robo\CopyFilesTaskLoader;
 use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
 use Drupal\marvin\Robo\PrepareDirectoryTaskLoader;
+use Drupal\marvin\Robo\VersionNumberTaskLoader;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use Robo\Collection\CollectionBuilder;
@@ -22,6 +24,10 @@ class TaskBuilder implements BuilderAwareInterface, ContainerAwareInterface {
   use StateAwareTrait;
   use TaskIO;
 
+  use ArtifactCollectFilesTaskLoader {
+    taskMarvinArtifactCollectFiles as public;
+  }
+
   use CopyFilesTaskLoader {
     taskMarvinCopyFiles as public;
   }
@@ -32,6 +38,10 @@ class TaskBuilder implements BuilderAwareInterface, ContainerAwareInterface {
 
   use PrepareDirectoryTaskLoader {
     taskMarvinPrepareDirectory as public;
+  }
+
+  use VersionNumberTaskLoader {
+    taskMarvinVersionNumberBumpExtensionInfo as public;
   }
 
   public function collectionBuilder(): CollectionBuilder {
