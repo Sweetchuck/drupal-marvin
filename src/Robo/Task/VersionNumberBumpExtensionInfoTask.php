@@ -101,16 +101,20 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
   public function setOptions(array $options) {
     parent::setOptions($options);
 
+    if (array_key_exists('packagePath', $options)) {
+      $this->setPackagePath($options['packagePath']);
+    }
+
     if (array_key_exists('versionNumber', $options)) {
       $this->setVersionNumber($options['versionNumber']);
     }
 
     if (array_key_exists('bumpExtensionInfo', $options)) {
-      $this->setVersionNumber($options['bumpExtensionInfo']);
+      $this->setBumpExtensionInfo($options['bumpExtensionInfo']);
     }
 
     if (array_key_exists('bumpComposerJson', $options)) {
-      $this->setVersionNumber($options['bumpComposerJson']);
+      $this->setBumpComposerJson($options['bumpComposerJson']);
     }
 
     return $this;

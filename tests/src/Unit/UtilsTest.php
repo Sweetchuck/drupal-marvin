@@ -218,6 +218,123 @@ class UtilsTest extends TestCase {
     static::assertSame($expected, Utils::escapeYamlValueString($text));
   }
 
+  public function casesChangeVersionNumberInYaml(): array {
+    return [
+      'first' => [
+        implode(PHP_EOL, [
+          'version: 8.x-1.1',
+          'type: module',
+          'core: 8.x',
+          '',
+        ]),
+        implode(PHP_EOL, [
+          'version: 8.x-1.0',
+          'type: module',
+          'core: 8.x',
+          '',
+        ]),
+        '8.x-1.1',
+      ],
+      'middle' => [
+        implode(PHP_EOL, [
+          'type: module',
+          'version: 8.x-1.1',
+          'core: 8.x',
+          '',
+        ]),
+        implode(PHP_EOL, [
+          'type: module',
+          'version: 8.x-1.0',
+          'core: 8.x',
+          '',
+        ]),
+        '8.x-1.1',
+      ],
+      'last-eol-yes' => [
+        implode(PHP_EOL, [
+          'type: module',
+          'core: 8.x',
+          'version: 8.x-1.1',
+          '',
+        ]),
+        implode(PHP_EOL, [
+          'type: module',
+          'core: 8.x',
+          'version: 8.x-1.0',
+          '',
+        ]),
+        '8.x-1.1',
+      ],
+      'last-eol-no' => [
+        implode(PHP_EOL, [
+          'type: module',
+          'core: 8.x',
+          'version: 8.x-1.1',
+        ]),
+        implode(PHP_EOL, [
+          'type: module',
+          'core: 8.x',
+          'version: 8.x-1.0',
+        ]),
+        '8.x-1.1',
+      ],
+      'only-eol-yes' => [
+        implode(PHP_EOL, [
+          'version: 8.x-1.1',
+          '',
+        ]),
+        implode(PHP_EOL, [
+          'version: 8.x-1.0',
+          '',
+        ]),
+        '8.x-1.1',
+      ],
+      'only-eol-no' => [
+        implode(PHP_EOL, [
+          'version: 8.x-1.1',
+        ]),
+        implode(PHP_EOL, [
+          'version: 8.x-1.0',
+        ]),
+        '8.x-1.1',
+      ],
+      'missing-eol-yes' => [
+        implode(PHP_EOL, [
+          'type: module',
+          'core: 8.x',
+          'version: 8.x-1.1',
+          '',
+        ]),
+        implode(PHP_EOL, [
+          'type: module',
+          'core: 8.x',
+          '',
+        ]),
+        '8.x-1.1',
+      ],
+      'missing-eol-no' => [
+        implode(PHP_EOL, [
+          'type: module',
+          'core: 8.x',
+          'version: 8.x-1.1',
+          '',
+        ]),
+        implode(PHP_EOL, [
+          'type: module',
+          'core: 8.x',
+        ]),
+        '8.x-1.1',
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesChangeVersionNumberInYaml
+   */
+  public function testChangeVersionNumberInYaml(string $expected, string $yamlString, string $versionNumber): void {
+    static::assertSame($expected, Utils::changeVersionNumberInYaml($yamlString, $versionNumber));
+  }
+
   public function casesEnsureTrailingEol(): array {
     return [
       'missing' => ['a' . PHP_EOL, 'a'],

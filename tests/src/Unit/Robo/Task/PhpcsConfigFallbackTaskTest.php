@@ -7,6 +7,10 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use org\bovigo\vfs\vfsStream;
 use Robo\State\Data as RoboStateData;
 
+/**
+ * @covers \Drupal\marvin\Robo\Task\PhpcsConfigFallbackTask
+ * @covers \Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader
+ */
 class PhpcsConfigFallbackTaskTest extends TaskTestBase {
 
   public function casesRunSuccessCollect(): array {

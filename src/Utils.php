@@ -179,8 +179,8 @@ class Utils {
     if (array_key_exists('version', $value)) {
       // @todo This does not work with "version: |" and "version: >".
       return preg_replace(
-        '/(?=version: ).+/sm',
-        $escapedVersionNumber . PHP_EOL,
+        '/(?<=version: ).+/um',
+        $escapedVersionNumber,
         $yamlString
       );
     }

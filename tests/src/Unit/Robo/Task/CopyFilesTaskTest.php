@@ -7,6 +7,10 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use org\bovigo\vfs\vfsStream;
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * @covers \Drupal\marvin\Robo\Task\CopyFilesTask
+ * @covers \Drupal\marvin\Robo\CopyFilesTaskLoader
+ */
 class CopyFilesTaskTest extends TaskTestBase {
 
   public function casesRunSuccess(): array {

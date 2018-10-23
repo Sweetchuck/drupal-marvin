@@ -5,6 +5,10 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use org\bovigo\vfs\vfsStream;
 use Stringy\StaticStringy;
 
+/**
+ * @covers \Drupal\marvin\Robo\Task\ArtifactCollectFilesTask
+ * @covers \Drupal\marvin\Robo\ArtifactCollectFilesTaskLoader
+ */
 class ArtifactCollectFilesTaskTest extends TaskTestBase {
 
   public function casesRunSuccess(): array {

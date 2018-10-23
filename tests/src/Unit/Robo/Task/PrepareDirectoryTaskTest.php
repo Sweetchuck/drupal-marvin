@@ -7,6 +7,10 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use org\bovigo\vfs\vfsStream;
 use Webmozart\PathUtil\Path;
 
+/**
+ * @covers \Drupal\marvin\Robo\Task\PrepareDirectoryTask
+ * @covers \Drupal\marvin\Robo\PrepareDirectoryTaskLoader
+ */
 class PrepareDirectoryTaskTest extends TaskTestBase {
 
   public function casesRun(): array {
