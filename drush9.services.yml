@@ -17,3 +17,9 @@ services:
     tags:
       -
         name: 'drush.command'
+
+  marvin.status_report.commands:
+    class: 'Drush\Commands\marvin\StatusReport\StatusReportCommands'
+    tags:
+      -
+        name: 'drush.command'
