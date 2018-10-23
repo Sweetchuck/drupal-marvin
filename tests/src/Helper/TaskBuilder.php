@@ -6,6 +6,7 @@ namespace Drupal\Tests\marvin\Helper;
 
 use Drupal\marvin\Robo\CopyFilesTaskLoader;
 use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
+use Drupal\marvin\Robo\PrepareDirectoryTaskLoader;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use Robo\Collection\CollectionBuilder;
@@ -27,6 +28,10 @@ class TaskBuilder implements BuilderAwareInterface, ContainerAwareInterface {
 
   use PhpcsConfigFallbackTaskLoader {
     taskMarvinPhpcsConfigFallback as public;
+  }
+
+  use PrepareDirectoryTaskLoader {
+    taskMarvinPrepareDirectory as public;
   }
 
   public function collectionBuilder(): CollectionBuilder {

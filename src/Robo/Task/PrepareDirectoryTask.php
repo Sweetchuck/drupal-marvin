@@ -97,7 +97,9 @@ class PrepareDirectoryTask extends BaseTask {
     return (new Finder())
       ->in($dir)
       ->depth('== 0')
-      ->ignoreDotFiles(TRUE);
+      ->ignoreVCS(FALSE)
+      ->ignoreDotFiles(FALSE)
+      ->ignoreUnreadableDirs(FALSE);
   }
 
 }
