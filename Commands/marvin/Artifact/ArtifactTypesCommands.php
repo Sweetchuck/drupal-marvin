@@ -98,6 +98,7 @@ class ArtifactTypesCommands extends ArtifactCommandsBase {
     return [
       'weight' => 0,
       'label' => '',
+      'id' => '',
     ];
   }
 

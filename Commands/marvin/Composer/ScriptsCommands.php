@@ -19,7 +19,11 @@ class ScriptsCommands extends CommandsBase {
    * @command marvin:composer:post-install-cmd
    * @hidden
    */
-  public function composerPostInstallCmd() {
+  public function composerPostInstallCmd(
+    array $options = [
+      'dev-mode' => FALSE,
+    ]
+  ) {
     return $this->delegate('post-install-cmd');
   }
 
@@ -29,7 +33,11 @@ class ScriptsCommands extends CommandsBase {
    * @command marvin:composer:post-update-cmd
    * @hidden
    */
-  public function composerPostUpdateCmd() {
+  public function composerPostUpdateCmd(
+    array $options = [
+      'dev-mode' => FALSE,
+    ]
+  ) {
     return $this->delegate('post-update-cmd');
   }
 

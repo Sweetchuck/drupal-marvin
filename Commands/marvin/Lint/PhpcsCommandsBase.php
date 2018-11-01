@@ -2,8 +2,8 @@
 
 namespace Drush\Commands\marvin\Lint;
 
-use Drupal\marvin\ComposerInfo;
 use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
+use Robo\Collection\CollectionBuilder;
 use Robo\Contract\TaskInterface;
 use Sweetchuck\Robo\Git\GitTaskLoader;
 use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
@@ -16,9 +16,9 @@ class PhpcsCommandsBase extends CommandsBase {
   use GitTaskLoader;
 
   /**
-   * @return null|\Robo\Contract\TaskInterface|\Robo\Collection\CollectionBuilder
+   * @return \Robo\Contract\TaskInterface|\Robo\Collection\CollectionBuilder
    */
-  protected function getTaskLintPhpcsExtension(string $workingDirectory): ?TaskInterface {
+  protected function getTaskLintPhpcsExtension(string $workingDirectory): CollectionBuilder {
     $gitHook = $this->getConfig()->get('command.marvin.settings.gitHook');
     $phpcsXml = $this->getPhpcsConfigurationFileName($workingDirectory);
 
@@ -94,7 +94,7 @@ class PhpcsCommandsBase extends CommandsBase {
   }
 
   protected function getTaskPhpcsConfigSetInstalledPaths(string $workingDirectory): TaskInterface {
-    $composerInfo = ComposerInfo::create();
+    $composerInfo = $this->getComposerInfo();
     $binDir = $composerInfo['config']['bin-dir'];
     $vendorDir = $composerInfo['config']['vendor-dir'];
     $vendorDirAbs = Path::makeAbsolute($vendorDir, $workingDirectory);

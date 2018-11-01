@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Unit\Robo\Task;
 
+use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
 use Robo\State\Data as RoboStateData;
 
@@ -28,6 +29,45 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
             'name' => 'a/b',
             'type' => 'library',
           ]),
+        ],
+      ],
+      'type.drupal-project' => [
+        [
+          'exitCode' => 0,
+          'assets' => [
+            'files' => [
+              'drush/custom/' => TRUE,
+              'docroot/modules/custom/' => TRUE,
+              'docroot/profiles/custom/' => FALSE,
+              'docroot/themes/custom/' => TRUE,
+              'tests/behat/subcontexts/' => TRUE,
+            ],
+            'exclude-patterns' => [],
+          ],
+        ],
+        [
+          'composer.json' => json_encode([
+            'name' => 'drupal/project_01',
+            'type' => 'drupal-project',
+          ]),
+          'drush' => [
+            'custom' => [
+              'foo' => [],
+            ],
+          ],
+          'docroot' => [
+            'modules' => [
+              'custom' => [],
+            ],
+            'themes' => [
+              'custom' => [],
+            ],
+          ],
+          'tests' => [
+            'behat' => [
+              'subcontexts' => [],
+            ],
+          ],
         ],
       ],
       'type.drupal-module' => [

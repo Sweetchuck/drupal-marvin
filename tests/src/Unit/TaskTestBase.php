@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Drupal\Tests\marvin\Unit\Robo\Task;
+namespace Drupal\Tests\marvin\Unit;
 
 use Drupal\marvin\Utils as MarvinUtils;
 use Drupal\Tests\marvin\Helper\DummyOutput;

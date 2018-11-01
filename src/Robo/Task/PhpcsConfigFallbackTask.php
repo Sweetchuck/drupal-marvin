@@ -98,7 +98,14 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
     switch ($composerInfo['type']) {
       case 'project':
       case 'drupal-project':
-        // @todo
+        // @todo Read drupalRootDir from the config.
+        $drupalRootDir = 'docroot';
+        $filePaths['files']['drush/custom/'] = TRUE;
+        $filePaths['files']["$drupalRootDir/modules/custom/"] = TRUE;
+        $filePaths['files']["$drupalRootDir/profiles/custom/"] = TRUE;
+        $filePaths['files']["$drupalRootDir/themes/custom/"] = TRUE;
+        $filePaths['files']["tests/behat/subcontexts/"] = TRUE;
+        // @todo Add exclude-patterns - node_modules, vendor.
         break;
 
       case 'drupal-module':

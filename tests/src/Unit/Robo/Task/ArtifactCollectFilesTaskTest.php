@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\marvin\Unit\Robo\Task;
 
+use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
 use Stringy\StaticStringy;
 

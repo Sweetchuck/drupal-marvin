@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Drupal\Tests\marvin\Unit\Robo\Task;
 
 use Drupal\marvin\Robo\Task\VersionNumberBumpExtensionInfoTask;
+use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
 use Webmozart\PathUtil\Path;
 

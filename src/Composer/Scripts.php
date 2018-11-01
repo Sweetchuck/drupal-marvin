@@ -42,6 +42,11 @@ class Scripts {
       'drush',
       escapeshellcmd("marvin:composer:$hook"),
     ];
+
+    if (static::$event->isDevMode()) {
+      $cmdPattern .= ' --dev-mode';
+    }
+
     $process = new Process(vsprintf($cmdPattern, $cmdArgs));
 
     $exitCode = $process->run(static::$processCallbackWrapper);
