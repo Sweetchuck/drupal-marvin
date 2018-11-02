@@ -49,6 +49,11 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
           'composer.json' => json_encode([
             'name' => 'drupal/project_01',
             'type' => 'drupal-project',
+            'extra' => [
+              'installer-paths' => [
+                'docroot/core' => ['type:drupal-core'],
+              ],
+            ],
           ]),
           'drush' => [
             'custom' => [

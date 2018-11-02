@@ -353,4 +353,18 @@ class Utils {
     return $url;
   }
 
+  /**
+   * @todo This could be a method on the ComposerInfo class.
+   */
+  public static function detectDrupalRootDir(ComposerInfo $composerInfo): string {
+    $installerPaths = $composerInfo['extra']['installer-paths'] ?? [];
+    foreach ($installerPaths as $installDir => $rules) {
+      if (in_array('drupal/core', $rules) || in_array('type:drupal-core', $rules)) {
+        return dirname($installDir);
+      }
+    }
+
+    return $composerInfo['config']['vendor-dir'] . '/drupal';
+  }
+
 }

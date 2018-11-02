@@ -3,6 +3,7 @@
 namespace Drupal\Tests\marvin\Unit;
 
 use Consolidation\AnnotatedCommand\CommandError;
+use Drupal\marvin\ComposerInfo;
 use Drupal\marvin\RfcLogLevel;
 use Drupal\marvin\StatusReport\StatusReport;
 use Drupal\marvin\StatusReport\StatusReportEntry;
@@ -75,8 +76,6 @@ class UtilsTest extends TestCase {
   }
 
   /**
-   * @covers ::commandClassNameToConfigIdentifier
-   *
    * @dataProvider casesCommandClassNameToConfigIdentifier
    */
   public function testCommandClassNameToConfigIdentifier(string $expected, string $className): void {
@@ -645,6 +644,52 @@ class UtilsTest extends TestCase {
    */
   public function testPhpErrorAll(int $expected, string $phpVersion) {
     static::assertSame($expected, Utils::phpErrorAll($phpVersion));
+  }
+
+  public function casesDetectDrupalRootDir(): array {
+    return [
+      'empty' => [
+        'vendor/drupal',
+        [],
+      ],
+      'type:drupal-core' => [
+        'a/b',
+        [
+          'extra' => [
+            'installer-paths' => [
+              'a/b/core' => ['type:drupal-core'],
+            ],
+          ],
+        ],
+      ],
+      'name:drupal/core' => [
+        'a/b',
+        [
+          'extra' => [
+            'installer-paths' => [
+              'a/b/core' => ['drupal/core'],
+            ],
+          ],
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesDetectDrupalRootDir
+   */
+  public function testDetectDrupalRootDir(string $expected, array $json): void {
+    $vfsStructure = [
+      'composer.json' => json_encode($json),
+    ];
+
+    $vfs = vfsStream::setup(
+      __FUNCTION__ . '.' . $this->dataName(),
+      NULL,
+      $vfsStructure
+    );
+    $composerInfo = ComposerInfo::create($vfs->url(), 'composer.json');
+    static::assertSame($expected, Utils::detectDrupalRootDir($composerInfo));
   }
 
 }

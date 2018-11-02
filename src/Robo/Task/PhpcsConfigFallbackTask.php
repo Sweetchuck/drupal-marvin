@@ -95,11 +95,12 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
       'files' => [],
       'exclude-patterns' => [],
     ];
+
+    // @todo Refactor, because this is conceptually wrong.
     switch ($composerInfo['type']) {
       case 'project':
       case 'drupal-project':
-        // @todo Read drupalRootDir from the config.
-        $drupalRootDir = 'docroot';
+        $drupalRootDir = MarvinUtils::detectDrupalRootDir($composerInfo) ?: '.';
         $filePaths['files']['drush/custom/'] = TRUE;
         $filePaths['files']["$drupalRootDir/modules/custom/"] = TRUE;
         $filePaths['files']["$drupalRootDir/profiles/custom/"] = TRUE;
