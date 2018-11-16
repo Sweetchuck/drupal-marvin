@@ -44,6 +44,7 @@ command:
       rubyExecutable: ''
       bundleExecutable: ''
 
+      # @todo Remove command.marvin.settings.database.
       database:
         variant: {}
           #my0506:

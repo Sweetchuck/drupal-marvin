@@ -9,6 +9,19 @@ use Webmozart\PathUtil\Path;
 class Scripts {
 
   /**
+   * @var string[]
+   */
+  protected static $drushConfigDirs = [
+    'drush/contrib/marvin/Commands',
+    'drush',
+  ];
+
+  /**
+   * @var string[]
+   */
+  protected static $drushIncludeDirs = [];
+
+  /**
    * @var \Composer\Script\Event
    */
   protected static $event;
@@ -30,18 +43,36 @@ class Scripts {
     return static::forwardComposerHookToDrushCommand('post-update-cmd');
   }
 
+  /**
+   * @todo Probably this whole class is not necessary for "marvin_product",
+   * because this can be implemented via
+   * composer.json#scripts.post-install-cmd = drush marvin:composer:X.
+   */
   protected static function forwardComposerHookToDrushCommand(string $hook): bool {
     $composerConfig = static::$event->getComposer()->getConfig();
     $binDirAbs = $composerConfig->get('bin-dir');
     $binDir = Path::makeRelative($binDirAbs, getcwd());
-    $cmdPattern = '%s --config=%s --config=%s %s';
+    $cmdPattern = '%s';
     $cmdArgs = [
       escapeshellcmd("$binDir/drush"),
-      // @todo Dynamically detect the install path from composer.json.
-      'drush/contrib/marvin/Commands',
-      'drush',
-      escapeshellcmd("marvin:composer:$hook"),
     ];
+
+    if (static::$event->getIO()->isDecorated()) {
+      $cmdPattern .= ' --ansi';
+    }
+
+    foreach (static::getDrushConfigDirs() as $drushConfigDir) {
+      $cmdPattern .= ' --config=%s';
+      $cmdArgs[] = escapeshellarg($drushConfigDir);
+    }
+
+    foreach (static::getDrushIncludeDirs() as $drushIncludeDir) {
+      $cmdPattern .= ' --include=%s';
+      $cmdArgs[] = escapeshellarg($drushIncludeDir);
+    }
+
+    $cmdPattern .= ' %s';
+    $cmdArgs[] = escapeshellcmd("marvin:composer:$hook");
 
     if (static::$event->isDevMode()) {
       $cmdPattern .= ' --dev-mode';
@@ -59,6 +90,16 @@ class Scripts {
     static::$processCallbackWrapper = function (string $type, string $buffer) {
       static::processCallback($type, $buffer);
     };
+  }
+
+  protected static function getDrushConfigDirs(): array {
+    // @todo Dynamically detect the install path from composer.json.
+    return static::$drushConfigDirs;
+  }
+
+  protected static function getDrushIncludeDirs(): array {
+    // @todo Dynamically detect the install path from composer.json.
+    return static::$drushIncludeDirs;
   }
 
   protected static function getComposerBinDir(): string {

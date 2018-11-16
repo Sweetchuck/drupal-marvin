@@ -3,17 +3,24 @@
 namespace Drush\Commands\marvin\Lint;
 
 use Drush\Commands\marvin\CommandsBase as MarvinCommandsBase;
-use Robo\Contract\TaskInterface;
+use Robo\Collection\CollectionBuilder;
 
 class ComposerValidateCommandsBase extends MarvinCommandsBase {
 
-  protected function getTaskComposerValidate(string $packagePath): TaskInterface {
-    $composerExecutable = $this->getConfig()->get('command.marvin.settings.composerExecutable', 'composer');
-
+  /**
+   * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Composer\Validate
+   */
+  protected function getTaskComposerValidate(string $packagePath): CollectionBuilder {
     // @todo Relative or absolute path to the composer executable.
     return $this
-      ->taskComposerValidate($composerExecutable)
+      ->taskComposerValidate($this->getComposerExecutable())
       ->dir($packagePath);
+  }
+
+  protected function getComposerExecutable(): string {
+    return $this
+      ->getConfig()
+      ->get('command.marvin.settings.composerExecutable', 'composer');
   }
 
 }
