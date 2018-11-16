@@ -103,6 +103,7 @@
         "sweetchuck/robo-phpunit": "*",
         "sweetchuck/robo-rvm": "dev-master",
         "sweetchuck/robo-scss-lint": "*",
+        "sweetchuck/robo-stringy": "^0.0",
         "sweetchuck/robo-yarn": "*",
         "sweetchuck/utils": "*",
         "symfony/yaml": "^3.4 || ^4.0",

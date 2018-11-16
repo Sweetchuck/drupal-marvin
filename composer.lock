@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1eb798d7c7729b1b02a1b0a2c9ada358",
+    "content-hash": "2656d0620a93fac150c4ca88c71b733d",
     "packages": [
         {
             "name": "chi-teck/drupal-code-generator",
@@ -2208,6 +2208,48 @@
             "transport-options": {
                 "symlink": true
             }
+        },
+        {
+            "name": "sweetchuck/robo-stringy",
+            "version": "v0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sweetchuck/robo-stringy.git",
+                "reference": "6cab7510086ee016ef477a32045c0bb92eb85c73"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sweetchuck/robo-stringy/zipball/6cab7510086ee016ef477a32045c0bb92eb85c73",
+                "reference": "6cab7510086ee016ef477a32045c0bb92eb85c73",
+                "shasum": ""
+            },
+            "require": {
+                "consolidation/robo": "^1.2",
+                "danielstjules/stringy": "^3.1",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "codeception/codeception": "^2.2",
+                "sweetchuck/codeception-module-robo-task-runner": "^0.4.0",
+                "sweetchuck/git-hooks": "^0.0",
+                "sweetchuck/robo-git": "^0.0",
+                "sweetchuck/robo-phpcs": "^0.0",
+                "symfony/finder": "^3.2 || ^4.0",
+                "symfony/yaml": "^3.2 || ^4.0",
+                "webmozart/path-util": "^2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sweetchuck\\Robo\\Stringy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Template to create a new Robo task.",
+            "time": "2018-05-06T12:52:17+00:00"
         },
         {
             "name": "sweetchuck/robo-yarn",
