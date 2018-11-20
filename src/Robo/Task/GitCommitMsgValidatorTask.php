@@ -131,6 +131,7 @@ class GitCommitMsgValidatorTask extends BaseTask implements BuilderAwareInterfac
       ->taskStringy()
       ->callRegexReplace('(^|(\r\n)|(\n\r)|\r|\n)#([^\r\n]*)|$', '')
       ->callTrim("\n\r")
+      ->setAssetNamePrefix('commitMsg.')
       ->deferTaskConfiguration('setString', 'commitMsg');
   }
 
@@ -139,7 +140,7 @@ class GitCommitMsgValidatorTask extends BaseTask implements BuilderAwareInterfac
       $exitCode = 0;
       foreach ($this->getPreparedRules() as $rule) {
         // @todo Pattern validation.
-        if (preg_match($rule['pattern'], $data['commitMsg']) !== 1) {
+        if (preg_match($rule['pattern'], $data['commitMsg.stringy']) !== 1) {
           $logEntry = $this->getRuleErrorLogEntry($rule);
           $this->logger->error($logEntry['message'], $logEntry['context']);
           $exitCode = 1;

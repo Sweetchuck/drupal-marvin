@@ -10,7 +10,7 @@ trait GitCommitMsgValidatorTaskLoader {
   /**
    * @return \Robo\Collection\CollectionBuilder|\Drupal\marvin\Robo\Task\GitCommitMsgValidatorTask
    */
-  protected function taskGitCommitMsgValidator(array $options = []) {
+  protected function taskMarvinGitCommitMsgValidator(array $options = []) {
     /** @var \Drupal\marvin\Robo\Task\GitCommitMsgValidatorTask $task */
     $task = $this->task(GitCommitMsgValidatorTask::class);
 
