@@ -22,7 +22,7 @@ class Utils {
   /**
    * Drupal related composer package types.
    *
-   * @var string[]
+   * @var bool[]
    */
   public static $drupalPackageTypes = [
     'drupal-core' => TRUE,
@@ -292,12 +292,16 @@ class Utils {
     ];
   }
 
+  /**
+   * @todo Do something on empty input.
+   */
   public static function phpVersionToPhpVersionId(string $phpVersion): string {
     if (mb_strpos($phpVersion, '.') === FALSE) {
+      // The input is already a version ID.
       return $phpVersion;
     }
 
-    $phpVersionParts = explode('.', $phpVersion) + [1 => '0', 2 => 0];
+    $phpVersionParts = explode('.', $phpVersion) + [1 => 0, 2 => 0];
 
     return sprintf(
       '%02d%02d%02d',

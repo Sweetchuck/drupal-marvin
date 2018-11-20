@@ -19,12 +19,12 @@ class UtilsTest extends TestCase {
 
   public function casesIsDrupalPackage(): array {
     return [
-      'module' => [
-        TRUE,
-        [
-          'type' => 'drupal-module',
-        ],
-      ],
+      'module' => [TRUE, ['type' => 'drupal-module']],
+      'theme' => [TRUE, ['type' => 'drupal-theme']],
+      'profile' => [TRUE, ['type' => 'drupal-profile']],
+      'drush' => [TRUE, ['type' => 'drupal-drush']],
+      'core' => [TRUE, ['type' => 'drupal-core']],
+      'library' => [FALSE, ['type' => 'library']],
     ];
   }
 
@@ -628,6 +628,22 @@ class UtilsTest extends TestCase {
     static::assertSame($expected, Utils::splitPackageName($packageName));
   }
 
+  public function casesPhpVersionToPhpVersionId(): array {
+    return [
+      'empty' => ['', ''],
+      '070102' => ['070102', '070102'],
+      '0.0.0' => ['000000', '0.0.0'],
+      '7.2.3' => ['070203', '7.2.3'],
+    ];
+  }
+
+  /**
+   * @dataProvider casesPhpVersionToPhpVersionId
+   */
+  public function testPhpVersionToPhpVersionId(string $expected, string $phpVersion): void {
+    static::assertSame($expected, Utils::phpVersionToPhpVersionId($phpVersion));
+  }
+
   public function casesPhpErrorAll(): array {
     return [
       '7.1' => [E_ALL, '7.1'],
@@ -704,6 +720,20 @@ class UtilsTest extends TestCase {
    */
   public function testSemverToDrupal(string $expected, string $core, string $semver): void {
     static::assertSame($expected, Utils::semverToDrupal($core, $semver));
+  }
+
+  public function casesDrupalToSemver(): array {
+    return [
+      'basic' => ['1.0.0', '8.x-1.0'],
+      'pre-release' => ['1.2.0-beta1', '8.x-1.2-beta1'],
+    ];
+  }
+
+  /**
+   * @dataProvider casesDrupalToSemver
+   */
+  public function testDrupalToSemver(string $expected, string $drupalVersion): void {
+    static::assertSame($expected, Utils::drupalToSemver($drupalVersion));
   }
 
   public function casesIncrementSemVersion(): array {

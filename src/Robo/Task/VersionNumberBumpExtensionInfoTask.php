@@ -294,6 +294,10 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     $versionNumber = MarvinUtils::drupalToSemver($this->options['versionNumber']['value']);
     $composerJsonFilePath = "{$this->options['packagePath']['value']}/composer.json";
 
+    if (!$this->fs->exists($composerJsonFilePath)) {
+      return $this;
+    }
+
     $logContext = [
       'versionNumber' => $versionNumber,
       'file' => $composerJsonFilePath,
