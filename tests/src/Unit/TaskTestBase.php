@@ -72,7 +72,7 @@ class TaskTestBase extends TestCase {
 
     foreach ($actual as $key => $log) {
       unset($log[2]['task']);
-      static::assertSame($expected[$key], $log);
+      static::assertSame($expected[$key], $log, "Log entry '$key'");
     }
   }
 

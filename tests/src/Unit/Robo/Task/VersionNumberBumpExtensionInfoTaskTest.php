@@ -16,29 +16,55 @@ use Webmozart\PathUtil\Path;
 class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
 
   public function casesRunSuccess(): array {
+    $taskName = 'Marvin - Bump version number - extension info';
+
     $logEntryHeader = [
       'notice',
       'Bump version number to "<info>{versionNumber}</info>" in "<info>{packagePath}</info>" directory.',
       [
         'versionNumber' => '8.x-1.1',
         'packagePath' => NULL,
-        'name' => 'Marvin - Bump version number - extension info',
+        'name' => $taskName,
       ],
     ];
 
     $logEntrySkipInfoYaml = [
       'debug',
-      'Skip version number bumping in *.info.yml files.',
+      'Skip update version number to "<info>{versionNumber}</info>" in "<info>{pattern}</info>" files.',
       [
-        'name' => 'Marvin - Bump version number - extension info',
+        'versionNumber' => '',
+        'pattern' => '',
+        'name' => $taskName,
+      ],
+    ];
+
+    $logEntryDoInfoYaml = [
+      'debug',
+      'Update version number to "<info>{versionNumber}</info>" in "<info>{file}</info>" file.',
+      [
+        'versionNumber' => '',
+        'file' => '',
+        'name' => $taskName,
       ],
     ];
 
     $logEntrySkipComposerJson = [
       'debug',
-      'Skip version number bumping in composer.json.',
+      'Skip update version number to "<info>{versionNumber}</info>" in "<info>{file}</info>" file.',
       [
-        'name' => 'Marvin - Bump version number - extension info',
+        'versionNumber' => '',
+        'file' => '',
+        'name' => $taskName,
+      ],
+    ];
+
+    $logEntryDoComposerJson = [
+      'debug',
+      'Update version number to "<info>{versionNumber}</info>" in "<info>{file}</info>" file.',
+      [
+        'versionNumber' => '',
+        'file' => '',
+        'name' => $taskName,
       ],
     ];
 
@@ -80,6 +106,18 @@ class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
           'exitCode' => 0,
           'logEntries' => [
             array_replace_recursive($logEntryHeader, [2 => ['packagePath' => 'vfs://testRunSuccess.all']]),
+            array_replace_recursive($logEntryDoInfoYaml, [
+              2 => [
+                'versionNumber' => '8.x-1.1',
+                'file' => 'vfs://testRunSuccess.all/dummy_m1.info.yml',
+              ],
+            ]),
+            array_replace_recursive($logEntryDoComposerJson, [
+              2 => [
+                'versionNumber' => '1.1.0',
+                'file' => 'vfs://testRunSuccess.all/composer.json',
+              ],
+            ]),
           ],
           'files' => [
             'composer.json' => $composerJsonAfter,
@@ -99,7 +137,18 @@ class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
           'exitCode' => 0,
           'logEntries' => [
             array_replace_recursive($logEntryHeader, [2 => ['packagePath' => 'vfs://testRunSuccess.bumpExtensionInfo.false']]),
-            $logEntrySkipInfoYaml,
+            array_replace_recursive($logEntrySkipInfoYaml, [
+              2 => [
+                'versionNumber' => '8.x-1.1',
+                'pattern' => 'vfs://testRunSuccess.bumpExtensionInfo.false/*.info.yml',
+              ],
+            ]),
+            array_replace_recursive($logEntryDoComposerJson, [
+              2 => [
+                'versionNumber' => '1.1.0',
+                'file' => 'vfs://testRunSuccess.bumpExtensionInfo.false/composer.json',
+              ],
+            ]),
           ],
           'files' => [
             'composer.json' => $composerJsonAfter,
@@ -119,8 +168,23 @@ class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
         [
           'exitCode' => 0,
           'logEntries' => [
-            array_replace_recursive($logEntryHeader, [2 => ['packagePath' => 'vfs://testRunSuccess.bumpComposerJson.false']]),
-            $logEntrySkipComposerJson,
+            array_replace_recursive($logEntryHeader, [
+              2 => [
+                'packagePath' => 'vfs://testRunSuccess.bumpComposerJson.false',
+              ],
+            ]),
+            array_replace_recursive($logEntryDoInfoYaml, [
+              2 => [
+                'versionNumber' => '8.x-1.1',
+                'file' => 'vfs://testRunSuccess.bumpComposerJson.false/dummy_m1.info.yml',
+              ],
+            ]),
+            array_replace_recursive($logEntrySkipComposerJson, [
+              2 => [
+                'versionNumber' => '1.1.0',
+                'file' => 'vfs://testRunSuccess.bumpComposerJson.false/composer.json',
+              ],
+            ]),
           ],
           'files' => [
             'composer.json' => $composerJsonBefore,

@@ -82,14 +82,50 @@ class ArtifactCollectFilesTask extends BaseTask {
     // the hard-coded file patterns.
     // @todo Add extra exclude dirs configuration.
     // @todo This task should be independent from the $this->getConfig().
-    $buildDir = $this->getConfig()->get('command.marvin.settings.buildDir');
+    $artifactDir = $this->getConfig()->get('command.marvin.settings.artifactDir', 'artifact');
+    $artifactDirSafe = preg_quote($artifactDir, '@');
 
     $packagePath = $this->getPackagePath();
     $composerInfo = ComposerInfo::create($packagePath, $this->getComposerJsonFileName());
+
     switch ($composerInfo['type']) {
       case 'project':
       case 'drupal-project':
-        // @todo
+        $docroot = 'docroot';
+        $docrootSafe = preg_quote($docroot, '@');
+
+        $outerSitesDir = 'sites';
+        $outerSitesDirSafe = preg_quote($outerSitesDir, '@');
+
+        $files = (new Finder)
+          ->in($packagePath)
+          ->path("@^{$docrootSafe}/(modules|themes|profiles|libraries)/custom/@")
+          ->notPath("@^{$docrootSafe}/(modules|themes|profiles|libraries)/custom/[^/]+/node_modules/@")
+          ->path("@^drush/Commands/custom/@")
+          ->name('*.yml')
+          ->name('*.twig')
+          ->files();
+        $this
+          ->configFinderGit($files)
+          ->configFinderPhp($files)
+          ->configFinderCss($files, FALSE)
+          ->configFinderJavaScript($files)
+          ->configFinderImages($files)
+          ->configFinderFont($files)
+          ->configFinderOs($files)
+          ->configFinderIde($files);
+        $this->assets['files'][] = $files;
+
+        $files = (new Finder)
+          ->in($packagePath)
+          ->path("@^{$outerSitesDirSafe}/[^/]+/translations/@")
+          ->path("@^{$outerSitesDirSafe}/[^/]+/config/@")
+          ->files();
+        $this->assets['files'][] = $files;
+
+        $this->assets['files'][] = 'drush/drush.yml';
+        $this->assets['files'][] = 'composer.json';
+        $this->assets['files'][] = 'composer.lock';
         break;
 
       case 'drupal-profile':
@@ -99,7 +135,7 @@ class ArtifactCollectFilesTask extends BaseTask {
         $files = (new Finder())
           ->in($packagePath)
           ->files()
-          ->notPath($buildDir)
+          ->notPath("@^{$artifactDirSafe}/@")
           ->name('composer.json')
           ->name('*.md')
           ->name('*.yml')
@@ -108,7 +144,7 @@ class ArtifactCollectFilesTask extends BaseTask {
         $this
           ->configFinderGit($files)
           ->configFinderPhp($files)
-          ->configFinderCss($files)
+          ->configFinderCss($files, TRUE)
           ->configFinderJavaScript($files)
           ->configFinderTypeScript($files)
           ->configFinderImages($files)
@@ -172,15 +208,20 @@ class ArtifactCollectFilesTask extends BaseTask {
   /**
    * @return $this
    */
-  protected function configFinderCss(Finder $finder) {
+  protected function configFinderCss(Finder $finder, bool $withImportable) {
     $finder
       ->name('*.css')
-      ->name('/^_.+\.scss$/')
-      ->name('/^_.+\.sass$/')
       ->notPath('.sass-cache')
       ->notName('config.rb')
       ->notName('.scss-lint.yml')
+      ->notName('scss-lint.yml')
       ->notName('*.css.map');
+
+    if ($withImportable) {
+      $finder
+        ->name('/^_.+\.scss$/')
+        ->name('/^_.+\.sass$/');
+    }
 
     return $this;
   }
@@ -193,6 +234,7 @@ class ArtifactCollectFilesTask extends BaseTask {
       ->name('*.js')
       ->notPath('node_modules')
       ->notName('.npmignore')
+      ->notName('*.js.map')
       ->notName('npm-debug.log')
       ->notName('npm-shrinkwrap.json')
       ->notName('package.json')

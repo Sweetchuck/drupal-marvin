@@ -692,4 +692,42 @@ class UtilsTest extends TestCase {
     static::assertSame($expected, Utils::detectDrupalRootDir($composerInfo));
   }
 
+  public function casesSemverToDrupal(): array {
+    return [
+      'basic' => ['8.x-4.2', '8.x', '4.2.1'],
+      'rc' => ['8.x-4.2-rc5', '8.x', '4.2.1-rc5'],
+    ];
+  }
+
+  /**
+   * @dataProvider casesSemverToDrupal
+   */
+  public function testSemverToDrupal(string $expected, string $core, string $semver): void {
+    static::assertSame($expected, Utils::semverToDrupal($core, $semver));
+  }
+
+  public function casesIncrementSemVersion(): array {
+    return [
+      'major.basic' => ['2.0.0', '1.2.3', 'major'],
+      'minor.basic' => ['1.3.0', '1.2.3', 'minor'],
+      'patch.basic' => ['1.2.4', '1.2.3', 'patch'],
+      'pre.basic-0' => ['1.2.4-alpha1', '1.2.3', 'pre-release'],
+      'pre.basic-1' => ['1.2.3-alpha2', '1.2.3-alpha1', 'pre-release'],
+      'pre.basic-2' => ['1.2.3-alpha.2', '1.2.3-alpha.1', 'pre-release'],
+    ];
+  }
+
+  /**
+   * @dataProvider casesIncrementSemVersion
+   */
+  public function testIncrementSemVersion(string $expected, string $semver, string $fragment): void {
+    static::assertSame($expected, (string) Utils::incrementSemVersion($semver, $fragment));
+  }
+
+  public function testIncrementSemVersionFail(): void {
+    static::expectException(\UnexpectedValueException::class);
+    static::expectExceptionCode(1);
+    Utils::incrementSemVersion('1.2.3', 'not-exists');
+  }
+
 }

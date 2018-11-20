@@ -34,8 +34,10 @@ class ArtifactCollectFilesTaskTest extends TaskTestBase {
       'packagePath' => $vfs->url(),
     ];
 
-    $task = $this->taskBuilder->taskMarvinArtifactCollectFiles($options);
-    $result = $task->run();
+    $result = $this
+      ->taskBuilder
+      ->taskMarvinArtifactCollectFiles($options)
+      ->run();
 
     $actual = [];
     /** @var \Symfony\Component\Finder\SplFileInfo $file */
@@ -47,6 +49,7 @@ class ArtifactCollectFilesTaskTest extends TaskTestBase {
 
     sort($expected);
     sort($actual);
+
     static::assertSame($expected, $actual);
   }
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2656d0620a93fac150c4ca88c71b733d",
+    "content-hash": "ff45a7e1073038646451cbf5623efe92",
     "packages": [
         {
             "name": "chi-teck/drupal-code-generator",
@@ -1881,9 +1881,14 @@
         {
             "name": "sweetchuck/robo-git",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sweetchuck/robo-git.git",
+                "reference": "030a06b08262048d09d7e96a9c76fd9c970f2e29"
+            },
             "dist": {
                 "type": "path",
-                "url": "../../sweetchuck/robo-git",
+                "url": "https://api.github.com/repos/Sweetchuck/robo-git/zipball/030a06b08262048d09d7e96a9c76fd9c970f2e29",
                 "reference": "030a06b08262048d09d7e96a9c76fd9c970f2e29",
                 "shasum": null
             },

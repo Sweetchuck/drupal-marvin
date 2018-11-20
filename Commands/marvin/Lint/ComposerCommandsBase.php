@@ -5,7 +5,7 @@ namespace Drush\Commands\marvin\Lint;
 use Drush\Commands\marvin\CommandsBase as MarvinCommandsBase;
 use Robo\Collection\CollectionBuilder;
 
-class ComposerValidateCommandsBase extends MarvinCommandsBase {
+class ComposerCommandsBase extends MarvinCommandsBase {
 
   /**
    * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Composer\Validate

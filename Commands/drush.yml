@@ -3,6 +3,15 @@ command:
   marvin:
     settings:
       ##
+      # Name of the directory where the generated artifacts should be stored.
+      #
+      # Relative directory path from the project root.
+      #
+      # @var string
+      ##
+      artifactDir: 'artifact'
+
+      ##
       # Name of the directory where every build log should be stored.
       #
       # Relative directory path from the project root.
@@ -32,7 +41,7 @@ command:
       ##
       # @todo
       #
-      # @var string
+      # @var null|string
       ##
       ci: null
 
@@ -40,6 +49,13 @@ command:
       # @var string
       ##
       composerExecutable: 'composer'
+
+      ##
+      # Path to the "git" executable.
+      #
+      # @var string
+      ##
+      gitExecutable: 'git'
 
       rubyExecutable: ''
       bundleExecutable: ''
@@ -161,6 +177,45 @@ command:
               DrupalPractice: true
           ciJenkins:
             failOn: 'never'
+
+    git-hook:
+      commit-msg:
+        settings:
+          rules: {}
+            #customKey01:
+              ##
+              # @var bool
+              ##
+              #enabled: true
+
+              ##
+              # This will be auto-populated from the array key.
+              #
+              # @var string
+              ##
+              #name: 'customKey01'
+
+              ##
+              # RegExp pattern. Required.
+              #
+              # @var string
+              ##
+              #pattern: "/^.+$/u"
+
+              ##
+              # Human readable description.
+              #
+              # @var string
+              ##
+              #description: 'Lorem ipsum.'
+
+              ##
+              # The key is an example for a valid commit message.
+              #
+              # @var bool[]
+              ##
+              #examples:
+              #  'Issue #42 - Something': true
 
     test:
       phpunit:

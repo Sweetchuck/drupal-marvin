@@ -34,7 +34,9 @@ class PhpunitCommandsBase extends CommandsBase {
   }
 
   protected function getPhpUnitExecutable(): string {
-    return $this->composerInfo['config']['bin-dir'] . '/phpunit';
+    $composerInfo = $this->getComposerInfo();
+
+    return $composerInfo['config']['bin-dir'] . '/phpunit';
   }
 
   protected function getTestSuiteNamesByEnvironmentVariant(): ?array {

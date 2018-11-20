@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Drupal\marvin\Robo\Task;
 
 use Drupal\marvin\Utils as MarvinUtils;
+use Stringy\StaticStringy;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -51,6 +52,10 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
   }
 
   /**
+   * Drupal version number.
+   *
+   * Example value: "8.x-1.2".
+   *
    * @return $this
    */
   public function setVersionNumber(string $value) {
@@ -241,22 +246,41 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
    * @return $this
    */
   protected function runActionExtensionInfo() {
+    $packagePath = $this->options['packagePath']['value'];
+    $versionNumber = $this->options['versionNumber']['value'];
+
     if (!$this->options['bumpExtensionInfo']['value']) {
-      $this->printTaskDebug('Skip version number bumping in *.info.yml files.');
+      $this->printTaskDebug(
+        'Skip update version number to "<info>{versionNumber}</info>" in "<info>{pattern}</info>" files.',
+        [
+          'versionNumber' => $versionNumber,
+          'pattern' => "$packagePath/*.info.yml",
+        ]
+      );
 
       return $this;
     }
 
+    // @todo Support for sub-modules.
     $files = (new Finder())
       ->in($this->options['packagePath']['value'])
       ->files()
+      ->depth('== 0')
       ->name('*.info.yml');
 
     /** @var \Symfony\Component\Finder\SplFileInfo $file */
     foreach ($files as $file) {
+      $this->printTaskDebug(
+        'Update version number to "<info>{versionNumber}</info>" in "<info>{file}</info>" file.',
+        [
+          'versionNumber' => $versionNumber,
+          'file' => $packagePath . '/' . $file->getRelativePathname(),
+        ]
+      );
+
       $this->fs->dumpFile(
         $file->getPathname(),
-        MarvinUtils::changeVersionNumberInYaml($file->getContents(), $this->options['versionNumber']['value'])
+        MarvinUtils::changeVersionNumberInYaml($file->getContents(), $versionNumber)
       );
     }
 
@@ -267,20 +291,36 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
    * @return $this
    */
   protected function runActionComposerJson() {
+    $versionNumber = MarvinUtils::drupalToSemver($this->options['versionNumber']['value']);
+    $composerJsonFilePath = "{$this->options['packagePath']['value']}/composer.json";
+
+    $logContext = [
+      'versionNumber' => $versionNumber,
+      'file' => $composerJsonFilePath,
+    ];
+
     if (!$this->options['bumpComposerJson']['value']) {
-      $this->printTaskDebug('Skip version number bumping in composer.json.');
+      $this->printTaskDebug(
+        'Skip update version number to "<info>{versionNumber}</info>" in "<info>{file}</info>" file.',
+        $logContext
+      );
 
       return $this;
     }
 
-    $composerJsonFilePath = "{$this->options['packagePath']['value']}/composer.json";
-    $parts = MarvinUtils::parseDrupalExtensionVersionNumber($this->options['versionNumber']['value']);
+    $this->printTaskDebug(
+      'Update version number to "<info>{versionNumber}</info>" in "<info>{file}</info>" file.',
+      $logContext
+    );
+
     $composerInfo = json_decode(file_get_contents($composerJsonFilePath), TRUE);
-    $composerInfo['version'] = "{$parts['extensionMajor']}.{$parts['extensionMinor']}.0";
+    $composerInfo['version'] = $versionNumber;
 
     $jsonString = json_encode($composerInfo, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-    MarvinUtils::ensureTrailingEol($jsonString);
-    $this->fs->dumpFile($composerJsonFilePath, $jsonString);
+    $this->fs->dumpFile(
+      $composerJsonFilePath,
+      StaticStringy::ensureRight($jsonString, "\n")
+    );
 
     return $this;
   }

@@ -7,6 +7,7 @@ namespace Drupal\marvin;
 use Consolidation\AnnotatedCommand\CommandError;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 use Drupal\marvin\StatusReport\StatusReportInterface;
+use Icecave\SemVer\Version;
 use Stringy\StaticStringy;
 use Stringy\Stringy;
 use Symfony\Component\Finder\Finder;
@@ -190,6 +191,9 @@ class Utils {
     return $yamlString . "version: $escapedVersionNumber" . PHP_EOL;
   }
 
+  /**
+   * @deprecated Use Stringy.
+   */
   public static function ensureTrailingEol(string &$text): void {
     if (!preg_match('/[\r\n]$/u', $text)) {
       $text .= PHP_EOL;
@@ -365,6 +369,86 @@ class Utils {
     }
 
     return $composerInfo['config']['vendor-dir'] . '/drupal';
+  }
+
+  public static function semverToDrupal(string $core, string $semver): string {
+    $version = Version::parse($semver);
+    $version->setPatch(99999);
+
+    return str_replace('.99999', '', "{$core}-{$version}");
+  }
+
+  public static function drupalToSemver(string $drupalVersion): string {
+    $parts = static::parseDrupalExtensionVersionNumber($drupalVersion);
+
+    $semver = "{$parts['extensionMajor']}.{$parts['extensionMinor']}.0";
+
+    if ($parts['extensionPreType']) {
+      $semver .= "-{$parts['extensionPreType']}{$parts['extensionPreMajor']}";
+    }
+
+    if ($parts['extensionBuild']) {
+      $semver .= "+{$parts['extensionBuild']}";
+    }
+
+    return $semver;
+  }
+
+  public static function incrementSemVersion(string $semver, string $fragment): Version {
+    $version = Version::parse($semver);
+
+    switch ($fragment) {
+      case 'major':
+        $version->setMinor(0);
+      case 'minor':
+        $version->setPatch(0);
+      case 'patch':
+        $version->setPreReleaseVersion(NULL);
+      case 'pre-release':
+        $version->setBuildMetaData(NULL);
+        break;
+
+      default:
+        throw new \UnexpectedValueException('@todo Not implemented yet', 1);
+    }
+
+    switch ($fragment) {
+      case 'major':
+        $version->setMajor($version->major() + 1);
+        break;
+
+      case 'minor':
+        $version->setMinor($version->minor() + 1);
+        break;
+
+      case 'patch':
+        // @todo Not recommended to increment the "patch" part.
+        $version->setPatch($version->patch() + 1);
+        break;
+
+      case 'pre-release':
+        $preRelease = $version->preReleaseVersion();
+        if (!$preRelease) {
+          $version->setPatch($version->patch() + 1);
+          $version->setPreReleaseVersion('alpha1');
+
+          break;
+        }
+
+        $pattern = '/^(?P<type>(alpha|beta|rc)\.?)(?P<number>\d+)$/ui';
+        $matches = [];
+        if (preg_match($pattern, $preRelease, $matches)) {
+          $version->setPreReleaseVersion(sprintf(
+            '%s%d',
+            $matches['type'],
+            intval($matches['number']) + 1
+          ));
+        }
+
+        break;
+    }
+
+    return $version;
   }
 
 }

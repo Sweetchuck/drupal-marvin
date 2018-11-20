@@ -6,6 +6,9 @@ use Sweetchuck\Utils\Comparer\ArrayValueComparer;
 use Robo\Collection\CollectionBuilder;
 use Robo\Contract\TaskInterface;
 
+/**
+ * @property null|\Psr\Log\LoggerInterface $logger
+ */
 trait CommandDelegatorTrait {
 
   protected function getCustomEventNamePrefix(): string {
@@ -31,9 +34,17 @@ trait CommandDelegatorTrait {
   }
 
   protected function delegateCollectTaskDefinitions(string $eventBaseName, array $args): array {
+    $eventName = $this->getCustomEventName($eventBaseName);
+    if (!empty($this->logger)) {
+      $this->logger->debug(
+        'Collecting task definitions for event "<info>{eventName}</info>"',
+        ['eventName' => $eventName]
+      );
+    }
+
     $taskDefinitions = [];
     /** @var callable[] $eventHandlers */
-    $eventHandlers = $this->getCustomEventHandlers($this->getCustomEventName($eventBaseName));
+    $eventHandlers = $this->getCustomEventHandlers($eventName);
     foreach ($eventHandlers as $eventHandler) {
       $taskDefinitions += $eventHandler($this->input(), $this->output(), ...$args);
     }

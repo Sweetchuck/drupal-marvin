@@ -8,6 +8,8 @@ use Drush\Drush;
 use Drupal\marvin\CommandDelegatorTrait;
 use Drupal\marvin\ComposerInfo;
 use Drupal\marvin\Utils;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Robo\Common\ConfigAwareTrait;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Tasks;
@@ -15,12 +17,16 @@ use Stringy\StaticStringy;
 use Sweetchuck\Robo\Composer\ComposerTaskLoader;
 use Webmozart\PathUtil\Path;
 
-class CommandsBase extends Tasks implements ConfigAwareInterface, CustomEventAwareInterface {
+class CommandsBase extends Tasks implements
+    ConfigAwareInterface,
+    CustomEventAwareInterface,
+    LoggerAwareInterface {
 
   // @todo Almost every ConfigAwareTrait method is overwritten. Custom trait?
   // @todo Those methods that are not part of the ConfigAwareInterface only used
   // in consolidation/robo tests.
   use ConfigAwareTrait;
+  use LoggerAwareTrait;
   use ComposerTaskLoader;
   use CommandDelegatorTrait;
   use CustomEventAwareTrait;
@@ -123,6 +129,12 @@ class CommandsBase extends Tasks implements ConfigAwareInterface, CustomEventAwa
     $environmentVariants[] = 'default';
 
     return $environmentVariants;
+  }
+
+  protected function getGitExecutable(): string {
+    return $this
+      ->getConfig()
+      ->get('command.marvin.settings.gitExecutable', 'git');
   }
 
 }
