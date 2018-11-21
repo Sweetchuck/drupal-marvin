@@ -10,7 +10,7 @@ trait NodeDetectorTaskLoader {
   /**
    * @return \Robo\Collection\CollectionBuilder|\Drupal\marvin\Robo\Task\NodeDetectorTask
    */
-  protected function taskNodeDetector(array $options = []) {
+  protected function taskMarvinNodeDetector(array $options = []) {
     /** @var \Drupal\marvin\Robo\Task\NodeDetectorTask $task */
     $task = $this->task(NodeDetectorTask::class);
 

@@ -189,7 +189,7 @@ class GitCommitMsgValidatorTask extends BaseTask implements BuilderAwareInterfac
     $examples = array_filter($rule['examples'], new ArrayFilterEnabled());
     if ($examples) {
       $entry['message'][] = 'Valid commit message examples are:';
-      $entry['message'] = array_merge($entry['message'], array_keys($rule['examples']));
+      $entry['message'] = array_merge($entry['message'], array_keys($examples, TRUE));
     }
 
     $entry['message'] = implode(PHP_EOL, $entry['message']);

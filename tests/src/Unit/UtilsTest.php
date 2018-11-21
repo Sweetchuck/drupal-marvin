@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Webmozart\PathUtil\Path;
 
 /**
- * @coversDefaultClass \Drupal\marvin\Utils
+ * @covers \Drupal\marvin\Utils
  */
 class UtilsTest extends TestCase {
 
@@ -513,6 +513,13 @@ class UtilsTest extends TestCase {
     static::assertEquals($expected, Utils::parseDrupalExtensionVersionNumber($versionNumber));
   }
 
+  public function testParseDrupalExtensionVersionNumberFail(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionCode(1);
+
+    Utils::parseDrupalExtensionVersionNumber('invalid');
+  }
+
   public function casesDbUrl(): array {
     return [
       'sqlite - basic' => [
@@ -645,13 +652,17 @@ class UtilsTest extends TestCase {
   }
 
   public function casesPhpErrorAll(): array {
+    // E_ALL is same for PHP 7.1, 7.2 and 7.3.
+    $eAll = 32767;
+
     return [
-      '7.1' => [E_ALL, '7.1'],
-      '7.2' => [E_ALL, '7.2'],
-      '7.3' => [E_ALL, '7.3'],
-      '701' => [E_ALL, '701'],
-      '702' => [E_ALL, '702'],
-      '703' => [E_ALL, '703'],
+      'v7.1' => [$eAll, '7.1'],
+      'v7.2' => [$eAll, '7.2'],
+      'v7.3' => [$eAll, '7.3'],
+      'v701' => [$eAll, '701'],
+      'v702' => [$eAll, '702'],
+      'v703' => [$eAll, '703'],
+      '????' => [E_ALL, '???'],
     ];
   }
 
@@ -726,6 +737,8 @@ class UtilsTest extends TestCase {
     return [
       'basic' => ['1.0.0', '8.x-1.0'],
       'pre-release' => ['1.2.0-beta1', '8.x-1.2-beta1'],
+      'pre-with-meta' => ['1.2.0-beta1+my-meta', '8.x-1.2-beta1+my-meta'],
+      'meta' => ['1.2.0+my-meta', '8.x-1.2+my-meta'],
     ];
   }
 

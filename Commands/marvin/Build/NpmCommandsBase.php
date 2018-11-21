@@ -47,7 +47,7 @@ class NpmCommandsBase extends CommandsBase {
 
           $builder
             ->addTask($this
-              ->taskNodeDetector()
+              ->taskMarvinNodeDetector()
               ->setWorkingDirectory($workingDirectory)
               ->setRootDirectory($packagePathRelative)
             )

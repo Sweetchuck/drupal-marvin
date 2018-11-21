@@ -146,7 +146,7 @@ class Utils {
     $matches = [];
     preg_match($pattern, $versionNumber, $matches);
     if (!$matches) {
-      throw new \InvalidArgumentException('@todo');
+      throw new \InvalidArgumentException('@todo', 1);
     }
 
     $default = [
