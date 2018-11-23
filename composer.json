@@ -19,17 +19,9 @@
             "type": "path",
             "url": "../../sweetchuck/lint-report"
         },
-        "sweetchuck/robo-bundler": {
-            "type": "path",
-            "url": "../../sweetchuck/robo-bundler"
-        },
         "sweetchuck/robo-cdd": {
             "type": "path",
             "url": "../../sweetchuck/robo-cdd"
-        },
-        "sweetchuck/robo-compass": {
-            "type": "path",
-            "url": "../../sweetchuck/robo-compass"
         },
         "sweetchuck/robo-composer": {
             "type": "path",
@@ -59,17 +51,9 @@
             "type": "path",
             "url": "../../sweetchuck/robo-phpunit"
         },
-        "sweetchuck/robo-rvm": {
-            "type": "path",
-            "url": "../../sweetchuck/robo-rvm"
-        },
         "sweetchuck/robo-sass": {
             "type": "path",
             "url": "../../sweetchuck/robo-sass"
-        },
-        "sweetchuck/robo-scss-lint": {
-            "type": "path",
-            "url": "../../sweetchuck/robo-scss-lint"
         },
         "sweetchuck/robo-tslint": {
             "type": "path",
@@ -95,15 +79,11 @@
         "icecave/semver": "^3.0",
         "squizlabs/php_codesniffer": "^3.3",
         "sweetchuck/git-hooks-stdinput-reader": "*",
-        "sweetchuck/robo-bundler": "*",
-        "sweetchuck/robo-compass": "*",
         "sweetchuck/robo-composer": "*",
         "sweetchuck/robo-git": "*",
         "sweetchuck/robo-nvm": "dev-master",
         "sweetchuck/robo-phpcs": "*",
         "sweetchuck/robo-phpunit": "*",
-        "sweetchuck/robo-rvm": "dev-master",
-        "sweetchuck/robo-scss-lint": "*",
         "sweetchuck/robo-stringy": "^0.0",
         "sweetchuck/robo-yarn": "*",
         "sweetchuck/utils": "*",
