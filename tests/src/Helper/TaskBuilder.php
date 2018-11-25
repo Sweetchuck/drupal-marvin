@@ -9,6 +9,7 @@ use Drupal\marvin\Robo\CopyFilesTaskLoader;
 use Drupal\marvin\Robo\GitCommitMsgValidatorTaskLoader;
 use Drupal\marvin\Robo\NodeDetectorTaskLoader;
 use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
+use Drupal\marvin\Robo\PickFirstFileTaskLoader;
 use Drupal\marvin\Robo\PrepareDirectoryTaskLoader;
 use Drupal\marvin\Robo\VersionNumberTaskLoader;
 use League\Container\ContainerAwareInterface;
@@ -16,10 +17,11 @@ use League\Container\ContainerAwareTrait;
 use Robo\Collection\CollectionBuilder;
 use Robo\Common\TaskIO;
 use Robo\Contract\BuilderAwareInterface;
+use Robo\State\StateAwareInterface;
 use Robo\State\StateAwareTrait;
 use Robo\TaskAccessor;
 
-class TaskBuilder implements BuilderAwareInterface, ContainerAwareInterface {
+class TaskBuilder implements BuilderAwareInterface, ContainerAwareInterface, StateAwareInterface {
 
   use TaskAccessor;
   use ContainerAwareTrait;
@@ -44,6 +46,10 @@ class TaskBuilder implements BuilderAwareInterface, ContainerAwareInterface {
 
   use PhpcsConfigFallbackTaskLoader {
     taskMarvinPhpcsConfigFallback as public;
+  }
+
+  use PickFirstFileTaskLoader {
+    taskMarvinPickFirstFile as public;
   }
 
   use PrepareDirectoryTaskLoader {

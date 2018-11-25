@@ -76,4 +76,15 @@ class TaskTestBase extends TestCase {
     }
   }
 
+  protected function getRootDir(string $name = ''): string {
+    $class = explode('\\', get_called_class());
+    $parts = [
+      end($class),
+      $name ?: $this->getName(FALSE),
+      $this->dataName(),
+    ];
+
+    return implode('.', array_filter($parts));
+  }
+
 }

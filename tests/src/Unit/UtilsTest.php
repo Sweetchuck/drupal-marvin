@@ -773,4 +773,76 @@ class UtilsTest extends TestCase {
     Utils::incrementSemVersion('1.2.3', 'not-exists');
   }
 
+  public function casesPickFirstFile(): array {
+    return [
+      'empty' => [NULL, [], [], []],
+      'not-exists' => [
+        NULL,
+        ['a'],
+        ['b.txt'],
+        [
+          'a' => [
+            'b.md' => '',
+          ],
+        ],
+      ],
+      'exists in current' => [
+        [
+          'dir' => '.',
+          'file' => 'a.txt',
+        ],
+        ['.'],
+        ['a.txt'],
+        [
+          'a.txt' => '',
+        ],
+      ],
+      'exists' => [
+        [
+          'dir' => 'b',
+          'file' => 'b.txt',
+        ],
+        ['c', 'b', 'a', '.'],
+        ['b.txt', 'a.txt'],
+        [
+          'a' => [
+            'a.txt' => '',
+          ],
+          'b' => [
+            'a.txt' => '',
+            'b.txt' => '',
+          ],
+          'c' => [
+            'a.md' => '',
+          ],
+          'a.txt' => '',
+          'b.txt' => '',
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesPickFirstFile
+   */
+  public function testPickFirstFile(?array $expected, array $dirs, array $files, array $vfsStructure): void {
+    $vfs = vfsStream::setup(
+      __FUNCTION__ . '.' . $this->dataName(),
+      NULL,
+      $vfsStructure
+    );
+
+    $dirPrefix = $vfs->url();
+
+    if ($expected) {
+      $expected['dir'] = Path::join($dirPrefix, $expected['dir']);
+    }
+
+    foreach (array_keys($dirs) as $key) {
+      $dirs[$key] = Path::join($dirPrefix, $dirs[$key]);
+    }
+
+    static::assertSame($expected, Utils::pickFirstFile($dirs, $files));
+  }
+
 }

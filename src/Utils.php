@@ -455,4 +455,19 @@ class Utils {
     return $version;
   }
 
+  public static function pickFirstFile(array $dirs, array $files): ?array {
+    foreach ($dirs as $dir) {
+      foreach ($files as $file) {
+        if (file_exists("$dir/$file")) {
+          return [
+            'dir' => $dir,
+            'file' => $file,
+          ];
+        }
+      }
+    }
+
+    return NULL;
+  }
+
 }
