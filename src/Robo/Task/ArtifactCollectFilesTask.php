@@ -213,6 +213,8 @@ class ArtifactCollectFilesTask extends BaseTask {
       ->name('*.css')
       ->notPath('.sass-cache')
       ->notName('config.rb')
+      ->notName('.sass-lint.yml')
+      ->notName('sass-lint.yml')
       ->notName('.scss-lint.yml')
       ->notName('scss-lint.yml')
       ->notName('*.css.map');
