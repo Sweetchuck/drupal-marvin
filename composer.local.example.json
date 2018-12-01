@@ -8,6 +8,7 @@
     "config": {
         "bin-dir": "bin",
         "optimize-autoloader": true,
+        "preferred-install": "dist",
         "sort-packages": true
     },
     "repositories": {
@@ -47,7 +48,7 @@
         "ext-pcre": "*",
         "danielstjules/stringy": "^3.1",
         "drupal/coder": "^8.3",
-        "drush/drush": "^9.3",
+        "drush/drush": "^9.5",
         "icecave/semver": "^3.0",
         "squizlabs/php_codesniffer": "^3.3",
         "sweetchuck/git-hooks-stdinput-reader": "^0.0",
@@ -87,7 +88,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-1.x": "8.x-1.x"
+            "dev-8.x-1.x": "1.x.x-dev"
         },
         "drush": {
             "services": {
