@@ -1,0 +1,141 @@
+{
+    "name": "drupal/marvin",
+    "description": "Set of developer helper Drush commands",
+    "type": "drupal-drush",
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "bin-dir": "bin",
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "repositories": {
+        "sweetchuck/robo-composer": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-composer"
+        },
+        "sweetchuck/robo-git": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-git"
+        },
+        "sweetchuck/robo-nvm": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-nvm"
+        },
+        "sweetchuck/robo-phpcs": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-phpcs"
+        },
+        "sweetchuck/robo-phpunit": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-phpunit"
+        },
+        "sweetchuck/robo-stringy": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-stringy"
+        },
+        "sweetchuck/robo-yarn": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-yarn"
+        }
+    },
+    "require": {
+        "php": ">=7.1",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-pcre": "*",
+        "danielstjules/stringy": "^3.1",
+        "drupal/coder": "^8.3",
+        "drush/drush": "^9.3",
+        "icecave/semver": "^3.0",
+        "squizlabs/php_codesniffer": "^3.3",
+        "sweetchuck/git-hooks-stdinput-reader": "^0.0",
+        "sweetchuck/robo-composer": "*",
+        "sweetchuck/robo-git": "*",
+        "sweetchuck/robo-nvm": "*",
+        "sweetchuck/robo-phpcs": "*",
+        "sweetchuck/robo-phpunit": "*",
+        "sweetchuck/robo-stringy": "*",
+        "sweetchuck/robo-yarn": "*",
+        "sweetchuck/utils": "dev-master",
+        "symfony/yaml": "^3.4 || ^4.0",
+        "webmozart/path-util": "^2.3"
+    },
+    "require-dev": {
+        "composer/installers": "^1.5",
+        "drupal-composer/drupal-scaffold": "^2.5",
+        "drupal/core": "^8.5",
+        "mikey179/vfsStream": "^1.6",
+        "phpunit/phpunit": "^6.3",
+        "sweetchuck/git-hooks": "^0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Drush\\Commands\\marvin\\": "Commands/marvin/",
+            "Drupal\\marvin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Drupal\\Dev\\marvin\\Composer\\": "src-dev/Composer/",
+            "Drush\\Commands\\Tests\\marvin\\Unish\\": "tests/src/DrushUnish/",
+            "Drush\\Commands\\Tests\\marvin\\Unit\\": "tests/src/DrushUnit/",
+            "Drupal\\Tests\\marvin\\Helper\\": "tests/src/Helper/",
+            "Drupal\\Tests\\marvin\\Unit\\": "tests/src/Unit/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-1.x": "8.x-1.x"
+        },
+        "drush": {
+            "services": {
+                "drush9.services.yml": "^9"
+            }
+        },
+        "enable-patching": true,
+        "composer-exit-on-patch-failure": true,
+        "drupal-scaffold": {
+            "excludes": [
+                ".csslintrc",
+                ".editorconfig",
+                ".eslintignore",
+                ".eslintrc.json",
+                ".gitattributes",
+                ".ht.router.php",
+                ".htaccess",
+                "web.config"
+            ]
+        },
+        "installer-paths": {
+            "tests/fixtures/drush-sut/web/core": ["type:drupal-core"],
+            "tests/fixtures/drush-sut/web/libraries/{$name}": ["type:drupal-library"],
+            "tests/fixtures/drush-sut/web/modules/contrib/{$name}": ["type:drupal-module"],
+            "tests/fixtures/drush-sut/web/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "tests/fixtures/drush-sut/web/themes/contrib/{$name}": ["type:drupal-theme"],
+            "tests/fixtures/drush-sut/drush/contrib/{$name}": ["type:drupal-drush"]
+        },
+        "marvin": {
+            "drushUnish": {
+                "filesToSymlink": {
+                    "etc": true
+                }
+            }
+        }
+    },
+    "scripts": {
+        "pre-install-cmd": [
+            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::preInstallCmd"
+        ],
+        "post-install-cmd": [
+            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postInstallCmd"
+        ],
+        "pre-update-cmd": [
+            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::preUpdateCmd"
+        ],
+        "post-update-cmd": [
+            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postUpdateCmd"
+        ]
+    }
+}

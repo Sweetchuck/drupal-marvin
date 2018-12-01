@@ -3,6 +3,7 @@
 namespace Drupal\marvin\Robo\Task;
 
 use Drupal\marvin\ComposerInfo;
+use Drupal\marvin\Utils as MarvinUtils;
 use Symfony\Component\Finder\Finder;
 
 class ArtifactCollectFilesTask extends BaseTask {
@@ -49,6 +50,24 @@ class ArtifactCollectFilesTask extends BaseTask {
   }
 
   /**
+   * @var string
+   */
+  protected $artifactDir = '';
+
+  public function getArtifactDir(): string {
+    return $this->artifactDir;
+  }
+
+  /**
+   * @return $this
+   */
+  public function setArtifactDir(string $artifactDir) {
+    $this->artifactDir = $artifactDir;
+
+    return $this;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function setOptions(array $options) {
@@ -60,6 +79,10 @@ class ArtifactCollectFilesTask extends BaseTask {
 
     if (array_key_exists('packagePath', $options)) {
       $this->setPackagePath($options['packagePath']);
+    }
+
+    if (array_key_exists('artifactDir', $options)) {
+      $this->setArtifactDir($options['artifactDir']);
     }
 
     return $this;
@@ -81,8 +104,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     // @todo The configuration what to copy should come from outside instead of
     // the hard-coded file patterns.
     // @todo Add extra exclude dirs configuration.
-    // @todo This task should be independent from the $this->getConfig().
-    $artifactDir = $this->getConfig()->get('command.marvin.settings.artifactDir', 'artifact');
+    $artifactDir = $this->getArtifactDir() ?: 'artifact';
     $artifactDirSafe = preg_quote($artifactDir, '@');
 
     $packagePath = $this->getPackagePath();
@@ -91,7 +113,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     switch ($composerInfo['type']) {
       case 'project':
       case 'drupal-project':
-        $docroot = 'docroot';
+        $docroot = MarvinUtils::detectDrupalRootDir($composerInfo);
         $docrootSafe = preg_quote($docroot, '@');
 
         $outerSitesDir = 'sites';
@@ -132,6 +154,7 @@ class ArtifactCollectFilesTask extends BaseTask {
       case 'drupal-module':
       case 'drupal-theme':
       case 'drupal-drush':
+        // @todo Exclude the "artifactDir" only if it is inside the "packagePath".
         $files = (new Finder())
           ->in($packagePath)
           ->files()
@@ -334,6 +357,7 @@ class ArtifactCollectFilesTask extends BaseTask {
       ->notName('.gitlab-ci.yml')
       ->notPath('.github')
       ->notName('.travis.yml')
+      ->notPath('.circle')
       ->notName('circle.yml');
 
     return $this;
