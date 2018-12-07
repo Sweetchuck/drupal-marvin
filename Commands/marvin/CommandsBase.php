@@ -8,8 +8,10 @@ use Drush\Drush;
 use Drupal\marvin\CommandDelegatorTrait;
 use Drupal\marvin\ComposerInfo;
 use Drupal\marvin\Utils;
+use Drush\Log\Logger;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Robo\Common\ConfigAwareTrait;
 use Robo\Contract\ConfigAwareInterface;
 use Robo\Tasks;
@@ -45,6 +47,17 @@ class CommandsBase extends Tasks implements
 
   public function __construct(?ComposerInfo $composerInfo = NULL) {
     $this->composerInfo = $composerInfo;
+  }
+
+  /**
+   * To complete \Psr\Log\LoggerInterface.
+   */
+  public function getLogger(): LoggerInterface {
+    if (!$this->logger) {
+      $this->logger = new Logger($this->output());
+    }
+
+    return $this->logger;
   }
 
   protected function initComposerInfo() {
