@@ -87,9 +87,6 @@
         }
     },
     "extra": {
-        "branch-alias": {
-            "dev-8.x-1.x": "1.x.x-dev"
-        },
         "drush": {
             "services": {
                 "drush9.services.yml": "^9"
