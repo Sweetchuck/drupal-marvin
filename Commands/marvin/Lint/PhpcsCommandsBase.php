@@ -45,14 +45,14 @@ class PhpcsCommandsBase extends CommandsBase {
           ->setFailOnXmlFileNotExists(FALSE)
           ->setAssetNamePrefix('phpcsXml.'))
         ->addTask($this
-          ->taskMarvinPhpcsConfigFallback()
-          ->setContainer($this->getContainer())
+          ->taskGitListStagedFiles()
           ->setWorkingDirectory($workingDirectory)
-          ->setAssetNamePrefix('phpcsXml.'))
+          ->setPaths(['*.php']))
         ->addTask($this
           ->taskGitReadStagedFiles()
+          ->setWorkingDirectory($workingDirectory)
           ->setCommandOnly(TRUE)
-          ->deferTaskConfiguration('setPaths', 'phpcsXml.files'))
+          ->deferTaskConfiguration('setPaths', 'fileNames'))
         ->addTask($this
           ->taskPhpcsLintInput($options)
           ->deferTaskConfiguration('setFiles', 'files')
