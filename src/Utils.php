@@ -48,6 +48,20 @@ class Utils {
     return Path::getDirectory(__DIR__);
   }
 
+  public static function drupalPhpExtensionPatterns(): array {
+    return static::prefixSuffixItems(array_keys(static::$drupalPhpExtensions, TRUE), '*.');
+  }
+
+  public static function prefixSuffixItems(iterable $items, string $prefix = '', string $suffix = ''): array {
+    $result = [];
+
+    foreach ($items as $key => $value) {
+      $result[$key] = "{$prefix}{$value}{$suffix}";
+    }
+
+    return $result;
+  }
+
   public static function commandClassNameToConfigIdentifier(string $className): string {
     return (string) (new Stringy($className))
       ->regexReplace('^\\\\?Drush\\\\Commands\\\\', '')

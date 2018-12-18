@@ -58,6 +58,28 @@ class UtilsTest extends TestCase {
     static::assertSame($expected, Utils::isValidDrupalExtensionVersionNumber($versionNumber));
   }
 
+  public function casesDrupalPhpExtensionPatterns(): array {
+    return [
+      'basic' => [
+        [
+          '*.engine',
+          '*.install',
+          '*.module',
+          '*.php',
+          '*.profile',
+          '*.theme',
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @dataProvider casesDrupalPhpExtensionPatterns
+   */
+  public function testDrupalPhpExtensionPatterns(array $expected): void {
+    static::assertSame($expected, Utils::drupalPhpExtensionPatterns());
+  }
+
   public function casesCommandClassNameToConfigIdentifier(): array {
     return [
       'with leading backslash - Lint*' => [

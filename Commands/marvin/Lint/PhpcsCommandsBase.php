@@ -3,6 +3,7 @@
 namespace Drush\Commands\marvin\Lint;
 
 use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
+use Drupal\marvin\Utils as MarvinUtils;
 use Robo\Collection\CollectionBuilder;
 use Robo\Contract\TaskInterface;
 use Sweetchuck\Robo\Git\GitTaskLoader;
@@ -47,7 +48,7 @@ class PhpcsCommandsBase extends CommandsBase {
         ->addTask($this
           ->taskGitListStagedFiles()
           ->setWorkingDirectory($workingDirectory)
-          ->setPaths(['*.php']))
+          ->setPaths(MarvinUtils::drupalPhpExtensionPatterns()))
         ->addTask($this
           ->taskGitReadStagedFiles()
           ->setWorkingDirectory($workingDirectory)
