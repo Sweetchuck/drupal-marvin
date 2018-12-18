@@ -6,7 +6,7 @@ use Drush\Commands\marvin\CommandsBase as MarvinCommandsBase;
 use League\Container\ContainerInterface;
 use Sweetchuck\LintReport\Reporter\BaseReporter;
 use Sweetchuck\LintReport\ReporterInterface;
-use Sweetchuck\Robo\Git\Utils;
+use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
 
 class CommandsBase extends MarvinCommandsBase {
 
@@ -46,9 +46,11 @@ class CommandsBase extends MarvinCommandsBase {
     $reporterCombinations = $this
       ->getConfig()
       ->get('command.marvin.lint.settings.reporterCombination');
+
+    $filter = new ArrayFilterEnabled();
     foreach ($this->getEnvironmentVariants() as $environmentVariant) {
       if (isset($reporterCombinations[$environmentVariant])) {
-        return Utils::filterEnabled($reporterCombinations[$environmentVariant]);
+        return array_filter($reporterCombinations[$environmentVariant], $filter);
       }
     }
 
