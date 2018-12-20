@@ -126,12 +126,17 @@ class CommandsBase extends Tasks implements
     );
   }
 
+  protected function getEnvironment(): string {
+    return getenv('DRUSH_MARVIN_SETTINGS_ENVIRONMENT') ?:
+      $this->getConfig()->get('command.marvin.settings.environment', 'dev');
+  }
+
   /**
    * @return string[]
    */
   protected function getEnvironmentVariants(): array {
     $config = $this->getConfig();
-    $environment = $config->get('command.marvin.settings.environment');
+    $environment = $this->getEnvironment();
     $gitHook = $config->get('command.marvin.settings.gitHook');
 
     $environmentVariants = [];
