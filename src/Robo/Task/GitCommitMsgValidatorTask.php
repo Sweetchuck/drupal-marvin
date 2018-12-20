@@ -147,6 +147,15 @@ class GitCommitMsgValidatorTask extends BaseTask implements BuilderAwareInterfac
         }
       }
 
+      if ($exitCode) {
+        $this->logger->error(
+          "The actual commit message is:\nBEGIN\n<info>{commitMessage}</info>\nEND",
+          [
+            'commitMessage' => $data['commitMsg.stringy'],
+          ]
+        );
+      }
+
       return $exitCode;
     };
   }
