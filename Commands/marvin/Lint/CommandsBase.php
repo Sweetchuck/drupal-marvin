@@ -65,6 +65,7 @@ class CommandsBase extends MarvinCommandsBase {
     $selectedLintReporterConfigs = array_intersect_key(
       $lintReporterConfigs,
       array_flip($lintReporterConfigNames)
+      // @todo array_flip(): Can only flip STRING and INTEGER values! CommandsBase.php:67
     );
 
     return $this->parseLintReporterConfigs($selectedLintReporterConfigs);

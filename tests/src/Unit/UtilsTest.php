@@ -867,4 +867,19 @@ class UtilsTest extends TestCase {
     static::assertSame($expected, Utils::pickFirstFile($dirs, $files));
   }
 
+  public function casesGetTriStateCliOption(): array {
+    return [
+      'null' => ['', NULL, 'a'],
+      'true' => ['--a', TRUE, 'a'],
+      'false' => ['--no-a', FALSE, 'a'],
+    ];
+  }
+
+  /**
+   * @dataProvider casesGetTriStateCliOption
+   */
+  public function testGetTriStateCliOption(string $expected, ?bool $state, string $optionName): void {
+    static::assertSame($expected, Utils::getTriStateCliOption($state, $optionName));
+  }
+
 }

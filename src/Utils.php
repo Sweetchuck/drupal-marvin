@@ -484,4 +484,12 @@ class Utils {
     return NULL;
   }
 
+  public static function getTriStateCliOption(?bool $state, string $optionName): string {
+    if ($state === NULL) {
+      return '';
+    }
+
+    return $state ? "--$optionName" : "--no-$optionName";
+  }
+
 }
