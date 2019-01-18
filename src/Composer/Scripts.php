@@ -81,8 +81,13 @@ class Scripts {
     $process = new Process(vsprintf($cmdPattern, $cmdArgs));
 
     $exitCode = $process->run(static::$processCallbackWrapper);
+    if ($exitCode === 0) {
+      return TRUE;
+    }
 
-    return $exitCode === 0;
+    static::$event->getIO()->writeError($process->getErrorOutput());
+
+    return FALSE;
   }
 
   protected static function init(Event $event): void {
