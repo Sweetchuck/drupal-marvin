@@ -119,14 +119,31 @@ class ArtifactCollectFilesTask extends BaseTask {
         $outerSitesDir = 'sites';
         $outerSitesDirSafe = preg_quote($outerSitesDir, '@');
 
-        $files = (new Finder)
+        $dirs = [
+          "$docrootSafe/modules",
+          "$docrootSafe/themes",
+          "$docrootSafe/profiles",
+          "$docrootSafe/libraries",
+          "$docrootSafe/sites/[^/]+/modules",
+          "$docrootSafe/sites/[^/]+/themes",
+          "$docrootSafe/sites/[^/]+/profiles",
+          "$docrootSafe/sites/[^/]+/libraries",
+          "drush/Commands",
+          "$docrootSafe/sites/[^/]+/drush/Commands",
+        ];
+
+        $files = (new Finder())
           ->in($packagePath)
-          ->path("@^{$docrootSafe}/(modules|themes|profiles|libraries)/custom/@")
-          ->notPath("@^{$docrootSafe}/(modules|themes|profiles|libraries)/custom/[^/]+/node_modules/@")
-          ->path("@^drush/Commands/custom/@")
           ->name('*.yml')
           ->name('*.twig')
           ->files();
+
+        foreach ($dirs as $dir) {
+          $files
+            ->path("@^$dir/custom/@")
+            ->notPath("@$dir/custom/[^/]+/node_modules/@");
+        }
+
         $this
           ->configFinderGit($files)
           ->configFinderPhp($files)
@@ -138,7 +155,14 @@ class ArtifactCollectFilesTask extends BaseTask {
           ->configFinderIde($files);
         $this->assets['files'][] = $files;
 
-        $files = (new Finder)
+        $this->assets['files'][] = (new Finder())
+          ->in($packagePath)
+          ->path("@$docrootSafe/sites/[^/]+/@")
+          ->name('settings.php')
+          ->name('services.yml')
+          ->files();
+
+        $files = (new Finder())
           ->in($packagePath)
           ->path("@^{$outerSitesDirSafe}/[^/]+/translations/@")
           ->path("@^{$outerSitesDirSafe}/[^/]+/config/@")
