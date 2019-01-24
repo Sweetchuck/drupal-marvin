@@ -170,6 +170,12 @@ class ArtifactCollectFilesTask extends BaseTask {
         $this->assets['files'][] = $files;
 
         $this->assets['files'][] = 'drush/drush.yml';
+        $this->assets['files'][] = (new Finder())
+          ->in($packagePath)
+          ->path('drush/sites')
+          ->name('*.yml')
+          ->files();
+
         $this->assets['files'][] = 'composer.json';
         $this->assets['files'][] = 'composer.lock';
         break;
