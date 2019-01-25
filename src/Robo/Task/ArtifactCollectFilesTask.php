@@ -135,6 +135,7 @@ class ArtifactCollectFilesTask extends BaseTask {
 
         $files = (new Finder())
           ->in($packagePath)
+          ->notPath("@^{$artifactDirSafe}@")
           ->name('*.yml')
           ->name('*.twig')
           ->files();
@@ -158,6 +159,7 @@ class ArtifactCollectFilesTask extends BaseTask {
 
         $this->assets['files'][] = (new Finder())
           ->in($packagePath)
+          ->notPath("@^{$artifactDirSafe}@")
           ->path("@$docrootSafe/sites/[^/]+/@")
           ->name('settings.php')
           ->name('services.yml')
@@ -165,6 +167,7 @@ class ArtifactCollectFilesTask extends BaseTask {
 
         $files = (new Finder())
           ->in($packagePath)
+          ->notPath("@^{$artifactDirSafe}@")
           ->path("@^{$outerSitesDirSafe}/[^/]+/translations/@")
           ->path("@^{$outerSitesDirSafe}/[^/]+/config/@")
           ->files();
@@ -173,7 +176,8 @@ class ArtifactCollectFilesTask extends BaseTask {
         $this->assets['files'][] = 'drush/drush.yml';
         $this->assets['files'][] = (new Finder())
           ->in($packagePath)
-          ->path('drush/sites')
+          ->notPath("@^{$artifactDirSafe}@")
+          ->path('@^drush/sites/@')
           ->name('*.yml')
           ->files();
 
