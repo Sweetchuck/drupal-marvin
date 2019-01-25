@@ -4,6 +4,7 @@ namespace Drupal\marvin\Robo\Task;
 
 use Drupal\marvin\ComposerInfo;
 use Drupal\marvin\Utils as MarvinUtils;
+use Sweetchuck\Utils\Filter\ArrayFilterFileSystemExists;
 use Symfony\Component\Finder\Finder;
 
 class ArtifactCollectFilesTask extends BaseTask {
@@ -178,6 +179,19 @@ class ArtifactCollectFilesTask extends BaseTask {
 
         $this->assets['files'][] = 'composer.json';
         $this->assets['files'][] = 'composer.lock';
+        $this->assets['files'][] = "{$docroot}/autoload.php";
+        $this->assets['files'][] = "{$docroot}/index.php";
+
+        $this->assets['files'] = array_merge(
+          $this->assets['files'],
+          array_filter(
+            [
+              "$docroot/.htaccess",
+              "$docroot/robots.txt",
+            ],
+            (new ArrayFilterFileSystemExists())->setBaseDir($packagePath)
+          )
+        );
         break;
 
       case 'drupal-profile':
