@@ -47,6 +47,7 @@ class PhpcsCommandsBase extends CommandsBase {
           ->setAssetNamePrefix('phpcsXml.'))
         ->addTask($this
           ->taskGitListStagedFiles()
+          ->setDiffFilter(['d' => FALSE])
           ->setWorkingDirectory($workingDirectory)
           ->setPaths(MarvinUtils::drupalPhpExtensionPatterns()))
         ->addTask($this
