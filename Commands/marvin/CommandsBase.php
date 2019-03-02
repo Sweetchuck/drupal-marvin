@@ -37,7 +37,7 @@ class CommandsBase extends Tasks implements
    * {@inheritdoc}
    */
   protected static function configPrefix() {
-    return 'command.';
+    return 'marvin.';
   }
 
   /**
@@ -80,6 +80,7 @@ class CommandsBase extends Tasks implements
     $configPostFix = static::configPostfix();
 
     $classKey = sprintf('%s%s%s.%s', $configPrefix, $configClass, $configPostFix, $key);
+    $classKey = preg_replace('/\.{2,}/', '.', $classKey);
 
     return rtrim($classKey, '.');
   }
@@ -127,8 +128,8 @@ class CommandsBase extends Tasks implements
   }
 
   protected function getEnvironment(): string {
-    return getenv('DRUSH_MARVIN_SETTINGS_ENVIRONMENT') ?:
-      $this->getConfig()->get('command.marvin.settings.environment', 'dev');
+    return getenv('DRUSH_MARVIN_ENVIRONMENT') ?:
+      $this->getConfig()->get('marvin.environment', 'dev');
   }
 
   /**
@@ -137,13 +138,17 @@ class CommandsBase extends Tasks implements
   protected function getEnvironmentVariants(): array {
     $config = $this->getConfig();
     $environment = $this->getEnvironment();
-    $gitHook = $config->get('command.marvin.settings.gitHook');
+    $gitHook = $config->get('marvin.gitHook');
+    $ci = $environment === 'ci' ? $config->get('marvin.ci') : '';
 
     $environmentVariants = [];
-    if ($environment === 'dev' && $gitHook) {
-      $environmentVariants[] = StaticStringy::camelize("$environment-$gitHook");
+
+    $modifiers = array_filter([$environment, $ci, $gitHook]);
+    while ($modifiers) {
+      $environmentVariants[] = StaticStringy::camelize(implode('-', $modifiers));
+      array_pop($modifiers);
     }
-    $environmentVariants[] = $environment;
+
     $environmentVariants[] = 'default';
 
     return $environmentVariants;
@@ -152,7 +157,7 @@ class CommandsBase extends Tasks implements
   protected function getGitExecutable(): string {
     return $this
       ->getConfig()
-      ->get('command.marvin.settings.gitExecutable', 'git');
+      ->get('marvin.gitExecutable', 'git');
   }
 
   /**

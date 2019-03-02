@@ -16,6 +16,8 @@ class ArtifactTypesCommands extends ArtifactCommandsBase {
   protected $types = [];
 
   /**
+   * Lists all available artifact types.
+   *
    * @command marvin:artifact:types
    * @bootstrap none
    * @default-string-field id
@@ -57,7 +59,7 @@ class ArtifactTypesCommands extends ArtifactCommandsBase {
    * @return $this
    */
   protected function collectArtifactTypes() {
-    $projectType = $this->getConfig()->get('command.marvin.settings.projectType');
+    $projectType = $this->getConfig()->get('marvin.projectType');
 
     /** @var callable[] $eventHandlers */
     $eventHandlers = $this->getCustomEventHandlers($this->getCustomEventName('types'));

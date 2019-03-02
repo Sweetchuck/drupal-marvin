@@ -20,7 +20,7 @@ class ComposerCommandsBase extends MarvinCommandsBase {
   protected function getComposerExecutable(): string {
     return $this
       ->getConfig()
-      ->get('command.marvin.settings.composerExecutable', 'composer');
+      ->get('marvin.composerExecutable', 'composer');
   }
 
 }

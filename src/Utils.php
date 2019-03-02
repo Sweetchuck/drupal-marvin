@@ -65,8 +65,8 @@ class Utils {
   public static function commandClassNameToConfigIdentifier(string $className): string {
     return (string) (new Stringy($className))
       ->regexReplace('^\\\\?Drush\\\\Commands\\\\', '')
-      ->regexReplace('Commands$', '')
-      ->regexReplace('^marvin_([^\\\\]+)', 'marvin')
+      ->regexReplace('(Commands|CommandsBase)$', '')
+      ->regexReplace('^marvin([^\\\\]*)', '')
       ->replace('\\', '.')
       ->underscored()
       ->regexReplace('(?<=\.)((lint\.lint)_)(?=[^\.]+$)', 'lint.');

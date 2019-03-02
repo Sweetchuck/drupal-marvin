@@ -4,12 +4,30 @@ namespace Drush\Commands\marvin\Test;
 
 use Drush\Commands\marvin\CommandsBase;
 use Robo\Collection\CollectionBuilder;
-use Sweetchuck\Robo\Git\Utils;
 use Sweetchuck\Robo\PHPUnit\PHPUnitTaskLoader;
+use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
 
 class PhpunitCommandsBase extends CommandsBase {
 
   use PHPUnitTaskLoader;
+
+  protected static function getClassKey(string $key): string {
+    return static::configPrefix() . $key;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static function configPrefix() {
+    return 'marvin.phpunit.';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getCustomEventNamePrefix(): string {
+    return parent::getCustomEventNamePrefix() . ':test:phpunit';
+  }
 
   /**
    * @return \Sweetchuck\Robo\PHPUnit\Task\RunTask|\Robo\Collection\CollectionBuilder
@@ -24,7 +42,7 @@ class PhpunitCommandsBase extends CommandsBase {
       ->setTestSuite($testSuiteNames)
       ->setGroup($groupNames);
 
-    $gitHook = $this->getConfig()->get('command.marvin.settings.gitHook');
+    $gitHook = $this->getConfig()->get('marvin.gitHook');
     if ($gitHook === 'pre-commit') {
       $task->setNoCoverage(TRUE);
       // @todo $task->setNoLogging(true);
@@ -60,7 +78,7 @@ class PhpunitCommandsBase extends CommandsBase {
       return [];
     }
 
-    return Utils::filterEnabled($testSuites) ?: NULL;
+    return array_keys(array_filter($testSuites, new ArrayFilterEnabled()));
   }
 
 }

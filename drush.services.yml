@@ -6,6 +6,12 @@ services:
   marvin.utils:
     class: 'Drupal\marvin\Utils'
 
+  marvin.drush_config.commands:
+    class: 'Drush\Commands\marvin\DrushConfigCommands'
+    tags:
+      -
+        name: 'drush.command'
+
   marvin.artifact_types.commands:
     class: 'Drush\Commands\marvin\Artifact\ArtifactTypesCommands'
     tags:

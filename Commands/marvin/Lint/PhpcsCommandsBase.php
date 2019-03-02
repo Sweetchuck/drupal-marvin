@@ -16,15 +16,35 @@ class PhpcsCommandsBase extends CommandsBase {
   use PhpcsConfigFallbackTaskLoader;
   use GitTaskLoader;
 
+  protected static function getClassKey(string $key): string {
+    return static::configPrefix() . $key;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static function configPrefix() {
+    return 'marvin.phpcs.';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getCustomEventNamePrefix(): string {
+    return parent::getCustomEventNamePrefix() . ':phpcs';
+  }
+
   /**
    * @return \Robo\Contract\TaskInterface|\Robo\Collection\CollectionBuilder
    */
   protected function getTaskLintPhpcsExtension(string $workingDirectory): CollectionBuilder {
-    $gitHook = $this->getConfig()->get('command.marvin.settings.gitHook');
+    $config = $this->getConfig();
+
+    $gitHook = $config->get('marvin.gitHook');
     $phpcsXml = $this->getPhpcsConfigurationFileName($workingDirectory);
 
     $presetName = $this->getPresetNameByEnvironmentVariant();
-    $options = $this->getConfigValue("preset.$presetName");
+    $options = $this->getConfigValue("preset.$presetName", []);
     if ($phpcsXml) {
       unset($options['standards']);
     }

@@ -3,9 +3,9 @@
 /reports/
 
 /tests/fixtures/drush-sandbox/
-/tests/fixtures/drush-sut/*
-!/tests/fixtures/drush-sut/web/modules/custom/
-!/tests/fixtures/drush-sut/drush/drush.yml
+/tests/fixtures/project_01/*
+!/tests/fixtures/project_01/docroot/modules/custom/
+!/tests/fixtures/project_01/drush/drush.yml
 /tests/fixtures/drush_coverage*
 
 /vendor/

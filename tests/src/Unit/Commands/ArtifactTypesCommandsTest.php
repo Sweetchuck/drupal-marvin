@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Drupal\Tests\marvin\Unit\Commands\Artifact;
+namespace Drupal\Tests\marvin\Unit\Commands;
 
 use Consolidation\AnnotatedCommand\AnnotationData;
 use Consolidation\AnnotatedCommand\CommandData;
@@ -21,7 +21,7 @@ use Symfony\Component\Console\Input\InputOption;
  */
 class ArtifactTypesCommandsTest extends TaskTestBase {
 
-  public function casesGetCustomEventName(): array {
+  public static function casesGetCustomEventName(): array {
     return [
       'empty' => ['marvin:artifact', ''],
       'something' => ['marvin:artifact:something', 'something'],
@@ -40,7 +40,7 @@ class ArtifactTypesCommandsTest extends TaskTestBase {
     static::assertSame($expected, $method->invoke($commands, $eventBaseName));
   }
 
-  public function casesArtifactTypes(): array {
+  public static function casesArtifactTypes(): array {
     return [
       'basic' => [
         [
@@ -91,7 +91,7 @@ class ArtifactTypesCommandsTest extends TaskTestBase {
       'marvin:artifact:types'
     );
 
-    $this->config->set('command.marvin.settings.projectType', $projectType);
+    $this->config->set('marvin.projectType', $projectType);
 
     $commands = new ArtifactTypesCommands();
     $commands->setConfig($this->config);

@@ -79,20 +79,18 @@ class CommandsBaseTest extends CommandsTestBase {
    */
   public function testGetEnvironmentVariants(array $expected, array $configData = []) {
     $configData = array_replace_recursive($this->getDefaultConfigData(), $configData);
-    $config = new Config($configData);
     $container = new Container();
 
-    $commands = new CommandsBase($this->composerInfo);
-    $commands->setConfig($config);
-    $commands->setContainer($container);
+    $this->commands->setConfig(new Config($configData));
+    $this->commands->setContainer($container);
 
     $methodName = 'getEnvironmentVariants';
-    $class = new ReflectionClass($commands);
+    $class = new ReflectionClass($this->commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
     /** @var string[] $environment */
-    $envVariants = $method->invokeArgs($commands, []);
+    $envVariants = $method->invokeArgs($this->commands, []);
 
     static::assertSame($expected, $envVariants);
   }

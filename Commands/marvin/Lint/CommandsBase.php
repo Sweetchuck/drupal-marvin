@@ -28,6 +28,20 @@ class CommandsBase extends MarvinCommandsBase {
     return parent::setContainer($container);
   }
 
+  protected function getPresetNameByEnvironmentVariant(): string {
+    $environmentVariants = $this->getEnvironmentVariants();
+    $defaultPresetMapping = $this->getConfigValue('defaultPreset');
+    foreach ($environmentVariants as $environmentVariant) {
+      if (!empty($defaultPresetMapping[$environmentVariant])) {
+        return $defaultPresetMapping[$environmentVariant];
+      }
+    }
+
+    // @todo Check if it exists.
+    // @todo Choice the first one if there is no default.
+    return 'default';
+  }
+
   /**
    * @return string[]
    */
