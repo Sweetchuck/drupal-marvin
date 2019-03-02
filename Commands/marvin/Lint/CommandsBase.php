@@ -28,29 +28,18 @@ class CommandsBase extends MarvinCommandsBase {
     return parent::setContainer($container);
   }
 
-  protected function getPresetNameByEnvironmentVariant(): string {
-    foreach ($this->getEnvironmentVariants() as $environmentVariant) {
-      $presetName = $this->getConfigValue("defaultPreset.$environmentVariant");
-      if ($presetName !== NULL) {
-        return $presetName;
-      }
-    }
-
-    return 'default';
-  }
-
   /**
    * @return string[]
    */
   protected function getLintReporterConfigNamesByEnvironmentVariant(): array {
     $reporterCombinations = $this
       ->getConfig()
-      ->get('command.marvin.lint.settings.reporterCombination');
+      ->get('marvin.lint.reporterCombination', []);
 
     $filter = new ArrayFilterEnabled();
     foreach ($this->getEnvironmentVariants() as $environmentVariant) {
       if (isset($reporterCombinations[$environmentVariant])) {
-        return array_filter($reporterCombinations[$environmentVariant], $filter);
+        return array_keys(array_filter($reporterCombinations[$environmentVariant], $filter));
       }
     }
 
@@ -58,14 +47,12 @@ class CommandsBase extends MarvinCommandsBase {
   }
 
   protected function getLintReporters(): array {
-    $config = $this->getConfig();
-    $lintReporterConfigs = $config->get('command.marvin.lint.settings.reporterConfig');
+    $lintReporterConfigs = $this->getConfig()->get('marvin.lint.reporterConfig', []);
     $lintReporterConfigNames = $this->getLintReporterConfigNamesByEnvironmentVariant();
 
     $selectedLintReporterConfigs = array_intersect_key(
       $lintReporterConfigs,
       array_flip($lintReporterConfigNames)
-      // @todo array_flip(): Can only flip STRING and INTEGER values! CommandsBase.php:67
     );
 
     return $this->parseLintReporterConfigs($selectedLintReporterConfigs);
