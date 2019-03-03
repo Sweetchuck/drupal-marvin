@@ -16,7 +16,7 @@ class DrushConfigCommandsTest extends UnishIntegrationTestCase {
       0
     );
 
-    $drushConfig = (array) $this->getOutputFromJSON();
+    $actualDrushConfig = (array) $this->getOutputFromJSON();
     $topLevelKeys = [
       'drush',
       'marvin',
@@ -26,7 +26,7 @@ class DrushConfigCommandsTest extends UnishIntegrationTestCase {
       'backend',
     ];
 
-    static::assertSame($topLevelKeys, array_keys($drushConfig));
+    static::assertSame($topLevelKeys, array_keys($actualDrushConfig));
   }
 
 }

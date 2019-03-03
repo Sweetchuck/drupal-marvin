@@ -2,11 +2,20 @@
 /bin/
 /reports/
 
-/tests/fixtures/drush-sandbox/
+!/tests/fixtures/project_01/
 /tests/fixtures/project_01/*
-!/tests/fixtures/project_01/docroot/modules/custom/
+
+!/tests/fixtures/project_01/drush/
+/tests/fixtures/project_01/drush/*
+
 !/tests/fixtures/project_01/drush/drush.yml
-/tests/fixtures/drush_coverage*
+
+!/tests/fixtures/project_01/docroot/
+/tests/fixtures/project_01/docroot/*
+!/tests/fixtures/project_01/docroot/modules/
+/tests/fixtures/project_01/docroot/modules/*
+
+!/tests/fixtures/project_01/docroot/modules/custom/
 
 /vendor/
 

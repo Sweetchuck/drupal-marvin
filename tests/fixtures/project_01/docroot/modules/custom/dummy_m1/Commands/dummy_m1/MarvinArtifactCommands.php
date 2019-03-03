@@ -14,7 +14,7 @@ class MarvinArtifactCommands extends DrushCommands {
   public function onEventMarvinArtifactTypes(string $projectType): array {
     $types = [];
 
-    if ($projectType === 'kernelTest') {
+    if ($projectType === 'integrationTest') {
       $types['dummy'] = [
         'label' => dt('Dummy') . " - '$projectType'",
         'description' => dt('Do not use it'),
@@ -22,13 +22,6 @@ class MarvinArtifactCommands extends DrushCommands {
     }
 
     return $types;
-  }
-
-  /**
-   * @command dummy:okay
-   */
-  public function dummy() {
-    $this->yell(' Iam Dummy');
   }
 
 }

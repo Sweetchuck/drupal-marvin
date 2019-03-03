@@ -21,6 +21,15 @@ use Symfony\Component\Console\Input\InputOption;
  */
 class ArtifactTypesCommandsTest extends TaskTestBase {
 
+  public function testGetCustomEventNamePrefix(): void {
+    $reflection = new ReflectionClass(ArtifactTypesCommands::class);
+    $method = $reflection->getMethod('getCustomEventNamePrefix');
+    $method->setAccessible(TRUE);
+    $commands = new ArtifactTypesCommands();
+
+    static::assertSame('marvin:artifact', $method->invoke($commands));
+  }
+
   public static function casesGetCustomEventName(): array {
     return [
       'empty' => ['marvin:artifact', ''],
