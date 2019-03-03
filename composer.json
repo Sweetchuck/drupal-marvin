@@ -53,9 +53,12 @@
     "autoload-dev": {
         "psr-4": {
             "Drupal\\Dev\\marvin\\Composer\\": "src-dev/Composer/",
+
             "Drupal\\Tests\\marvin\\Helper\\": "tests/src/Helper/",
-            "Drupal\\Tests\\marvin\\Kernel\\": "tests/src/Integration/",
             "Drupal\\Tests\\marvin\\Unit\\": "tests/src/Unit/",
+            "Drupal\\Tests\\marvin\\Integration\\": "tests/src/Integration/",
+            "Unish\\": "vendor/drush/drush/tests/unish/",
+
             "Drupal\\Tests\\": "tests/fixtures/project_01/docroot/core/tests/Drupal/Tests/",
             "Drupal\\KernelTests\\": "tests/fixtures/project_01/docroot/core/tests/Drupal/KernelTests"
         }

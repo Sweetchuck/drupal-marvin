@@ -2,8 +2,31 @@
 
 declare(strict_types = 1);
 
-namespace Drupal\Tests\marvin\Kernel;
+namespace Drupal\Tests\marvin\Integration;
 
-class DrushConfigCommandsTest {
+class DrushConfigCommandsTest extends UnishIntegrationTestCase {
+
+  public function testDrushConfig(): void {
+    $this->drush(
+      'marvin:drush-config',
+      [],
+      [
+        'format' => 'json',
+      ],
+      0
+    );
+
+    $drushConfig = (array) $this->getOutputFromJSON();
+    $topLevelKeys = [
+      'drush',
+      'marvin',
+      'options',
+      'env',
+      'runtime',
+      'backend',
+    ];
+
+    static::assertSame($topLevelKeys, array_keys($drushConfig));
+  }
 
 }

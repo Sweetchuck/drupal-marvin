@@ -20,8 +20,6 @@ class DrushConfigCommands extends CommandsBase {
       'format' => 'yaml',
     ]
   ): array {
-    $c = $this->getContainer();
-
     return $this->getConfig()->export();
   }
 
