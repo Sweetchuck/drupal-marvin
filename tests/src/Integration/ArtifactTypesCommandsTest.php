@@ -6,7 +6,7 @@ namespace Drupal\Tests\marvin\Integration;
 
 class ArtifactTypesCommandsTest extends UnishIntegrationTestCase {
 
-  public function testArtifactTypes() {
+  public function testArtifactTypesJson() {
     $this->drush(
       'marvin:artifact:types',
       [],
@@ -29,6 +29,25 @@ class ArtifactTypesCommandsTest extends UnishIntegrationTestCase {
       json_encode($expected, JSON_PRETTY_PRINT) . PHP_EOL,
       $this->getOutputRaw()
     );
+  }
+
+  public function testArtifactTypesTable() {
+    $this->drush(
+      'marvin:artifact:types',
+      [],
+      [
+        'format' => 'table',
+      ],
+      0
+    );
+
+    $expected = implode(PHP_EOL, [
+      ' ID    Label                     Description   ',
+      " dummy Dummy - 'integrationTest' Do not use it ",
+      '',
+    ]);
+
+    static::assertSame($expected, $this->getOutputRaw());
   }
 
 }
