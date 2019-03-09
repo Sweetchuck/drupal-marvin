@@ -1,9 +1,8 @@
 <?php
 
-namespace Drush\Commands\marvin\Build;
+namespace Drush\Commands\marvin;
 
 use Drupal\marvin\Robo\NodeDetectorTaskLoader;
-use Drush\Commands\marvin\CommandsBase;
 use Robo\Collection\CollectionBuilder;
 use Robo\Collection\loadTasks as ForEachTaskLoader;
 use Sweetchuck\Robo\Git\GitTaskLoader;
@@ -18,6 +17,13 @@ class NpmCommandsBase extends CommandsBase {
   use NvmTaskLoader;
   use YarnTaskLoader;
   use NodeDetectorTaskLoader;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getCustomEventNamePrefix(): string {
+    return parent::getCustomEventNamePrefix() . ':npm';
+  }
 
   protected function getTaskNpmInstallPackages(array $packages): CollectionBuilder {
     $cb = $this->collectionBuilder();

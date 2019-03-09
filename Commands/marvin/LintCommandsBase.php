@@ -1,14 +1,13 @@
 <?php
 
-namespace Drush\Commands\marvin\Lint;
+namespace Drush\Commands\marvin;
 
-use Drush\Commands\marvin\CommandsBase as MarvinCommandsBase;
 use League\Container\ContainerInterface;
 use Sweetchuck\LintReport\Reporter\BaseReporter;
 use Sweetchuck\LintReport\ReporterInterface;
 use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
 
-class CommandsBase extends MarvinCommandsBase {
+class LintCommandsBase extends CommandsBase {
 
   /**
    * {@inheritdoc}

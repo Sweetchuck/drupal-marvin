@@ -1,6 +1,6 @@
 <?php
 
-namespace Drush\Commands\marvin\Lint;
+namespace Drush\Commands\marvin;
 
 use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
 use Drupal\marvin\Utils as MarvinUtils;
@@ -10,7 +10,7 @@ use Sweetchuck\Robo\Git\GitTaskLoader;
 use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
 use Webmozart\PathUtil\Path;
 
-class PhpcsCommandsBase extends CommandsBase {
+class PhpcsCommandsBase extends LintCommandsBase {
 
   use PhpcsTaskLoader;
   use PhpcsConfigFallbackTaskLoader;

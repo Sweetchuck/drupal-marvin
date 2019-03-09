@@ -16,7 +16,7 @@ class MarvinArtifactCommands extends DrushCommands {
 
     if ($projectType === 'integrationTest') {
       $types['dummy'] = [
-        'label' => dt('Dummy') . " - '$projectType'",
+        'label' => dt('Dummy - @projectType', ['@projectType' => $projectType]),
         'description' => dt('Do not use it'),
       ];
     }

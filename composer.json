@@ -126,6 +126,7 @@
             "rm -rf bin/ reports/ vendor/",
             "git clean --force -d -x -- tests/",
             "git clean --force -d -X -- tests/"
-        ]
+        ],
+        "test:unit": "phpunit --testsuite Unit --coverage-html reports/human/coverage/Unit/html --coverage-clover reports/machine/coverage/coverage.Unit.xml --testdox-html reports/human/unit/junit.Unit.html --log-junit reports/machine/unit/junit.Unit.xml"
     }
 }

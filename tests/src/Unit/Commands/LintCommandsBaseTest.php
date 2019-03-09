@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Unit\Commands;
 
-use Drush\Commands\marvin\Lint\CommandsBase as LintCommandsBase;
+use Drush\Commands\marvin\LintCommandsBase;
 use League\Container\Container;
 use ReflectionClass;
 use Robo\Config\Config;
@@ -13,7 +13,7 @@ use Sweetchuck\LintReport\Reporter\VerboseReporter;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * @covers \Drush\Commands\marvin\Lint\CommandsBase<extended>
+ * @covers \Drush\Commands\marvin\CommandsBase<extended>
  */
 class LintCommandsBaseTest extends CommandsTestBase {
 
