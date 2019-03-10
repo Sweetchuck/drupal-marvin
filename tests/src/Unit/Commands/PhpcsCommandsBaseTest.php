@@ -11,6 +11,9 @@ use Robo\Config\Config;
 use Symfony\Component\Yaml\Yaml;
 
 /**
+ * @group marvin
+ * @group drush-command
+ *
  * @covers \Drush\Commands\marvin\PhpcsCommandsBase<extended>
  */
 class PhpcsCommandsBaseTest extends CommandsTestBase {
@@ -59,7 +62,7 @@ class PhpcsCommandsBaseTest extends CommandsTestBase {
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
-    static::assertSame('marvin:lint:phpcs', $method->invokeArgs($commands, []));
+    static::assertSame('marvin:phpcs', $method->invokeArgs($commands, []));
   }
 
   public static function casesGetPresetNameByEnvironmentVariant(): array {

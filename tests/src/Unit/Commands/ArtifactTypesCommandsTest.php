@@ -10,14 +10,17 @@ use Consolidation\AnnotatedCommand\Hooks\HookManager;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 use Drupal\Tests\marvin\Helper\DummyOutput;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
-use Drush\Commands\marvin\Artifact\ArtifactTypesCommands;
+use Drush\Commands\marvin\ArtifactTypesCommands;
 use ReflectionClass;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * @covers \Drush\Commands\marvin\Artifact\ArtifactTypesCommands<extended>
+ * @group marvin
+ * @group drush-command
+ *
+ * @covers \Drush\Commands\marvin\ArtifactTypesCommands<extended>
  */
 class ArtifactTypesCommandsTest extends TaskTestBase {
 

@@ -42,7 +42,7 @@ marvin:
   #
   # @var null|string
   ##
-  gitHook: null
+  gitHookName: null
 
   ##
   # @todo
@@ -174,7 +174,12 @@ marvin:
       ciJenkins:
         failOn: 'never'
 
-  git-hook:
+  ##
+  # Keys are the official Git hook names.
+  #
+  # @var array
+  ##
+  gitHook:
     commit-msg:
       rules: {}
         #customKey01:

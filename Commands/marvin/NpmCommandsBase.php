@@ -21,9 +21,12 @@ class NpmCommandsBase extends CommandsBase {
   /**
    * {@inheritdoc}
    */
-  protected function getCustomEventNamePrefix(): string {
-    return parent::getCustomEventNamePrefix() . ':npm';
-  }
+  protected static $classKeyPrefix = 'marvin.npm';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $customEventNamePrefix = 'marvin:npm';
 
   protected function getTaskNpmInstallPackages(array $packages): CollectionBuilder {
     $cb = $this->collectionBuilder();

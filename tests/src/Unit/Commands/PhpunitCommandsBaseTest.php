@@ -4,18 +4,21 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Unit\Commands;
 
-use Drush\Commands\marvin\Test\PhpunitCommandsBase;
+use Drush\Commands\marvin\PhpunitCommandsBase;
 use ReflectionClass;
 use Robo\Config\Config;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * @covers \Drush\Commands\marvin\Test\PhpunitCommandsBase<extended>
+ * @group marvin
+ * @group drush-command
+ *
+ * @covers \Drush\Commands\marvin\PhpunitCommandsBase<extended>
  */
 class PhpunitCommandsBaseTest extends CommandsTestBase {
 
   /**
-   * @var \Drush\Commands\marvin\Test\PhpunitCommandsBase
+   * @var \Drush\Commands\marvin\PhpunitCommandsBase
    */
   protected $commands;
 
@@ -83,7 +86,7 @@ class PhpunitCommandsBaseTest extends CommandsTestBase {
           $default,
           [
             'marvin' => [
-              'gitHook' => 'pre-commit',
+              'gitHookName' => 'pre-commit',
             ],
           ]
         ),
@@ -96,7 +99,7 @@ class PhpunitCommandsBaseTest extends CommandsTestBase {
           'marvin' => [
             'environment' => 'dev',
             'ci' => 'jenkins',
-            'gitHook' => 'pre-commit',
+            'gitHookName' => 'pre-commit',
             'phpunit' => [
               'testSuite' => [
                 'dev' => [

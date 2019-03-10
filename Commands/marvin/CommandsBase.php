@@ -27,17 +27,28 @@ class CommandsBase extends Tasks implements
   // @todo Almost every ConfigAwareTrait method is overwritten. Custom trait?
   // @todo Those methods that are not part of the ConfigAwareInterface only used
   // in consolidation/robo tests.
-  use ConfigAwareTrait;
+  use ConfigAwareTrait {
+    getClassKey as protected;
+  }
   use LoggerAwareTrait;
   use ComposerTaskLoader;
   use CommandDelegatorTrait;
   use CustomEventAwareTrait;
 
   /**
+   * @var string
+   */
+  protected static $classKeyPrefix = 'marvin';
+
+  /**
    * {@inheritdoc}
    */
   protected static function configPrefix() {
-    return 'marvin.';
+    return static::$classKeyPrefix . '.';
+  }
+
+  protected static function getClassKey(string $key): string {
+    return static::$classKeyPrefix . ($key === '' ? '' : ".$key");
   }
 
   /**
@@ -72,21 +83,6 @@ class CommandsBase extends Tasks implements
     return $this
       ->initComposerInfo()
       ->composerInfo;
-  }
-
-  protected static function getClassKey(string $key): string {
-    $configPrefix = static::configPrefix();
-    $configClass = Utils::commandClassNameToConfigIdentifier(get_called_class());
-    $configPostFix = static::configPostfix();
-
-    $classKey = sprintf('%s%s%s.%s', $configPrefix, $configClass, $configPostFix, $key);
-    $classKey = preg_replace('/\.{2,}/', '.', $classKey);
-
-    return rtrim($classKey, '.');
-  }
-
-  protected static function configName(): string {
-    return static::getClassKey('');
   }
 
   /**
@@ -138,7 +134,7 @@ class CommandsBase extends Tasks implements
   protected function getEnvironmentVariants(): array {
     $config = $this->getConfig();
     $environment = $this->getEnvironment();
-    $gitHook = $config->get('marvin.gitHook');
+    $gitHook = $config->get('marvin.gitHookName');
     $ci = $environment === 'ci' ? $config->get('marvin.ci') : '';
 
     $environmentVariants = [];

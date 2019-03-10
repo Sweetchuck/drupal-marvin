@@ -10,6 +10,9 @@ use ReflectionClass;
 use Robo\Config\Config;
 
 /**
+ * @group marvin
+ * @group drush-command
+ *
  * @covers \Drush\Commands\marvin\CommandsBase<extended>
  */
 class CommandsBaseTest extends CommandsTestBase {
@@ -68,7 +71,10 @@ class CommandsBaseTest extends CommandsTestBase {
       'override with gitHook' => [
         ['devPreCommit', 'dev', 'default'],
         [
-          'marvin' => ['environment' => 'dev', 'gitHook' => 'pre-commit'],
+          'marvin' => [
+            'environment' => 'dev',
+            'gitHookName' => 'pre-commit',
+          ],
         ],
       ],
     ];

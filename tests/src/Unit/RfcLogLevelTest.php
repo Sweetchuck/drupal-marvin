@@ -7,6 +7,11 @@ namespace Drupal\Tests\marvin\Unit;
 use Drupal\marvin\RfcLogLevel;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group marvin
+ *
+ * @covers \Drupal\marvin\RfcLogLevel<extended>
+ */
 class RfcLogLevelTest extends TestCase {
 
   public function testGetLevels(): void {

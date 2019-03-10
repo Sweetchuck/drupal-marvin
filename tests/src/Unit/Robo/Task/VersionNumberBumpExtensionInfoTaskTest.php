@@ -10,7 +10,10 @@ use org\bovigo\vfs\vfsStream;
 use Webmozart\PathUtil\Path;
 
 /**
- * @covers \Drupal\marvin\Robo\Task\VersionNumberBumpExtensionInfoTask
+ * @group marvin
+ * @group robo-task
+ *
+ * @covers \Drupal\marvin\Robo\Task\VersionNumberBumpExtensionInfoTask<extended>
  * @covers \Drupal\marvin\Robo\VersionNumberTaskLoader
  */
 class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {

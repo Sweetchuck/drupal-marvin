@@ -11,8 +11,13 @@ use Robo\Contract\TaskInterface;
  */
 trait CommandDelegatorTrait {
 
+  /**
+   * @var string
+   */
+  protected $customEventNamePrefix = 'marvin';
+
   protected function getCustomEventNamePrefix(): string {
-    return 'marvin';
+    return $this->customEventNamePrefix;
   }
 
   protected function getCustomEventName(string $eventBaseName): string {

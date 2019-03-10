@@ -1,8 +1,7 @@
 <?php
 
-namespace Drush\Commands\marvin\Test;
+namespace Drush\Commands\marvin;
 
-use Drush\Commands\marvin\CommandsBase;
 use Robo\Collection\CollectionBuilder;
 use Sweetchuck\Robo\PHPUnit\PHPUnitTaskLoader;
 use Sweetchuck\Utils\Filter\ArrayFilterEnabled;

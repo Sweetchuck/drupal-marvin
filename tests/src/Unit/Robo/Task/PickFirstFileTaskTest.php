@@ -9,7 +9,10 @@ use org\bovigo\vfs\vfsStream;
 use Robo\State\Data;
 
 /**
- * @covers \Drupal\marvin\Robo\Task\PickFirstFileTask
+ * @group marvin
+ * @group robo-task
+ *
+ * @covers \Drupal\marvin\Robo\Task\PickFirstFileTask<extended>
  * @covers \Drupal\marvin\Robo\PickFirstFileTaskLoader
  */
 class PickFirstFileTaskTest extends TaskTestBase {

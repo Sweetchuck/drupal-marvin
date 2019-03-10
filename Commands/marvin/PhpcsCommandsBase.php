@@ -16,23 +16,15 @@ class PhpcsCommandsBase extends LintCommandsBase {
   use PhpcsConfigFallbackTaskLoader;
   use GitTaskLoader;
 
-  protected static function getClassKey(string $key): string {
-    return static::configPrefix() . $key;
-  }
+  /**
+   * {@inheritdoc}
+   */
+  protected static $classKeyPrefix = 'marvin.phpcs';
 
   /**
    * {@inheritdoc}
    */
-  protected static function configPrefix() {
-    return 'marvin.phpcs.';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getCustomEventNamePrefix(): string {
-    return parent::getCustomEventNamePrefix() . ':phpcs';
-  }
+  protected $customEventNamePrefix = 'marvin:phpcs';
 
   /**
    * @return \Robo\Contract\TaskInterface|\Robo\Collection\CollectionBuilder

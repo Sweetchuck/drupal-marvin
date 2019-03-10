@@ -6,26 +6,26 @@ services:
   marvin.utils:
     class: 'Drupal\marvin\Utils'
 
+  marvin.artifact_types.commands:
+    class: 'Drush\Commands\marvin\ArtifactTypesCommands'
+    tags:
+      -
+        name: 'drush.command'
+
+  marvin.composer_scripts.commands:
+    class: 'Drush\Commands\marvin\ComposerScriptsCommands'
+    tags:
+      -
+        name: 'drush.command'
+
   marvin.drush_config.commands:
     class: 'Drush\Commands\marvin\DrushConfigCommands'
     tags:
       -
         name: 'drush.command'
 
-  marvin.artifact_types.commands:
-    class: 'Drush\Commands\marvin\Artifact\ArtifactTypesCommands'
-    tags:
-      -
-        name: 'drush.command'
-
-  marvin.composer_scripts.commands:
-    class: 'Drush\Commands\marvin\Composer\ScriptsCommands'
-    tags:
-      -
-        name: 'drush.command'
-
   marvin.status_report.commands:
-    class: 'Drush\Commands\marvin\StatusReport\StatusReportCommands'
+    class: 'Drush\Commands\marvin\StatusReportCommands'
     tags:
       -
         name: 'drush.command'

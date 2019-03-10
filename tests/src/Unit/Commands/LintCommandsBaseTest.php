@@ -13,7 +13,10 @@ use Sweetchuck\LintReport\Reporter\VerboseReporter;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * @covers \Drush\Commands\marvin\CommandsBase<extended>
+ * @group marvin
+ * @group drush-command
+ *
+ * @covers \Drush\Commands\marvin\LintCommandsBase<extended>
  */
 class LintCommandsBaseTest extends CommandsTestBase {
 

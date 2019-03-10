@@ -12,9 +12,12 @@ class LintCommandsBase extends CommandsBase {
   /**
    * {@inheritdoc}
    */
-  protected function getCustomEventNamePrefix(): string {
-    return parent::getCustomEventNamePrefix() . ':lint';
-  }
+  protected static $classKeyPrefix = 'marvin.lint';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $customEventNamePrefix = 'marvin:lint';
 
   /**
    * {@inheritdoc}

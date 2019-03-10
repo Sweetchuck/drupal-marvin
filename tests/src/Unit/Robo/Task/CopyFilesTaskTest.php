@@ -9,7 +9,10 @@ use org\bovigo\vfs\vfsStream;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
- * @covers \Drupal\marvin\Robo\Task\CopyFilesTask
+ * @group marvin
+ * @group robo-task
+ *
+ * @covers \Drupal\marvin\Robo\Task\CopyFilesTask<extended>
  * @covers \Drupal\marvin\Robo\CopyFilesTaskLoader
  */
 class CopyFilesTaskTest extends TaskTestBase {

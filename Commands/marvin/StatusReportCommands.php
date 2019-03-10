@@ -1,13 +1,23 @@
 <?php
 
-namespace Drush\Commands\marvin\StatusReport;
+namespace Drush\Commands\marvin;
 
 use Consolidation\AnnotatedCommand\CommandData;
 use Drupal\marvin\StatusReport\StatusReport;
 use Drupal\marvin\StatusReport\StatusReportInterface;
 use Drupal\marvin\Utils as MarvinUtils;
 
-class StatusReportCommands extends StatusReportCommandsBase {
+class StatusReportCommands extends CommandsBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $classKeyPrefix = 'marvin.statusReport';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $customEventNamePrefix = 'marvin:status-report';
 
   /**
    * @command marvin:status-report

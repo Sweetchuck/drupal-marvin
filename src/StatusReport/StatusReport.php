@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Drupal\marvin\StatusReport;
 
 use Drupal\marvin\RfcLogLevel;
+use Drupal\marvin\Utils;
 
 class StatusReport implements StatusReportInterface {
 
@@ -13,6 +14,9 @@ class StatusReport implements StatusReportInterface {
    */
   protected $entries = [];
 
+  /**
+   * {@inheritdoc}
+   */
   public function count() {
     return count($this->entries);
   }
@@ -36,17 +40,20 @@ class StatusReport implements StatusReportInterface {
     return $data;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getOutputData() {
     return $this->jsonSerialize();
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @todo Fail on warning.
    */
   public function getExitCode() {
-    $severity = $this->getHighestSeverity();
-
-    return $severity === NULL || $severity > RfcLogLevel::ERROR ? 0 : $severity + 1;
+    return Utils::getExitCodeBasedOnSeverity($this->getHighestSeverity());
   }
 
   /**
@@ -65,17 +72,8 @@ class StatusReport implements StatusReportInterface {
    */
   public function removeEntries(...$entries) {
     foreach ($entries as $entry) {
-      if ($entry instanceof StatusReportEntryInterface) {
-        unset($this->entries[$entry->getId()]);
-
-        continue;
-      }
-
-      if (is_scalar($entry)) {
-        unset($this->entries[$entry]);
-
-        continue;
-      }
+      $entryId = $entry instanceof StatusReportEntryInterface ? $entry->getId() : $entry;
+      unset($this->entries[$entryId]);
     }
 
     return $this;
@@ -90,6 +88,9 @@ class StatusReport implements StatusReportInterface {
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getHighestSeverity(): ?int {
     $highestSeverity = NULL;
     foreach ($this->entries as $entry) {

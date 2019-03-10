@@ -1,8 +1,7 @@
 <?php
 
-namespace Drush\Commands\marvin\Artifact;
+namespace Drush\Commands\marvin;
 
-use Drush\Commands\marvin\CommandsBase;
 use Drupal\marvin\Robo\CopyFilesTaskLoader;
 use Drupal\marvin\Robo\PrepareDirectoryTaskLoader;
 use Drupal\marvin\Robo\ArtifactCollectFilesTaskLoader;
@@ -16,8 +15,11 @@ class ArtifactCommandsBase extends CommandsBase {
   /**
    * {@inheritdoc}
    */
-  protected function getCustomEventNamePrefix(): string {
-    return parent::getCustomEventNamePrefix() . ':artifact';
-  }
+  protected static $classKeyPrefix = 'marvin.artifact';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $customEventNamePrefix = 'marvin:artifact';
 
 }

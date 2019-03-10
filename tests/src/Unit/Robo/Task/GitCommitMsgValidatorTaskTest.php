@@ -7,7 +7,10 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 
 /**
- * @covers \Drupal\marvin\Robo\Task\GitCommitMsgValidatorTask
+ * @group marvin
+ * @group robo-task
+ *
+ * @covers \Drupal\marvin\Robo\Task\GitCommitMsgValidatorTask<extended>
  * @covers \Drupal\marvin\Robo\GitCommitMsgValidatorTaskLoader
  */
 class GitCommitMsgValidatorTaskTest extends TaskTestBase {

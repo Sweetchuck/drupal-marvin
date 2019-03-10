@@ -68,8 +68,8 @@ class Utils {
       ->regexReplace('(Commands|CommandsBase)$', '')
       ->regexReplace('^marvin([^\\\\]*)', '')
       ->replace('\\', '.')
-      ->underscored()
-      ->regexReplace('(?<=\.)((lint\.lint)_)(?=[^\.]+$)', 'lint.');
+      ->dasherize()
+      ->regexReplace('(?<=\.)(([^\.]+)\.(\2[_-]))(?=[^\.]+$)', '\2.');
   }
 
   /**
@@ -423,6 +423,7 @@ class Utils {
       case 'patch':
         $version->setPreReleaseVersion(NULL);
       case 'pre-release':
+      case 'preReleaseVersion':
         $version->setBuildMetaData(NULL);
         break;
 
@@ -445,6 +446,7 @@ class Utils {
         break;
 
       case 'pre-release':
+      case 'preReleaseVersion':
         $preRelease = $version->preReleaseVersion();
         if (!$preRelease) {
           $version->setPatch($version->patch() + 1);
@@ -453,20 +455,27 @@ class Utils {
           break;
         }
 
-        $pattern = '/^(?P<type>(alpha|beta|rc)\.?)(?P<number>\d+)$/ui';
-        $matches = [];
-        if (preg_match($pattern, $preRelease, $matches)) {
-          $version->setPreReleaseVersion(sprintf(
-            '%s%d',
-            $matches['type'],
-            intval($matches['number']) + 1
-          ));
+        $parts = static::parseSemVersionPreRelease($preRelease);
+        if ($parts) {
+          $version->setPreReleaseVersion(sprintf('%s%d', $parts['type'], $parts['number'] + 1));
         }
 
         break;
     }
 
     return $version;
+  }
+
+  public static function parseSemVersionPreRelease(string $preRelease): ?array {
+    $pattern = '/^(?P<type>(alpha|beta|rc)\.?)(?P<number>\d+)$/ui';
+    $matches = [];
+
+    return preg_match($pattern, $preRelease, $matches) ?
+      [
+        'type' => $matches['type'],
+        'number' => (int) $matches['number'],
+      ]
+      : NULL;
   }
 
   public static function pickFirstFile(array $dirs, array $files): ?array {
@@ -490,6 +499,10 @@ class Utils {
     }
 
     return $state ? "--$optionName" : "--no-$optionName";
+  }
+
+  public static function getExitCodeBasedOnSeverity(?int $severity, int $lowestError = RfcLogLevel::ERROR): int {
+    return $severity === NULL || $severity > $lowestError ? 0 : $severity + 1;
   }
 
 }
