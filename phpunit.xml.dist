@@ -50,7 +50,7 @@
 
     <log
       type="coverage-html"
-      target="reports/human/coverage/html"/>
+      target="reports/human/coverage/overall/html"/>
 
     <log
       type="coverage-clover"

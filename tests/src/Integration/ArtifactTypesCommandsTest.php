@@ -4,6 +4,10 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Integration;
 
+/**
+ * @group marvin
+ * @group drush-command
+ */
 class ArtifactTypesCommandsTest extends UnishIntegrationTestCase {
 
   public function testArtifactTypesJson() {
