@@ -22,7 +22,7 @@ class ArtifactTypesCommandsTest extends UnishIntegrationTestCase {
 
     $expected = [
       'dummy' => [
-        'label' => "Dummy - 'integrationTest'",
+        'label' => "Dummy - integrationTest",
         'description' => 'Do not use it',
         'id' => 'dummy',
         'weight' => 0,
@@ -46,8 +46,8 @@ class ArtifactTypesCommandsTest extends UnishIntegrationTestCase {
     );
 
     $expected = implode(PHP_EOL, [
-      ' ID    Label                     Description   ',
-      " dummy Dummy - 'integrationTest' Do not use it ",
+      ' ID    Label                   Description   ',
+      " dummy Dummy - integrationTest Do not use it ",
       '',
     ]);
 

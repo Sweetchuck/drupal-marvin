@@ -127,6 +127,10 @@
             "git clean --force -d -x -- tests/",
             "git clean --force -d -X -- tests/"
         ],
+        "test": [
+            "@test:unit",
+            "@test:integration"
+        ],
         "test:unit": "phpunit --testsuite Unit --coverage-html reports/human/coverage/Unit/html --coverage-clover reports/machine/coverage/coverage.Unit.xml --testdox-html reports/human/unit/junit.Unit.html --log-junit reports/machine/unit/junit.Unit.xml",
         "test:integration": "phpunit --testsuite Integration --coverage-html reports/human/coverage/Integration/html --coverage-clover reports/machine/coverage/coverage.Integration.xml --testdox-html reports/human/unit/junit.Integration.html --log-junit reports/machine/unit/junit.Integration.xml"
     }

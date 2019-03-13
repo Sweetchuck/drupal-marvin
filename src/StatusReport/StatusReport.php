@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\marvin\StatusReport;
 
+use ArrayIterator;
 use Drupal\marvin\RfcLogLevel;
 use Drupal\marvin\Utils;
 
@@ -13,6 +14,11 @@ class StatusReport implements StatusReportInterface {
    * @var \Drupal\marvin\StatusReport\StatusReportEntryInterface[]
    */
   protected $entries = [];
+
+  /**
+   * @var int
+   */
+  protected $lowestSeverityAssError = RfcLogLevel::ERROR;
 
   /**
    * {@inheritdoc}
@@ -25,7 +31,7 @@ class StatusReport implements StatusReportInterface {
    * {@inheritdoc}
    */
   public function getIterator() {
-    return new \ArrayIterator($this->entries);
+    return new ArrayIterator($this->entries);
   }
 
   /**
@@ -49,11 +55,12 @@ class StatusReport implements StatusReportInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo Fail on warning.
    */
   public function getExitCode() {
-    return Utils::getExitCodeBasedOnSeverity($this->getHighestSeverity());
+    return Utils::getExitCodeBasedOnSeverity(
+      $this->getHighestSeverity(),
+      $this->getLowestSeverityAsError()
+    );
   }
 
   /**
@@ -105,6 +112,19 @@ class StatusReport implements StatusReportInterface {
     }
 
     return $highestSeverity;
+  }
+
+  public function getLowestSeverityAsError(): int {
+    return $this->lowestSeverityAssError;
+  }
+
+  /**
+   * @return $this
+   */
+  public function setLowestSeverityAssError(int $severity) {
+    $this->lowestSeverityAssError = $severity;
+
+    return $this;
   }
 
 }

@@ -65,15 +65,18 @@ class StatusReportCommandsRunTest extends TaskTestBase {
     $commands->setConfig($this->config);
     $commands->setHookManager($hookManager);
 
-    $actualStatusReport = $commands->statusReport($options);
+    $commandResult = $commands->statusReport($options);
+
+    /** @var array $actualStatusReport */
+    $actualStatusReport = $commandResult->getOutputData();
     static::assertSameSize($expected, $actualStatusReport, 'Number of status report entries');
     /** @var string $entryId */
     /** @var \Drupal\marvin\StatusReport\StatusReportEntry $entry */
     foreach ($actualStatusReport as $entryId => $actual) {
       static::assertSame(
-        $expected[$entryId],
+        $expected[$entryId]->jsonSerialize(),
         $actual,
-        sprintf('%s = %s', $expected[$entryId]->getId(), $actual->getId())
+        sprintf('%s = %s', $expected[$entryId]->getId(), $actual['id'])
       );
     }
   }

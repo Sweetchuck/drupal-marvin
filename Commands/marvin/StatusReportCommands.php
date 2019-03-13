@@ -3,6 +3,7 @@
 namespace Drush\Commands\marvin;
 
 use Consolidation\AnnotatedCommand\CommandData;
+use Consolidation\AnnotatedCommand\CommandResult;
 use Drupal\marvin\StatusReport\StatusReport;
 use Drupal\marvin\StatusReport\StatusReportInterface;
 use Drupal\marvin\Utils as MarvinUtils;
@@ -39,9 +40,14 @@ class StatusReportCommands extends CommandsBase {
       'include-field-labels' => TRUE,
       'table-style' => 'compact',
     ]
-  ): StatusReportInterface {
-    return (new StatusReport())
+  ): CommandResult {
+    $statusReport = (new StatusReport())
       ->addEntries(...array_values($this->collectStatusReportEntries()));
+
+    return CommandResult::dataWithExitCode(
+      $statusReport->jsonSerialize(),
+      $statusReport->getExitCode()
+    );
   }
 
   /**
