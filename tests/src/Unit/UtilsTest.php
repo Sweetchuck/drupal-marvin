@@ -15,7 +15,7 @@ use Webmozart\PathUtil\Path;
 /**
  * @group marvin
  *
- * @covers \Drupal\marvin\Utils
+ * @covers \Drupal\marvin\Utils<extended>
  */
 class UtilsTest extends TestCase {
 

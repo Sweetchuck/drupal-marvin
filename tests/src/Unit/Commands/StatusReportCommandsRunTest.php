@@ -11,6 +11,12 @@ use Drupal\marvin\StatusReport\StatusReportInterface;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use Drush\Commands\marvin\StatusReportCommands;
 
+/**
+ * @group marvin
+ * @group drush-command
+ *
+ * @covers \Drush\Commands\marvin\StatusReportCommands<extended>
+ */
 class StatusReportCommandsRunTest extends TaskTestBase {
 
   public static function casesStatusReport(): array {

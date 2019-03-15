@@ -7,6 +7,8 @@ namespace Drupal\Tests\marvin\Integration;
 /**
  * @group marvin
  * @group drush-command
+ *
+ * @covers \Drush\Commands\marvin\DrushConfigCommands<extended>
  */
 class DrushConfigCommandsTest extends UnishIntegrationTestCase {
 

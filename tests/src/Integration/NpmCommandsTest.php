@@ -7,6 +7,8 @@ namespace Drupal\Tests\marvin\Integration;
 /**
  * @group marvin
  * @group drush-command
+ *
+ * @covers \Drush\Commands\marvin\NpmCommandsBase<extended>
  */
 class NpmCommandsTest extends UnishIntegrationTestCase {
 

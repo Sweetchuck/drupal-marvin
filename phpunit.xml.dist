@@ -57,7 +57,11 @@
 
     <log
       type="coverage-clover"
-      target="reports/machine/coverage/coverage.xml"/>
+      target="reports/machine/coverage-clover/overall.xml"/>
+
+    <log
+      type="coverage-php"
+      target="reports/machine/coverage-php/overall.php"/>
 
     <log
       type="testdox-html"

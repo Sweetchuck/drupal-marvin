@@ -8,10 +8,13 @@ use DrupalComposer\DrupalScaffold\Handler as DrupalScaffoldHandler;
 use Exception;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use SebastianBergmann\CodeCoverage\CodeCoverage;
+use SebastianBergmann\CodeCoverage\Report\Html\Facade as HtmlCodeCoverageReporter;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 use Sweetchuck\GitHooks\Composer\Scripts as GitHooks;
 use Sweetchuck\Utils\Filter\ArrayFilterFileSystemExists;
@@ -44,6 +47,24 @@ class Scripts {
       ->phpcsConfigSet()
       ->preparePhpunitXml()
       ->prepareProject();
+
+    return 0;
+  }
+
+  public static function generateCoverageHtml(Event $event): int {
+    $self = new static($event);
+
+    $srcFiles = (new Finder())
+      ->in('reports/machine/coverage-php')
+      ->files()
+      ->name('*.php');
+
+    $dstDir = 'reports/human/coverage/all/html';
+
+    (new HtmlCodeCoverageReporter())->process(
+      $self->mergeCodeCoverageFiles($srcFiles),
+      $dstDir
+    );
 
     return 0;
   }
@@ -433,6 +454,25 @@ class Scripts {
       'UNISH_DB_URL' => 'mysql://username:password@localhost:3306/databasename',
       'BROWSERTEST_OUTPUT_DIRECTORY' => realpath($this->cwd) . '/tests/fixtures/project_01/docroot/sites/simpletest/browser_output',
     ];
+  }
+
+  protected function mergeCodeCoverageFiles(iterable $files): CodeCoverage {
+    $codeCoverage = new CodeCoverage();
+
+    $coverage = NULL;
+    $require = function (string $fileName) {
+      return require $fileName;
+    };
+
+    /** @var \Symfony\Component\Finder\SplFileInfo $file */
+    foreach ($files as $file) {
+      $coverage = $require($file->getRealPath());
+      if ($coverage instanceof CodeCoverage) {
+        $codeCoverage->merge($coverage);
+      }
+    }
+
+    return $codeCoverage;
   }
 
 }

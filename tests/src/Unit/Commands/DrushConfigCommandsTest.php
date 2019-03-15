@@ -11,6 +11,8 @@ use Drush\Commands\marvin\DrushConfigCommands;
 /**
  * @group marvin
  * @group drush-command
+ *
+ * @covers \Drush\Commands\marvin\DrushConfigCommands<extended>
  */
 class DrushConfigCommandsTest extends TaskTestBase {
 
