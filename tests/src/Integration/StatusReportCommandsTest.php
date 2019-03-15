@@ -45,13 +45,27 @@ class StatusReportCommandsTest extends UnishIntegrationTestCase {
         ],
         RfcLogLevel::ERROR,
       ],
+      'error table' => [
+        [
+          'exitCode' => RfcLogLevel::ERROR + 1,
+          'stdOutput' => implode(PHP_EOL, [
+            'Severity Title Value Description ',
+            ' Error    e1_ti e1_va e1_de',
+          ]),
+        ],
+        RfcLogLevel::ERROR,
+        [
+          'no-ansi' => NULL,
+          'format' => 'table',
+        ],
+      ],
     ];
   }
 
   /**
    * @dataProvider casesMarvinStatusReport
    */
-  public function testMarvinStatusReport(array $expected, int $severity): void {
+  public function testMarvinStatusReport(array $expected, int $severity, array $options = []): void {
     $expected += [
       'stdError' => '',
       'stdOutput' => '',
@@ -62,7 +76,7 @@ class StatusReportCommandsTest extends UnishIntegrationTestCase {
     $this->drush(
       'marvin:status-report',
       [],
-      [],
+      $options,
       $expected['exitCode']
     );
 

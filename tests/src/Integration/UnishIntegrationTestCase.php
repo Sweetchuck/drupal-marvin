@@ -20,4 +20,8 @@ class UnishIntegrationTestCase extends UnishIntegrationTestCaseBase {
     ] + parent::getCommonCommandLineOptions();
   }
 
+  public function getMarvinRootDir(): string {
+    return dirname(__DIR__, 3);
+  }
+
 }

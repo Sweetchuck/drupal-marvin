@@ -6,7 +6,7 @@ namespace Drush\Commands\dummy_m1;
 
 use Drush\Commands\DrushCommands;
 
-class MarvinArtifactCommands extends DrushCommands {
+class ArtifactCommands extends DrushCommands {
 
   /**
    * @hook on-event marvin:artifact:types

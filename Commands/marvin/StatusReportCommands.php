@@ -44,26 +44,28 @@ class StatusReportCommands extends CommandsBase {
     $statusReport = (new StatusReport())
       ->addEntries(...array_values($this->collectStatusReportEntries()));
 
-    return CommandResult::dataWithExitCode(
-      $statusReport->jsonSerialize(),
-      $statusReport->getExitCode()
-    );
+    return CommandResult::dataWithExitCode($statusReport, $statusReport->getExitCode());
   }
 
   /**
    * @hook alter marvin:status-report
    */
-  public function hookAlterMarvinStatusReport($statusReport, CommandData $commandData) {
+  public function hookAlterMarvinStatusReport(CommandResult $result, CommandData $commandData) {
+    $statusReport = $result->getOutputData();
     if ($statusReport instanceof StatusReportInterface) {
       $expectedFormat = $commandData->input()->getOption('format');
-      if ($expectedFormat === 'table') {
-        return MarvinUtils::convertStatusReportToRowsOfFields($statusReport);
+      switch ($expectedFormat) {
+        case 'table':
+          $statusReport = MarvinUtils::convertStatusReportToRowsOfFields($statusReport);
+          break;
+
+        default:
+          $statusReport = $statusReport->jsonSerialize();
+          break;
       }
 
-      return $statusReport->jsonSerialize();
+      $result->setOutputData($statusReport);
     }
-
-    return $statusReport;
   }
 
   /**

@@ -7,6 +7,7 @@ namespace Drupal\Tests\marvin\Unit\Commands;
 use Consolidation\AnnotatedCommand\Hooks\HookManager;
 use Drupal\marvin\RfcLogLevel;
 use Drupal\marvin\StatusReport\StatusReportEntry;
+use Drupal\marvin\StatusReport\StatusReportInterface;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use Drush\Commands\marvin\StatusReportCommands;
 
@@ -67,16 +68,19 @@ class StatusReportCommandsRunTest extends TaskTestBase {
 
     $commandResult = $commands->statusReport($options);
 
-    /** @var array $actualStatusReport */
+    /** @var \Drupal\marvin\StatusReport\StatusReportInterface $actualStatusReport */
     $actualStatusReport = $commandResult->getOutputData();
+
+    static::assertInstanceOf(StatusReportInterface::class, $actualStatusReport);
     static::assertSameSize($expected, $actualStatusReport, 'Number of status report entries');
+
     /** @var string $entryId */
-    /** @var \Drupal\marvin\StatusReport\StatusReportEntry $entry */
+    /** @var \Drupal\marvin\StatusReport\StatusReportEntryInterface $actual */
     foreach ($actualStatusReport as $entryId => $actual) {
       static::assertSame(
         $expected[$entryId]->jsonSerialize(),
-        $actual,
-        sprintf('%s = %s', $expected[$entryId]->getId(), $actual['id'])
+        $actual->jsonSerialize(),
+        sprintf('%s = %s', $expected[$entryId]->getId(), $actual->getId())
       );
     }
   }

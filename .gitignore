@@ -17,6 +17,12 @@
 
 !/tests/fixtures/project_01/docroot/modules/custom/
 
+!/tests/fixtures/project_01/docroot/themes/
+/tests/fixtures/project_01/docroot/themes/*
+
+!/tests/fixtures/project_01/docroot/themes/custom/
+/tests/fixtures/project_01/docroot/themes/custom/*/node_modules/
+
 /vendor/
 
 /phpcs.xml
