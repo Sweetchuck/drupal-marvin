@@ -11,6 +11,7 @@ use Drupal\marvin\RfcLogLevel;
  * @group drush-command
  *
  * @covers \Drush\Commands\marvin\StatusReportCommands<extended>
+ * @covers \Drupal\marvin\CommandDelegatorTrait
  */
 class StatusReportCommandsTest extends UnishIntegrationTestCase {
 

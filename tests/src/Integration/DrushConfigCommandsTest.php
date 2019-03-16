@@ -9,6 +9,7 @@ namespace Drupal\Tests\marvin\Integration;
  * @group drush-command
  *
  * @covers \Drush\Commands\marvin\DrushConfigCommands<extended>
+ * @covers \Drupal\marvin\CommandDelegatorTrait
  */
 class DrushConfigCommandsTest extends UnishIntegrationTestCase {
 
