@@ -12,7 +12,7 @@ namespace Drupal\Tests\marvin\Integration;
  */
 class NpmCommandsTest extends UnishIntegrationTestCase {
 
-  public function testDrushConfig(): void {
+  public function testNpmInstall(): void {
     $root = $this->getMarvinRootDir();
 
     $nvmDir = getenv('REAL_NVM_DIR');

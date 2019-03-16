@@ -41,8 +41,7 @@ class StatusReportCommands extends CommandsBase {
       'table-style' => 'compact',
     ]
   ): CommandResult {
-    $statusReport = (new StatusReport())
-      ->addEntries(...array_values($this->collectStatusReportEntries()));
+    $statusReport = (new StatusReport())->addEntries(...array_values($this->collectStatusReportEntries()));
 
     return CommandResult::dataWithExitCode($statusReport, $statusReport->getExitCode());
   }
