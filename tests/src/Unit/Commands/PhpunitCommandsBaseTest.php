@@ -14,6 +14,7 @@ use Symfony\Component\Yaml\Yaml;
  * @group drush-command
  *
  * @covers \Drush\Commands\marvin\PhpunitCommandsBase<extended>
+ * @covers \Drupal\marvin\PhpVariantTrait
  */
 class PhpunitCommandsBaseTest extends CommandsTestBase {
 
@@ -67,7 +68,7 @@ class PhpunitCommandsBaseTest extends CommandsTestBase {
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
-    static::assertSame('marvin:test:phpunit', $method->invokeArgs($this->commands, []));
+    static::assertSame('marvin:phpunit', $method->invokeArgs($this->commands, []));
   }
 
   public static function casesGetTestSuiteNamesByEnvironmentVariant(): array {

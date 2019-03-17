@@ -6,10 +6,17 @@ namespace Drupal\marvin;
 
 trait PhpVariantTrait {
 
+  /**
+   * @return \Consolidation\Config\ConfigInterface
+   *
+   * @see \Robo\Common\ConfigAwareTrait::getConfig
+   */
+  public abstract function getConfig();
+
   protected function getConfigPhpVariants(): array {
     $phpVariants = [];
 
-    $items = (array) $this->getConfig()->get('command.marvin.settings.php.variant', []);
+    $items = (array) $this->getConfig()->get('marvin.php.variant', []);
 
     foreach ($items as $id => $item) {
       $phpVariants[$id] = $this->loadPhpVariant($id, $item);
@@ -43,6 +50,15 @@ trait PhpVariantTrait {
     }
 
     return $item;
+  }
+
+  protected function createPhpVariantFromCurrent(): array {
+    $phpVariant = [
+      'id' => PHP_VERSION_ID . '-nts',
+      'binDir' => PHP_BINDIR,
+    ];
+
+    return $this->loadPhpVariant($phpVariant['id'], $phpVariant);
   }
 
   protected function detectPhpVariantVersion($item): array {

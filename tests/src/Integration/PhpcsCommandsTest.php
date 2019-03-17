@@ -50,7 +50,7 @@ class PhpcsCommandsTest extends UnishIntegrationTestCase {
       'exitCode' => 2,
       'stdError' => implode(PHP_EOL, [
         '[notice] ',
-        " [notice] notice runs cd '$root/tests/fixtures/project_01/docroot/modules/custom/dummy_m1' && ../../../../../../../bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'Commands/' 'dummy_m1.module'",
+        " [notice] notice runs cd '$root/tests/fixtures/project_01/docroot/modules/custom/dummy_m1' && ../../../../../../../bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'Commands/' 'tests/' 'dummy_m1.module'",
         ' [error]  PHP Code Sniffer found some errors :-( ',
         ' [error]  Exit code 2',
       ]),

@@ -10,36 +10,21 @@ class PhpunitCommandsBase extends CommandsBase {
 
   use PHPUnitTaskLoader;
 
-  protected static function getClassKey(string $key): string {
-    return static::configPrefix() . $key;
-  }
+  /**
+   * {@inheritdoc}
+   */
+  protected static $classKeyPrefix = 'marvin.phpunit';
 
   /**
    * {@inheritdoc}
    */
-  protected static function configPrefix() {
-    return 'marvin.phpunit.';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getCustomEventNamePrefix(): string {
-    return parent::getCustomEventNamePrefix() . ':test:phpunit';
-  }
+  protected $customEventNamePrefix = 'marvin:phpunit';
 
   /**
    * @return \Sweetchuck\Robo\PHPUnit\Task\RunTask|\Robo\Collection\CollectionBuilder
    */
-  protected function getTaskPhpUnit(array $testSuiteNames, array $groupNames, array $phpVariant): CollectionBuilder {
-    $task = $this
-      ->taskPHPUnitRun()
-      ->setPhpExecutable("{$phpVariant['phpdbgExecutable']} -qrr")
-      ->setPhpunitExecutable($this->getPhpUnitExecutable())
-      ->setProcessTimeout(NULL)
-      ->setColors('always')
-      ->setTestSuite($testSuiteNames)
-      ->setGroup($groupNames);
+  protected function getTaskPhpUnit(array $options): CollectionBuilder {
+    $task = $this->taskPHPUnitRun($options);
 
     $gitHook = $this->getConfig()->get('marvin.gitHook');
     if ($gitHook === 'pre-commit') {
@@ -48,6 +33,20 @@ class PhpunitCommandsBase extends CommandsBase {
     }
 
     return $task;
+  }
+
+  protected function geDefaultPhpunitTaskOptions(?array $phpVariant = NULL): array {
+    $options = [
+      'colors' => $this->getColors(),
+      'processTimeout' => NULL,
+      'phpExecutable' => "{$phpVariant['phpdbgExecutable']} -qrr",
+    ];
+
+    if (!empty($phpVariant['phpdbgExecutable'])) {
+      $options['phpunitExecutable'] = $this->getPhpUnitExecutable();
+    }
+
+    return $options;
   }
 
   protected function getPhpUnitExecutable(): string {
@@ -78,6 +77,16 @@ class PhpunitCommandsBase extends CommandsBase {
     }
 
     return array_keys(array_filter($testSuites, new ArrayFilterEnabled()));
+  }
+
+  protected function getColors(): string {
+    $state = $this->getTriStateOptionValue('ansi');
+
+    if ($state === NULL) {
+      $state = 'auto';
+    }
+
+    return $state ? 'always' : 'never';
   }
 
 }

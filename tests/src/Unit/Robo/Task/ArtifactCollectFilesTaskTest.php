@@ -30,7 +30,7 @@ class ArtifactCollectFilesTaskTest extends TaskTestBase {
    */
   public function testRunSuccess(array $expected, array $structure): void {
     $vfs = vfsStream::setup(__FUNCTION__, NULL, $structure);
-    $this->config->set('command.marvin.settings.buildDir', 'build');
+    $this->config->set('marvin.buildDir', 'build');
 
     $options = [
       'composerJsonFileName' => 'composer.json',

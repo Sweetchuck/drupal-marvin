@@ -156,9 +156,6 @@ class CommandsBase extends Tasks implements
       ->get('marvin.gitExecutable', 'git');
   }
 
-  /**
-   * @return bool|null
-   */
   protected function getTriStateOptionValue(string $optionName): ?bool {
     if ($this->input()->getOption($optionName)) {
       return TRUE;

@@ -63,7 +63,7 @@ marvin:
   ##
   gitExecutable: 'git'
 
-  # @todo Remove command.marvin.settings.database.
+  # @todo Remove marvin.database.
   database:
     variant: {}
       #my0506:
@@ -83,10 +83,28 @@ marvin:
     ##
     # Keys are custom.
     #
+    # However keys are custom,
+    # currently the PHP version detection is based on the key.
+    # So it has to be provided in the following format:
+    # {PHP_VERSION_ID}-(zts|nts)
+    #
+    # Examples: 70102-zts or 70303-nts
+    #
+    # @todo Improve phpVariant version detection.
+    #
     # @var array
     ##
     variant: {}
       #70203-nts:
+
+        ##
+        # Same as the key in the marvin.php.variant.
+        #
+        # Automatically populated.
+        #
+        # @var string
+        ##
+        #id: ''
 
         ##
         # @todo
@@ -122,6 +140,29 @@ marvin:
         # @var string
         ##
         #phpIni: ''
+
+        ##
+        # ID of PHP variant which is the CLI counterpart of this PHP variant.
+        #
+        # Most of the time the HTTP server uses a PHP with different configuration
+        # than the PHP available in the terminal.
+        #
+        # @var null|string
+        ##
+        #cli: ~
+
+        ##
+        # @todo
+        #
+        # @var array
+        ##
+        #version:
+          #id: 70102
+          #major: 7
+          #minor: 1
+          #patch: 2
+          #majorMinor: 701
+          #full: 7.1.2
 
   lint:
     ##
