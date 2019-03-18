@@ -11,7 +11,7 @@ trait DatabaseVariantTrait {
    *
    * @see \Robo\Common\ConfigAwareTrait::getConfig
    */
-  public abstract function getConfig();
+  abstract public function getConfig();
 
   protected function getConfigDatabaseVariants(): array {
     $databaseVariants = [];

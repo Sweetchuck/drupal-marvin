@@ -36,7 +36,7 @@ class PhpunitCommandsTest extends UnishIntegrationTestCase {
         ],
         [
           'docroot/modules/custom/dummy_m1/tests/src/Unit/DummyM1GoodTest.php',
-        ]
+        ],
       ],
       'basic bad' => [
         [
@@ -57,7 +57,7 @@ class PhpunitCommandsTest extends UnishIntegrationTestCase {
         ],
         [
           'docroot/modules/custom/dummy_m1/tests/src/Unit/DummyM1BadTest.php',
-        ]
+        ],
       ],
     ];
   }

@@ -11,7 +11,7 @@ trait PhpVariantTrait {
    *
    * @see \Robo\Common\ConfigAwareTrait::getConfig
    */
-  public abstract function getConfig();
+  abstract public function getConfig();
 
   protected function getConfigPhpVariants(): array {
     $phpVariants = [];
