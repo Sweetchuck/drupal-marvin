@@ -72,6 +72,12 @@ marvin:
       #  type: 'pgsql'
 
   php:
+
+    ##
+    # Key is a file name extension, value indicates that it is enabled or not.
+    #
+    # @var bool[]
+    ##
     extension:
       profile: true
       module: true
@@ -79,6 +85,7 @@ marvin:
       engine: true
       install: true
       php: true
+      inc: true
 
     ##
     # Keys are custom.
