@@ -17,8 +17,7 @@ class ComposerScriptsCommandsTest extends UnishIntegrationTestCase {
     $this->drush(
       'marvin:composer:post-install-cmd',
       [],
-      [],
-      0
+      $this->getCommonCommandLineOptions()
     );
 
     $actualStdOutput = $this->getOutput();
@@ -32,8 +31,7 @@ class ComposerScriptsCommandsTest extends UnishIntegrationTestCase {
     $this->drush(
       'marvin:composer:post-update-cmd',
       [],
-      [],
-      0
+      $this->getCommonCommandLineOptions()
     );
 
     $actualStdOutput = $this->getOutput();
