@@ -15,6 +15,7 @@ class ComposerCommandsTest extends UnishIntegrationTestCase {
 
   public function testLintComposerValidate(): void {
     $root = $this->getMarvinRootDir();
+    //$projectRoot = $this->getProjectRootDir();
 
     $expected = [
       'exitCode' => 0,
@@ -29,8 +30,14 @@ class ComposerCommandsTest extends UnishIntegrationTestCase {
     $this->drush(
       'marvin:lint:composer-validate',
       ["$root/tests/fixtures/project_01"],
-      [],
-      $expected['exitCode']
+      $this->getCommonCommandLineOptions(),
+      NULL,
+      NULL,
+      $expected['exitCode'],
+      NULL,
+      [
+        'HOME' => '/dev/null',
+      ]
     );
 
     $actualStdError = $this->getErrorOutput();

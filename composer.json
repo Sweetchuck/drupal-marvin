@@ -11,13 +11,7 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
-    "repositories": {
-        "drush/drush": {
-            "type": "git",
-            "url": "https://github.com/drush-ops/drush.git",
-            "reference": "1472ae385bf5e820fcdb07f22d1d0d7f278f0087"
-        }
-    },
+    "repositories": {},
     "require": {
         "php": ">=7.1",
         "ext-json": "*",
@@ -46,7 +40,7 @@
         "cweagans/composer-patches": "^1.6",
         "drupal-composer/drupal-scaffold": "^2.5",
         "drupal/core": "^8.5",
-        "drush/drush": "dev-master#1472ae385bf5e820fcdb07f22d1d0d7f278f0087",
+        "drush/drush": "^9.6.2",
         "mikey179/vfsstream": "^1.6",
         "phpunit/phpunit": "^6.3",
         "sweetchuck/git-hooks": "^0.0"

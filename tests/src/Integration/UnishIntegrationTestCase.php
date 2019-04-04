@@ -44,6 +44,10 @@ class UnishIntegrationTestCase extends BrowserTestBase {
     ];
   }
 
+  protected function getProjectRootDir(): string {
+    return dirname($this->getDrupalRoot());
+  }
+
   public function getMarvinRootDir(): string {
     return dirname(__DIR__, 3);
   }

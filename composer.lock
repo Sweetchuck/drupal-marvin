@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c79100ea14e007ae5bf184c77a41c110",
+    "content-hash": "0fb616796fb99652dcc25259cc8a5c9e",
     "packages": [
         {
             "name": "consolidation/annotated-command",
@@ -4018,11 +4018,11 @@
         },
         {
             "name": "drush/drush",
-            "version": "dev-master",
+            "version": "9.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "1472ae385bf5e820fcdb07f22d1d0d7f278f0087"
+                "reference": "65d36cf542308d0b88f77c80f818a978d2844b80"
             },
             "require": {
                 "chi-teck/drupal-code-generator": "^1.28.1",
@@ -4104,9 +4104,6 @@
                 },
                 "branch-alias": {
                     "dev-master": "9.x-dev"
-                },
-                "patches_applied": {
-                    "Unish tests": "https://patch-diff.githubusercontent.com/raw/drush-ops/drush/pull/3962.diff"
                 }
             },
             "autoload": {
@@ -4209,7 +4206,7 @@
                 "irc": "irc://irc.freenode.org/drush",
                 "slack": "https://drupal.slack.com/messages/C62H9CWQM"
             },
-            "time": "2019-04-03T11:23:25+00:00"
+            "time": "2019-04-03T11:17:00+00:00"
         },
         {
             "name": "easyrdf/easyrdf",
@@ -7960,8 +7957,7 @@
         "sweetchuck/robo-nvm": 20,
         "sweetchuck/robo-phpunit": 20,
         "sweetchuck/robo-yarn": 20,
-        "sweetchuck/utils": 20,
-        "drush/drush": 20
+        "sweetchuck/utils": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
