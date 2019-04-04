@@ -32,8 +32,12 @@ class PhpcsCommandsTest extends UnishIntegrationTestCase {
     $this->drush(
       'marvin:lint:phpcs',
       ["$root/tests/fixtures/project_01"],
-      [],
-      $expected['exitCode']
+      $this->getCommonCommandLineOptions(),
+      NULL,
+      NULL,
+      $expected['exitCode'],
+      NULL,
+      $this->getCommonCommandLineEnvVars()
     );
 
     $actualStdError = $this->getErrorOutput();
@@ -60,8 +64,12 @@ class PhpcsCommandsTest extends UnishIntegrationTestCase {
     $this->drush(
       'marvin:lint:phpcs',
       ["$root/tests/fixtures/project_01/docroot/modules/custom/dummy_m1"],
-      [],
-      $expected['exitCode']
+      $this->getCommonCommandLineOptions(),
+      NULL,
+      NULL,
+      $expected['exitCode'],
+      NULL,
+      $this->getCommonCommandLineEnvVars()
     );
 
     $actualStdError = $this->getErrorOutput();
