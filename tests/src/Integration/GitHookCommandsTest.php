@@ -17,8 +17,12 @@ class GitHookCommandsTest extends UnishIntegrationTestCase {
     $this->drush(
       'marvin:git-hook:pre-commit',
       [],
-      [],
-      0
+      $this->getCommonCommandLineOptions(),
+      NULL,
+      NULL,
+      0,
+      NULL,
+      $this->getCommonCommandLineEnvVars()
     );
 
     $actualStdOutput = $this->getOutput();
