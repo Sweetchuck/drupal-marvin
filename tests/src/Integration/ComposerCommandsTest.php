@@ -35,9 +35,7 @@ class ComposerCommandsTest extends UnishIntegrationTestCase {
       NULL,
       $expected['exitCode'],
       NULL,
-      [
-        'HOME' => '/dev/null',
-      ]
+      $this->getCommonCommandLineEnvVars()
     );
 
     $actualStdError = $this->getErrorOutput();

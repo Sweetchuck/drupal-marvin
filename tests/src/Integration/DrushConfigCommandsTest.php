@@ -14,13 +14,17 @@ namespace Drupal\Tests\marvin\Integration;
 class DrushConfigCommandsTest extends UnishIntegrationTestCase {
 
   public function testDrushConfig(): void {
+    $options = $this->getCommonCommandLineOptions();
+    $options['format'] = 'json';
     $this->drush(
       'marvin:drush-config',
       [],
-      [
-        'format' => 'json',
-      ],
-      0
+      $options,
+      NULL,
+      NULL,
+      0,
+      NULL,
+      $this->getCommonCommandLineEnvVars()
     );
 
     $actualDrushConfig = (array) $this->getOutputFromJSON();

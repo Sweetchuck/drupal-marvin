@@ -33,14 +33,17 @@ class UnishIntegrationTestCase extends BrowserTestBase {
     return implode(' ', $options);
   }
 
-  /**
-   * {@inheritdoc}
-   */
   protected function getCommonCommandLineOptions() {
     return [
       'config' => [
         Path::join($this->getDrupalRoot(), '..', 'drush'),
       ],
+    ];
+  }
+
+  protected function getCommonCommandLineEnvVars() {
+    return [
+      'HOME' => '/dev/null',
     ];
   }
 
