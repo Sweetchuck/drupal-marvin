@@ -77,7 +77,9 @@ class PhpunitCommandsTest extends UnishIntegrationTestCase {
     $this->drush(
       'marvin:test:unit',
       $args,
-      [],
+      $this->getCommonCommandLineOptions(),
+      NULL,
+      NULL,
       $expected['exitCode']
     );
 
