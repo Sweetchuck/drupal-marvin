@@ -4,10 +4,34 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Integration;
 
-use Unish\UnishIntegrationTestCase as UnishIntegrationTestCaseBase;
+use Drupal\Tests\BrowserTestBase;
+use Drush\TestTraits\DrushTestTrait;
 use Webmozart\PathUtil\Path;
 
-class UnishIntegrationTestCase extends UnishIntegrationTestCaseBase {
+class UnishIntegrationTestCase extends BrowserTestBase {
+
+  use DrushTestTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function convertKeyValueToFlag($key, $value) {
+    if ($value === NULL) {
+      return "--$key";
+    }
+
+    $options = [];
+
+    if (!is_iterable($value)) {
+      $value = [$value];
+    }
+
+    foreach ($value as $item) {
+      $options[] = sprintf('--%s=%s', $key, static::escapeshellarg($item));
+    }
+
+    return implode(' ', $options);
+  }
 
   /**
    * {@inheritdoc}
@@ -15,9 +39,9 @@ class UnishIntegrationTestCase extends UnishIntegrationTestCaseBase {
   protected function getCommonCommandLineOptions() {
     return [
       'config' => [
-        Path::join(static::getSut(), 'drush'),
+        Path::join($this->getDrupalRoot(), '..', 'drush'),
       ],
-    ] + parent::getCommonCommandLineOptions();
+    ];
   }
 
   public function getMarvinRootDir(): string {

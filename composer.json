@@ -15,7 +15,7 @@
         "drush/drush": {
             "type": "git",
             "url": "https://github.com/drush-ops/drush.git",
-            "reference": "d3e5b475da82a89ad81f11ba5b5768856f55b861"
+            "reference": "1472ae385bf5e820fcdb07f22d1d0d7f278f0087"
         }
     },
     "require": {
@@ -41,12 +41,13 @@
     },
     "require-dev": {
         "ext-dom": "*",
+        "behat/mink-goutte-driver": "^1.2",
         "composer/installers": "^1.5",
         "cweagans/composer-patches": "^1.6",
         "drupal-composer/drupal-scaffold": "^2.5",
         "drupal/core": "^8.5",
-        "drush/drush": "dev-master#d3e5b475da82a89ad81f11ba5b5768856f55b861",
-        "mikey179/vfsStream": "^1.6",
+        "drush/drush": "dev-master#1472ae385bf5e820fcdb07f22d1d0d7f278f0087",
+        "mikey179/vfsstream": "^1.6",
         "phpunit/phpunit": "^6.3",
         "sweetchuck/git-hooks": "^0.0"
     },
@@ -83,11 +84,7 @@
         },
         "enable-patching": true,
         "composer-exit-on-patch-failure": true,
-        "patches": {
-            "drush/drush": {
-                "Unish tests": "https://patch-diff.githubusercontent.com/raw/drush-ops/drush/pull/3962.diff"
-            }
-        },
+        "patches": {},
         "drupal-scaffold": {
             "excludes": [
                 ".csslintrc",
@@ -95,7 +92,6 @@
                 ".eslintignore",
                 ".eslintrc.json",
                 ".gitattributes",
-                ".ht.router.php",
                 ".htaccess",
                 "web.config"
             ]
