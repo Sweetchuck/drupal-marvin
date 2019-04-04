@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Integration;
 
+use PHPUnit\Framework\SkippedTestError;
+
 /**
  * @group marvin
  * @group drush-command
@@ -14,6 +16,8 @@ namespace Drupal\Tests\marvin\Integration;
 class NpmCommandsTest extends UnishIntegrationTestCase {
 
   public function testNpmInstall(): void {
+    throw new SkippedTestError('@todo install nvm');
+
     $root = $this->getMarvinRootDir();
 
     $nvmDir = getenv('REAL_NVM_DIR');
@@ -29,12 +33,20 @@ class NpmCommandsTest extends UnishIntegrationTestCase {
       'stdOutput' => '',
     ];
 
-    $this->setEnv(['NVM_DIR' => $nvmDir]);
+    $envVars = [
+      'NVM_DIR' =>  $nvmDir,
+    ];
+    $options = $this->getCommonCommandLineOptions();
+
     $this->drush(
       'marvin:npm:install',
       ["$root/tests/fixtures/project_01/docroot/themes/custom/dummy_t1"],
-      [],
-      $expected['exitCode']
+      $options,
+      NULL,
+      NULL,
+      $expected['exitCode'],
+      NULL,
+      $envVars
     );
 
     $actualStdError = $this->getErrorOutput();
