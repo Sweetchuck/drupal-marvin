@@ -73,12 +73,19 @@ class StatusReportCommandsTest extends UnishIntegrationTestCase {
       'exitCode' => 0,
     ];
 
-    $this->setEnv(['MARVIN_SEVERITY' => $severity]);
+    $envVars = [
+      'MARVIN_SEVERITY' => $severity,
+    ];
+
     $this->drush(
       'marvin:status-report',
       [],
-      $options,
-      $expected['exitCode']
+      $options + $this->getCommonCommandLineOptions(),
+      NULL,
+      NULL,
+      $expected['exitCode'],
+      NULL,
+      $envVars + $this->getCommonCommandLineEnvVars()
     );
 
     $actualStdError = $this->getErrorOutput();

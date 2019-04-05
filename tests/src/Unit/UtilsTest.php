@@ -19,6 +19,15 @@ use Webmozart\PathUtil\Path;
  */
 class UtilsTest extends TestCase {
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function tearDown() {
+    parent::tearDown();
+
+    putenv('COMPOSER');
+  }
+
   public function casesIsDrupalPackage(): array {
     return [
       'module' => [TRUE, ['type' => 'drupal-module']],
