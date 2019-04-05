@@ -43,7 +43,8 @@
         "drush/drush": "^9.6.2",
         "mikey179/vfsstream": "^1.6",
         "phpunit/phpunit": "^6.3",
-        "sweetchuck/git-hooks": "^0.0"
+        "sweetchuck/git-hooks": "^0.0",
+        "weitzman/drupal-test-traits": "^1.1"
     },
     "suggest": {
         "drush/drush": "9.6.*"

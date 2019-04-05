@@ -449,7 +449,8 @@ class Scripts {
 
   protected function getPhpunitEnvVars(): array {
     return [
-      'SIMPLETEST_BASE_URL' => 'http://localhost',
+      'SIMPLETEST_BASE_URL' => 'http://localhost:8888',
+      'DTT_BASE_URL' => 'http://localhost:8888',
       'SIMPLETEST_DB' => 'mysql://username:password@localhost:3306/databasename',
       'UNISH_DB_URL' => 'mysql://username:password@localhost:3306/databasename',
       'BROWSERTEST_OUTPUT_DIRECTORY' => realpath($this->cwd) . '/tests/fixtures/project_01/docroot/sites/simpletest/browser_output',

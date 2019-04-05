@@ -4,13 +4,18 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Integration;
 
-use Drupal\Tests\BrowserTestBase;
 use Drush\TestTraits\DrushTestTrait;
 use Webmozart\PathUtil\Path;
+use weitzman\DrupalTestTraits\ExistingSiteBase;
 
-class UnishIntegrationTestCase extends BrowserTestBase {
+class UnishIntegrationTestCase extends ExistingSiteBase {
 
   use DrushTestTrait;
+
+  /**
+   * @var string
+   */
+  protected $projectName = 'project_01';
 
   /**
    * {@inheritdoc}
@@ -53,6 +58,10 @@ class UnishIntegrationTestCase extends BrowserTestBase {
 
   public function getMarvinRootDir(): string {
     return dirname(__DIR__, 3);
+  }
+
+  public function getDrupalRoot(): string {
+    return Path::join($this->getMarvinRootDir(), "tests/fixtures/{$this->projectName}/docroot");
   }
 
 }

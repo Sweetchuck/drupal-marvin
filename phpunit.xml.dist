@@ -13,6 +13,7 @@
 
     <!-- Example SIMPLETEST_BASE_URL value: http://localhost -->
     <!-- <env name="SIMPLETEST_BASE_URL" value=""/> -->
+    <!-- <env name="DTT_BASE_URL" value=""/> -->
 
     <!-- Example SIMPLETEST_DB value: mysql://username:password@localhost/databasename#table_prefix -->
     <!-- <env name="SIMPLETEST_DB" value=""/> -->
