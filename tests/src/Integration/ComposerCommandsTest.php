@@ -15,7 +15,6 @@ class ComposerCommandsTest extends UnishIntegrationTestCase {
 
   public function testLintComposerValidate(): void {
     $root = $this->getMarvinRootDir();
-    //$projectRoot = $this->getProjectRootDir();
 
     $expected = [
       'exitCode' => 0,

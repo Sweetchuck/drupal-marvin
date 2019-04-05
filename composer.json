@@ -35,6 +35,8 @@
     },
     "require-dev": {
         "ext-dom": "*",
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*",
         "behat/mink-goutte-driver": "^1.2",
         "composer/installers": "^1.5",
         "cweagans/composer-patches": "^1.6",

@@ -247,7 +247,8 @@ class Scripts {
       ->prepareProjectComposerJson()
       ->prepareProjectSelf()
       ->prepareProjectDirs()
-      ->prepareProjectScaffold();
+      ->prepareProjectScaffold()
+      ->prepareProjectSettingsPhp();
 
     return $this;
   }
@@ -377,6 +378,49 @@ class Scripts {
     return $this;
   }
 
+  protected function prepareProjectSettingsPhp() {
+    $src = "{$this->projectRoot}/docroot/sites/default/default.settings.php";
+    if (!$this->fs->exists($src)) {
+      $this->logger->info(
+        "File not exists: {fileName}",
+        [
+          'fileName' => $src,
+        ]
+      );
+
+      return $this;
+    }
+
+    $dst = "{$this->projectRoot}/docroot/sites/default/settings.php";
+    if ($this->fs->exists($dst)) {
+      $this->logger->info(
+        "File already exists: {fileName}",
+        [
+          'fileName' => $dst,
+        ]
+      );
+
+      return $this;
+    }
+
+    $replacementPairs = [];
+    $replacementPairs['$databases = [];'] = <<<'PHP'
+$databases = [
+  'default' => [
+    'default' => [
+      'driver' => 'sqlite',
+      'namespace' => '\Drupal\Core\Database\Driver\sqlite',
+      'database' => __DIR__ . '/db.default.default.sqlite',
+    ],
+  ],
+];
+PHP;
+
+    $this->fs->dumpFile($dst, strtr($this->fileGetContents($src), $replacementPairs));
+
+    return $this;
+  }
+
   protected function getProjectSelfDestination(): string {
     return "{$this->projectRoot}/drush/custom/" . $this->getComposerPackageName();
   }
@@ -451,9 +495,9 @@ class Scripts {
     return [
       'SIMPLETEST_BASE_URL' => 'http://localhost:8888',
       'DTT_BASE_URL' => 'http://localhost:8888',
-      'SIMPLETEST_DB' => 'mysql://username:password@localhost:3306/databasename',
-      'UNISH_DB_URL' => 'mysql://username:password@localhost:3306/databasename',
-      'BROWSERTEST_OUTPUT_DIRECTORY' => realpath($this->cwd) . '/tests/fixtures/project_01/docroot/sites/simpletest/browser_output',
+      'SIMPLETEST_DB' => "sqlite://sites/default/db.default.default.sqlite",
+      'UNISH_DB_URL' => 'sqlite://sites/default/db.default.default.sqlite',
+      'BROWSERTEST_OUTPUT_DIRECTORY' => realpath($this->cwd) . "/{$this->projectRoot}/docroot/sites/simpletest/browser_output",
     ];
   }
 

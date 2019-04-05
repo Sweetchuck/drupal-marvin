@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ed239aa754844bd31b32b0bbf3ca3b5",
+    "content-hash": "b5103df4e7d25de31439c4d8561dc268",
     "packages": [
         {
             "name": "consolidation/annotated-command",
@@ -8026,6 +8026,8 @@
         "ext-pcre": "*"
     },
     "platform-dev": {
-        "ext-dom": "*"
+        "ext-dom": "*",
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*"
     }
 }

@@ -16,11 +16,12 @@ use PHPUnit\Framework\SkippedTestError;
 class NpmCommandsTest extends UnishIntegrationTestCase {
 
   public function testNpmInstall(): void {
-    throw new SkippedTestError('@todo install nvm');
+    $nvmDir = getenv('REAL_NVM_DIR');
+    if (!$nvmDir) {
+      throw new SkippedTestError('${REAL_NVM_DIR} is empty. NVM has to be installed.');
+    }
 
     $root = $this->getMarvinRootDir();
-
-    $nvmDir = getenv('REAL_NVM_DIR');
 
     $expected = [
       'exitCode' => 0,
@@ -34,7 +35,7 @@ class NpmCommandsTest extends UnishIntegrationTestCase {
     ];
 
     $envVars = [
-      'NVM_DIR' =>  $nvmDir,
+      'NVM_DIR' => $nvmDir,
     ];
     $options = $this->getCommonCommandLineOptions();
 

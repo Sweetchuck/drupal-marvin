@@ -2,6 +2,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
   bootstrap="tests/src/bootstrap.php"
+  verbose="true"
   colors="true">
 
   <php>
@@ -35,8 +36,8 @@
       <directory>tests/src/Unit/</directory>
     </testsuite>
 
-    <testsuite name="Kernel">
-      <directory>tests/src/Kernel/</directory>
+    <testsuite name="Integration">
+      <directory>tests/src/Integration/</directory>
     </testsuite>
   </testsuites>
 
@@ -58,7 +59,7 @@
 
     <log
       type="coverage-clover"
-      target="reports/machine/coverage-clover/overall.xml"/>
+      target="reports/machine/coverage/overall.xml"/>
 
     <log
       type="coverage-php"
