@@ -11,6 +11,7 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
+    "repositories": {},
     "require": {
         "php": ">=7.1",
         "ext-json": "*",
@@ -18,7 +19,6 @@
         "ext-pcre": "*",
         "danielstjules/stringy": "^3.1",
         "drupal/coder": "^8.3",
-        "drush/drush": "^9.5",
         "icecave/semver": "^3.0",
         "squizlabs/php_codesniffer": "^3.3",
         "sweetchuck/git-hooks-stdinput-reader": "^0.0",
@@ -34,12 +34,22 @@
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
+        "ext-dom": "*",
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*",
+        "behat/mink-goutte-driver": "^1.2",
         "composer/installers": "^1.5",
+        "cweagans/composer-patches": "^1.6",
         "drupal-composer/drupal-scaffold": "^2.5",
         "drupal/core": "^8.5",
-        "mikey179/vfsStream": "^1.6",
+        "drush/drush": "^9.6.2",
+        "mikey179/vfsstream": "^1.6",
         "phpunit/phpunit": "^6.3",
-        "sweetchuck/git-hooks": "^0.0"
+        "sweetchuck/git-hooks": "^0.0",
+        "weitzman/drupal-test-traits": "^1.1"
+    },
+    "suggest": {
+        "drush/drush": "9.6.*"
     },
     "autoload": {
         "psr-4": {
@@ -50,10 +60,14 @@
     "autoload-dev": {
         "psr-4": {
             "Drupal\\Dev\\marvin\\Composer\\": "src-dev/Composer/",
-            "Drush\\Commands\\Tests\\marvin\\Unish\\": "tests/src/DrushUnish/",
-            "Drush\\Commands\\Tests\\marvin\\Unit\\": "tests/src/DrushUnit/",
+
             "Drupal\\Tests\\marvin\\Helper\\": "tests/src/Helper/",
-            "Drupal\\Tests\\marvin\\Unit\\": "tests/src/Unit/"
+            "Drupal\\Tests\\marvin\\Unit\\": "tests/src/Unit/",
+            "Drupal\\Tests\\marvin\\Integration\\": "tests/src/Integration/",
+            "Unish\\": "vendor/drush/drush/tests/unish/",
+
+            "Drupal\\Tests\\": "tests/fixtures/project_01/docroot/core/tests/Drupal/Tests/",
+            "Drupal\\KernelTests\\": "tests/fixtures/project_01/docroot/core/tests/Drupal/KernelTests"
         }
     },
     "extra": {
@@ -62,11 +76,12 @@
         },
         "drush": {
             "services": {
-                "drush9.services.yml": "^9"
+                "drush.services.yml": "^9"
             }
         },
         "enable-patching": true,
         "composer-exit-on-patch-failure": true,
+        "patches": {},
         "drupal-scaffold": {
             "excludes": [
                 ".csslintrc",
@@ -74,18 +89,17 @@
                 ".eslintignore",
                 ".eslintrc.json",
                 ".gitattributes",
-                ".ht.router.php",
                 ".htaccess",
                 "web.config"
             ]
         },
         "installer-paths": {
-            "tests/fixtures/drush-sut/web/core": ["type:drupal-core"],
-            "tests/fixtures/drush-sut/web/libraries/{$name}": ["type:drupal-library"],
-            "tests/fixtures/drush-sut/web/modules/contrib/{$name}": ["type:drupal-module"],
-            "tests/fixtures/drush-sut/web/profiles/contrib/{$name}": ["type:drupal-profile"],
-            "tests/fixtures/drush-sut/web/themes/contrib/{$name}": ["type:drupal-theme"],
-            "tests/fixtures/drush-sut/drush/contrib/{$name}": ["type:drupal-drush"]
+            "tests/fixtures/project_01/docroot/core": ["type:drupal-core"],
+            "tests/fixtures/project_01/docroot/libraries/{$name}": ["type:drupal-library"],
+            "tests/fixtures/project_01/docroot/modules/contrib/{$name}": ["type:drupal-module"],
+            "tests/fixtures/project_01/docroot/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "tests/fixtures/project_01/docroot/themes/contrib/{$name}": ["type:drupal-theme"],
+            "tests/fixtures/project_01/drush/contrib/{$name}": ["type:drupal-drush"]
         },
         "marvin": {
             "drushUnish": {
@@ -96,14 +110,8 @@
         }
     },
     "scripts": {
-        "pre-install-cmd": [
-            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::preInstallCmd"
-        ],
         "post-install-cmd": [
             "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postInstallCmd"
-        ],
-        "pre-update-cmd": [
-            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::preUpdateCmd"
         ],
         "post-update-cmd": [
             "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postUpdateCmd"
@@ -112,6 +120,22 @@
             "rm -rf bin/ reports/ vendor/",
             "git clean --force -d -x -- tests/",
             "git clean --force -d -X -- tests/"
+        ],
+        "test": [
+            "rm -rf ./reports/",
+            "@test:unit",
+            "@test:integration"
+        ],
+        "test:unit": [
+            "mkdir -p reports/machine/coverage-php/",
+            "phpunit --testsuite Unit --coverage-html reports/human/coverage/Unit/html --testdox-html reports/human/testdox/Unit.html --coverage-clover reports/machine/coverage-clover/Unit.xml --coverage-php reports/machine/coverage-php/Unit.php --log-junit reports/machine/junit/Unit.xml"
+        ],
+        "test:integration": [
+            "mkdir -p reports/machine/coverage-php/",
+            "phpunit --testsuite Integration --coverage-html reports/human/coverage/Integration/html --testdox-html reports/human/testdox/Integration.html --coverage-clover reports/machine/coverage-clover/Integration.xml --coverage-php reports/machine/coverage-php/Integration.php --log-junit reports/machine/junit/Integration.xml"
+        ],
+        "generate:coverage-html": [
+            "\\Drupal\\Dev\\marvin\\Composer\\Scripts::generateCoverageHtml"
         ]
     }
 }

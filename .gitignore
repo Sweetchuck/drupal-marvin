@@ -2,11 +2,26 @@
 /bin/
 /reports/
 
-/tests/fixtures/drush-sandbox/
-/tests/fixtures/drush-sut/*
-!/tests/fixtures/drush-sut/web/modules/custom/
-!/tests/fixtures/drush-sut/drush/drush.yml
-/tests/fixtures/drush_coverage*
+!/tests/fixtures/project_01/
+/tests/fixtures/project_01/*
+
+!/tests/fixtures/project_01/drush/
+/tests/fixtures/project_01/drush/*
+
+!/tests/fixtures/project_01/drush/drush.yml
+
+!/tests/fixtures/project_01/docroot/
+/tests/fixtures/project_01/docroot/*
+!/tests/fixtures/project_01/docroot/modules/
+/tests/fixtures/project_01/docroot/modules/*
+
+!/tests/fixtures/project_01/docroot/modules/custom/
+
+!/tests/fixtures/project_01/docroot/themes/
+/tests/fixtures/project_01/docroot/themes/*
+
+!/tests/fixtures/project_01/docroot/themes/custom/
+/tests/fixtures/project_01/docroot/themes/custom/*/node_modules/
 
 /vendor/
 

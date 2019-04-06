@@ -1,0 +1,31 @@
+
+services:
+  marvin.file_system_exists_walker:
+    class: 'Sweetchuck\Utils\Walker\FileSystemExistsWalker'
+
+  marvin.utils:
+    class: 'Drupal\marvin\Utils'
+
+  marvin.artifact_types.commands:
+    class: 'Drush\Commands\marvin\ArtifactTypesCommands'
+    tags:
+      -
+        name: 'drush.command'
+
+  marvin.composer_scripts.commands:
+    class: 'Drush\Commands\marvin\ComposerScriptsCommands'
+    tags:
+      -
+        name: 'drush.command'
+
+  marvin.drush_config.commands:
+    class: 'Drush\Commands\marvin\DrushConfigCommands'
+    tags:
+      -
+        name: 'drush.command'
+
+  marvin.status_report.commands:
+    class: 'Drush\Commands\marvin\StatusReportCommands'
+    tags:
+      -
+        name: 'drush.command'

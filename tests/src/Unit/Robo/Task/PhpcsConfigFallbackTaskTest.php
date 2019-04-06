@@ -9,7 +9,10 @@ use org\bovigo\vfs\vfsStream;
 use Robo\State\Data as RoboStateData;
 
 /**
- * @covers \Drupal\marvin\Robo\Task\PhpcsConfigFallbackTask
+ * @group marvin
+ * @group robo-task
+ *
+ * @covers \Drupal\marvin\Robo\Task\PhpcsConfigFallbackTask<extended>
  * @covers \Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader
  */
 class PhpcsConfigFallbackTaskTest extends TaskTestBase {

@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace Drupal\marvin;
 
 /**
+ * RfcLogLevel from Drupal core is not always available.
+ *
  * @see \Drupal\Core\Logger\RfcLogLevel
  * @see http://tools.ietf.org/html/rfc5424
  */

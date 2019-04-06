@@ -11,6 +11,8 @@ use Symfony\Component\Filesystem\Filesystem;
 use Webmozart\PathUtil\Path;
 
 /**
+ * @group marvin
+ *
  * @covers \Drupal\marvin\ComposerInfo<extended>
  */
 class ComposerInfoTest extends TestCase {

@@ -3,10 +3,18 @@
 namespace Drupal\Dev\marvin\Composer;
 
 use Composer\IO\IOInterface;
-use Composer\Semver\Comparator;
 use Composer\Script\Event;
 use DrupalComposer\DrupalScaffold\Handler as DrupalScaffoldHandler;
+use Exception;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
+use SebastianBergmann\CodeCoverage\CodeCoverage;
+use SebastianBergmann\CodeCoverage\Report\Html\Facade as HtmlCodeCoverageReporter;
+use Symfony\Component\Console\Logger\ConsoleLogger;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 use Sweetchuck\GitHooks\Composer\Scripts as GitHooks;
 use Sweetchuck\Utils\Filter\ArrayFilterFileSystemExists;
@@ -14,51 +22,16 @@ use Sweetchuck\Utils\Filter\ArrayFilterFileSystemExists;
 class Scripts {
 
   /**
-   * Current event.
-   *
-   * @var \Composer\Script\Event
-   */
-  protected static $event;
-
-  /**
-   * CLI process callback.
-   *
-   * @var \Closure
-   */
-  protected static $processCallbackWrapper;
-
-  /**
-   * @var string
-   */
-  protected static $drushSutRoot = 'tests/fixtures/drush-sut';
-
-  /**
-   * @var \Symfony\Component\Filesystem\Filesystem
-   */
-  protected static $fs;
-
-  public static function preInstallCmd(Event $event): int {
-    static::init($event);
-    static::checkComposerVersion();
-
-    return 0;
-  }
-
-  /**
    * Composer event callback.
    */
   public static function postInstallCmd(Event $event): int {
-    static::init($event);
-    static::gitHooksDeploy();
-    static::phpcsConfigSet();
-    static::prepareDrushSut();
+    $self = new static($event);
 
-    return 0;
-  }
-
-  public static function preUpdateCmd(Event $event): int {
-    static::init($event);
-    static::checkComposerVersion();
+    $self
+      ->gitHooksDeploy()
+      ->phpcsConfigSet()
+      ->preparePhpunitXml()
+      ->prepareProject();
 
     return 0;
   }
@@ -67,45 +40,147 @@ class Scripts {
    * Composer event callback.
    */
   public static function postUpdateCmd(Event $event): int {
-    static::init($event);
-    static::gitHooksDeploy();
-    static::phpcsConfigSet();
-    static::prepareDrushSut();
+    $self = new static($event);
+
+    $self
+      ->gitHooksDeploy()
+      ->phpcsConfigSet()
+      ->preparePhpunitXml()
+      ->prepareProject();
 
     return 0;
   }
 
-  protected static function init(Event $event) {
-    static::$event = $event;
-    static::$fs = new Filesystem();
+  public static function generateCoverageHtml(Event $event): int {
+    $self = new static($event);
 
-    if (!static::$processCallbackWrapper) {
-      static::$processCallbackWrapper = function (string $type, string $buffer) {
-        static::processCallback($type, $buffer);
+    $srcFiles = (new Finder())
+      ->in('reports/machine/coverage-php')
+      ->files()
+      ->name('*.php');
+
+    $dstDir = 'reports/human/coverage/all/html';
+
+    (new HtmlCodeCoverageReporter())->process(
+      $self->mergeCodeCoverageFiles($srcFiles),
+      $dstDir
+    );
+
+    return 0;
+  }
+
+  /**
+   * Current event.
+   *
+   * @var \Composer\Script\Event
+   */
+  protected $event;
+
+  /**
+   * CLI process callback.
+   *
+   * @var \Closure
+   */
+  protected $processCallbackWrapper;
+
+  /**
+   * @var string
+   */
+  protected $projectRoot = 'tests/fixtures/project_01';
+
+  /**
+   * @var \Symfony\Component\Filesystem\Filesystem
+   */
+  protected $fs;
+
+  /**
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
+   * Current working directory.
+   *
+   * @var string
+   */
+  protected $cwd = '.';
+
+  protected function __construct(Event $event, ?LoggerInterface $logger = NULL, ?Filesystem $fs = NULL, string $cwd = '.') {
+    $this->cwd = $cwd ?: '.';
+    $this->event = $event;
+    $this->logger = $logger ?: $this->createLogger();
+    $this->fs = $fs ?: $this->createFilesystem();
+  }
+
+  protected function createLogger(): LoggerInterface {
+    $io = $this->event->getIO();
+    if ($io instanceof LoggerInterface) {
+      return $io;
+    }
+
+    $verbosity = OutputInterface::VERBOSITY_NORMAL;
+    if ($io->isDebug()) {
+      $verbosity = OutputInterface::VERBOSITY_DEBUG;
+    }
+    elseif ($io->isVeryVerbose()) {
+      $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE;
+    }
+    elseif ($io->isVerbose()) {
+      $verbosity = OutputInterface::VERBOSITY_VERBOSE;
+    }
+
+    $output = new ConsoleOutput($verbosity, $io->isDecorated());
+
+    return new ConsoleLogger($output);
+  }
+
+  protected function createFilesystem(): Filesystem {
+    return new Filesystem();
+  }
+
+  /**
+   * @return $this
+   */
+  protected function initProcessCallbackWrapper() {
+    if (!$this->processCallbackWrapper) {
+      $this->processCallbackWrapper = function (string $type, string $buffer) {
+        $this->processCallback($type, $buffer);
       };
     }
+
+    return $this;
   }
 
-  protected static function gitHooksDeploy(): void {
-    if (!static::$event->isDevMode()) {
-      return;
+  /**
+   * @return $this
+   */
+  protected function gitHooksDeploy() {
+    if ($this->event->isDevMode()) {
+      GitHooks::deploy($this->event);
     }
 
-    GitHooks::deploy(static::$event);
+    return $this;
   }
 
-  protected static function phpcsConfigSet(): void {
-    if (!static::$event->isDevMode()) {
-      return;
-    }
-
+  /**
+   * @return $this
+   */
+  protected function phpcsConfigSet() {
     /** @var \Composer\Config $config */
-    $config = static::$event->getComposer()->getConfig();
+    $config = $this->event->getComposer()->getConfig();
 
     $phpcsExecutable = $config->get('bin-dir') . '/phpcs';
+    if (!$this->fs->exists($phpcsExecutable)) {
+      $this->logger->info("phpcs executable not exists: '$phpcsExecutable'");
+
+      return $this;
+    }
+
     $rulesDir = $config->get('vendor-dir') . '/drupal/coder/coder_sniffer';
-    if (!static::$fs->exists($phpcsExecutable) || !static::$fs->exists($rulesDir)) {
-      return;
+    if (!$this->fs->exists($rulesDir)) {
+      $this->logger->info("phpcs rules not exists: '$rulesDir'");
+
+      return $this;
     }
 
     $cmdPattern = '%s --config-set installed_paths %s';
@@ -114,60 +189,141 @@ class Scripts {
       escapeshellcmd($rulesDir),
     ];
 
-    static::processRun('.', vsprintf($cmdPattern, $cmdArgs));
+    $this->processRun('.', vsprintf($cmdPattern, $cmdArgs));
+
+    return $this;
   }
 
-  protected static function preparePhpunitXml(): void {
-    $dstFileName = 'phpunit.xml';
-    if (!static::$event->isDevMode() || static::$fs->exists($dstFileName)) {
-      return;
+  /**
+   * @return $this
+   */
+  protected function preparePhpunitXml() {
+    /** @var \Composer\Config $config */
+    $config = $this->event->getComposer()->getConfig();
+
+    $phpunitExecutable = $config->get('bin-dir') . '/phpunit';
+    if (!$this->fs->exists($phpunitExecutable)) {
+      $this->logger->info('PHPUnit configuration file creation is skipped because phpunit/phpunit is not installed');
+
+      return $this;
     }
 
-    $srcFileName = 'phpunit.xml.dist';
-    $content = static::fileGetContents($srcFileName);
+    $dstFileName = "{$this->cwd}/phpunit.xml";
+    if ($this->fs->exists($dstFileName)) {
+      $this->logger->info('PHPUnit configuration file is already exists');
 
-    $cwd = getcwd();
+      return $this;
+    }
+
+    $srcFileName = "{$this->cwd}/phpunit.xml.dist";
+    if (!$this->fs->exists($srcFileName)) {
+      $this->logger->info("File not exists: '$srcFileName'");
+
+      return $this;
+    }
+
+    $basePattern = '<env name="%s" value="%s"/>';
     $replacementPairs = [];
-
-    $envUnishDbUrl = getenv('UNISH_DB_URL');
-    if (!$envUnishDbUrl) {
-      $envUnishDbUrl = 'sqlite://none/of/this/matters';
-      $placeholder = '<!--<env name="UNISH_DB_URL" value="sqlite://none/of/this/matters"/>-->';
-      $new = sprintf('<env name="UNISH_DB_URL" value="%s"/>', static::escapeXmlAttribute($envUnishDbUrl));
-      $replacementPairs[$placeholder] = $new;
+    foreach ($this->getPhpunitEnvVars() as $envVarName => $envVarValue) {
+      $placeholder = sprintf("<!-- $basePattern -->", $envVarName, '');
+      $replacementPairs[$placeholder] = sprintf($basePattern, $envVarName, $this->escapeXmlAttribute($envVarValue));
     }
 
-    $envUnishTmp = getenv('UNISH_TMP');
-    if (!$envUnishTmp) {
-      $envUnishTmp = "$cwd/tests/fixtures";
-      $placeholder = '<!--<env name="UNISH_TMP" value="/tmp" />-->';
-      $new = sprintf('<env name="UNISH_TMP" value="%s" />', static::escapeXmlAttribute($envUnishTmp));
-      $replacementPairs[$placeholder] = $new;
-    }
+    $content = $this->fileGetContents($srcFileName);
+    $this->fs->dumpFile($dstFileName, strtr($content, $replacementPairs));
 
-    $envUnishDrush = getenv('UNISH_Drush');
-    if (!$envUnishDrush) {
-      $envUnishDrush = "$cwd/tests/fixtures";
-      $placeholder = '<!--<env name="UNISH_DRUSH" value="./bin/drush"/>-->';
-      $new = sprintf('<env name="UNISH_DRUSH" value="%s"/>', static::escapeXmlAttribute($envUnishDrush));
-      $replacementPairs[$placeholder] = $new;
-    }
-
-    static::$fs->dumpFile($dstFileName, strtr($content, $replacementPairs));
+    return $this;
   }
 
-  protected static function prepareDrushSut(): void {
-    if (!static::$event->isDevMode()) {
-      return;
+  /**
+   * @return $this
+   */
+  protected function prepareProject() {
+    if (!$this->event->isDevMode()) {
+      return $this;
     }
 
-    static::prepareDrushSutSelf();
-    static::prepareDrushSutDirs();
-    static::prepareDrushSutScaffold();
+    $this
+      ->prepareProjectComposerJson()
+      ->prepareProjectSelf()
+      ->prepareProjectDirs()
+      ->prepareProjectScaffold()
+      ->prepareProjectSettingsPhp();
+
+    return $this;
   }
 
-  protected static function prepareDrushSutSelf(): void {
-    $dstDir = static::getDrushSutSelfDestination();
+  /**
+   * @return $this
+   */
+  protected function prepareProjectComposerJson() {
+    $content = [
+      'name' => 'drupal/marvin-tests-project_01',
+      'description' => 'drupal/marvin-tests-project_01',
+      "license" => "proprietary",
+      'type' => 'drupal-project',
+      'extra' => [
+        'installer-types' => [
+          'bower-asset',
+          'npm-asset',
+        ],
+        'installer-paths' => [
+          'docroot/core' => [
+            'type:drupal-core',
+          ],
+          'docroot/libraries/{$name}' => [
+            'type:drupal-library',
+            'type:bower-asset',
+            'type:npm-asset',
+          ],
+          'docroot/modules/contrib/{$name}' => [
+            'type:drupal-module',
+          ],
+          'docroot/profiles/contrib/{$name}' => [
+            'type:drupal-profile',
+          ],
+          'docroot/themes/contrib/{$name}' => [
+            'type:drupal-theme',
+          ],
+          'drush/Commands/contrib/{$name}' => [
+            'type:drupal-drush',
+          ],
+        ],
+        'enable-patching' => TRUE,
+        'composer-exit-on-patch-failure' => TRUE,
+        'patches' => [],
+        'drupal-scaffold' => [
+          'excludes' => [
+            'sites/example.settings.local.php',
+            '.csslintrc',
+            '.editorconfig',
+            '.eslintignore',
+            '.eslintrc.json',
+            '.gitattributes',
+            '.ht.router.php',
+            'web.config',
+          ],
+          'initial' => [
+            'sites/default/default.services.yml' => 'sites/default/services.yml',
+            'sites/default/default.settings.php' => 'sites/default/settings.php',
+          ],
+        ],
+      ],
+    ];
+
+    $this->fs->dumpFile(
+      "{$this->cwd}/{$this->projectRoot}/composer.json",
+      json_encode($content, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
+    );
+
+    return $this;
+  }
+
+  /**
+   * @return $this
+   */
+  protected function prepareProjectSelf() {
+    $dstDir = $this->getProjectSelfDestination();
 
     $relative = implode(
       '/',
@@ -178,93 +334,101 @@ class Scripts {
       )
     );
 
-    $filesToSymlink = static::getDrushSutSelfFilesToSymlink();
-    static::$fs->mkdir($dstDir);
+    $filesToSymlink = $this->getProjectSelfFilesToSymlink();
+    $this->fs->mkdir($dstDir);
     foreach ($filesToSymlink as $fileToSymlink) {
-      static::$fs->symlink("$relative/$fileToSymlink", "$dstDir/$fileToSymlink");
+      $this->fs->symlink("$relative/$fileToSymlink", "$dstDir/$fileToSymlink");
     }
+
+    return $this;
   }
 
-  protected static function prepareDrushSutDirs(): void {
-    $drushSutRoot = static::$drushSutRoot;
+  protected function prepareProjectDirs() {
+    $drushSutRoot = $this->projectRoot;
 
     $dirs = [
-      "$drushSutRoot/web/libraries",
-      "$drushSutRoot/web/profiles",
-      "$drushSutRoot/web/themes",
+      "$drushSutRoot/docroot/libraries",
+      "$drushSutRoot/docroot/profiles",
+      "$drushSutRoot/docroot/themes",
     ];
-    static::$fs->mkdir($dirs, 0777 - umask());
+    $this->fs->mkdir($dirs, 0777 - umask());
+
+    return $this;
   }
 
-  protected static function prepareDrushSutScaffold(): void {
-    $indexPhp = static::$drushSutRoot . '/web/index.php';
-    $io = static::$event->getIO();
-    if (static::$fs->exists($indexPhp)) {
+  /**
+   * @return $this
+   */
+  protected function prepareProjectScaffold() {
+    $indexPhp = $this->projectRoot . '/docroot/index.php';
+    $io = $this->event->getIO();
+    if ($this->fs->exists("{$this->cwd}/$indexPhp")) {
       $io->write(
         "File '<info>$indexPhp</info>' already exists.",
         IOInterface::VERBOSE
       );
 
-      return;
+      return $this;
     }
 
-    $handler = new DrupalScaffoldHandler(static::$event->getComposer(), $io);
+    $handler = new DrupalScaffoldHandler($this->event->getComposer(), $io);
     $handler->downloadScaffold();
     $handler->generateAutoload();
+
+    return $this;
   }
 
-  /**
-   * Checks if the installed version of Composer is compatible.
-   *
-   * Composer 1.0.0 and higher consider a `composer install` without having a
-   * lock file present as equal to `composer update`. We do not ship with a lock
-   * file to avoid merge conflicts downstream, meaning that if a project is
-   * installed with an older version of Composer the scaffolding of Drupal will
-   * not be triggered. We check this here instead of in drupal-scaffold to be
-   * able to give immediate feedback to the end user, rather than failing the
-   * installation after going through the lengthy process of compiling and
-   * downloading the Composer dependencies.
-   *
-   * @see https://github.com/composer/composer/pull/5035
-   */
-  public static function checkComposerVersion(): void {
-    $composer = static::$event->getComposer();
-    $io = static::$event->getIO();
+  protected function prepareProjectSettingsPhp() {
+    $src = "{$this->projectRoot}/docroot/sites/default/default.settings.php";
+    if (!$this->fs->exists($src)) {
+      $this->logger->info(
+        "File not exists: {fileName}",
+        [
+          'fileName' => $src,
+        ]
+      );
 
-    $version = $composer::VERSION;
-
-    // The dev-channel of composer uses the git revision as version number,
-    // try to the branch alias instead.
-    if (preg_match('/^[0-9a-f]{40}$/i', $version)) {
-      $version = $composer::BRANCH_ALIAS_VERSION;
+      return $this;
     }
 
-    // If Composer is installed through git we have no easy way to determine if
-    // it is new enough, just display a warning.
-    if ($version === '@package_version@' || $version === '@package_branch_alias_version@') {
-      $io->writeError('<warning>You are running a development version of Composer. If you experience problems, please update Composer to the latest stable version.</warning>');
+    $dst = "{$this->projectRoot}/docroot/sites/default/settings.php";
+    if ($this->fs->exists($dst)) {
+      $this->logger->info(
+        "File already exists: {fileName}",
+        [
+          'fileName' => $dst,
+        ]
+      );
 
-      return;
+      return $this;
     }
 
-    if (Comparator::lessThan($version, '1.0.0')) {
-      $message = 'Drupal-project requires Composer version 1.0.0 or higher. Please update your Composer before continuing';
-      $io->writeError("<error>$message</error>.");
+    $replacementPairs = [];
+    $replacementPairs['$databases = [];'] = <<<'PHP'
+$databases = [
+  'default' => [
+    'default' => [
+      'driver' => 'sqlite',
+      'namespace' => '\Drupal\Core\Database\Driver\sqlite',
+      'database' => __DIR__ . '/db.default.default.sqlite',
+    ],
+  ],
+];
+PHP;
 
-      throw new \Exception($message, 1);
-    }
+    $this->fs->dumpFile($dst, strtr($this->fileGetContents($src), $replacementPairs));
 
-    $io->write("Composer version <info>$version</info> is fine", TRUE, IOInterface::VERBOSE);
+    return $this;
   }
 
-  protected static function getDrushSutSelfDestination(): string {
-    return static::$drushSutRoot . '/drush/custom/' . static::getComposerPackageName();
+  protected function getProjectSelfDestination(): string {
+    return "{$this->projectRoot}/drush/custom/" . $this->getComposerPackageName();
   }
 
-  protected static function getComposerPackageName(): string {
-    $parts = explode('/', static::$event->getComposer()->getPackage()->getName(), 2);
+  protected function getComposerPackageName(): string {
+    $parts = explode('/', $this->event->getComposer()->getPackage()->getName(), 2);
     if (empty($parts[1])) {
-      throw new \Exception('Invalid package name', 1);
+      throw new Exception('Invalid package name', 1);
     }
 
     return $parts[1];
@@ -273,17 +437,23 @@ class Scripts {
   /**
    * @return string[]
    */
-  protected static function getDrushSutSelfFilesToSymlink(): array {
-    $extra = static::$event->getComposer()->getPackage()->getExtra();
+  protected function getProjectSelfFilesToSymlink(): array {
+    $extra = $this->event->getComposer()->getPackage()->getExtra();
     $filesToSymLink = $extra['marvin']['drushUnish']['filesToSymlink'] ?? [];
-    $filesToSymLink += static::getDrushSutSelfFilesToSymlinkDefaults();
+    $filesToSymLink += $this->getProjectSelfFilesToSymlinkDefaults();
 
     $filesToSymLink = array_keys($filesToSymLink, TRUE, TRUE);
 
-    return array_filter($filesToSymLink, new ArrayFilterFileSystemExists());
+    $filter = new ArrayFilterFileSystemExists();
+    $filter->setBaseDir($this->cwd);
+
+    return array_filter($filesToSymLink, $filter);
   }
 
-  protected static function getDrushSutSelfFilesToSymlinkDefaults(): array {
+  /**
+   * @return bool[]
+   */
+  protected function getProjectSelfFilesToSymlinkDefaults(): array {
     return [
       'Commands' => TRUE,
       'src' => TRUE,
@@ -293,32 +463,61 @@ class Scripts {
     ];
   }
 
-  protected static function processRun(string $workingDirectory, string $command): Process {
-    static::$event->getIO()->write("Run '$command' in '$workingDirectory'");
+  protected function processRun(string $workingDirectory, string $command): Process {
+    $this->event->getIO()->write("Run '$command' in '$workingDirectory'");
     $process = new Process($command, NULL, NULL, NULL, 0);
     $process->setWorkingDirectory($workingDirectory);
-    $process->run(static::$processCallbackWrapper);
+    $process->run($this->processCallbackWrapper);
 
     return $process;
   }
 
-  protected static function processCallback(string $type, string $buffer): void {
+  protected function processCallback(string $type, string $buffer): void {
     $type === Process::OUT ?
-      static::$event->getIO()->write($buffer, FALSE)
-      : static::$event->getIO()->writeError($buffer, FALSE);
+      $this->event->getIO()->write($buffer, FALSE)
+      : $this->event->getIO()->writeError($buffer, FALSE);
   }
 
-  protected static function escapeXmlAttribute(string $value): string {
+  protected function escapeXmlAttribute(string $value): string {
     return htmlentities($value, ENT_QUOTES);
   }
 
-  protected static function fileGetContents(string $fileName): string {
+  protected function fileGetContents(string $fileName): string {
     $content = file_get_contents($fileName);
     if ($content === FALSE) {
-      throw new \RuntimeException("File '$fileName' is not readable.", 1);
+      throw new RuntimeException("File '$fileName' is not readable.", 1);
     }
 
     return $content;
+  }
+
+  protected function getPhpunitEnvVars(): array {
+    return [
+      'SIMPLETEST_BASE_URL' => 'http://localhost:8888',
+      'DTT_BASE_URL' => 'http://localhost:8888',
+      'SIMPLETEST_DB' => "sqlite://sites/default/db.default.default.sqlite",
+      'UNISH_DB_URL' => 'sqlite://sites/default/db.default.default.sqlite',
+      'BROWSERTEST_OUTPUT_DIRECTORY' => realpath($this->cwd) . "/{$this->projectRoot}/docroot/sites/simpletest/browser_output",
+    ];
+  }
+
+  protected function mergeCodeCoverageFiles(iterable $files): CodeCoverage {
+    $codeCoverage = new CodeCoverage();
+
+    $coverage = NULL;
+    $require = function (string $fileName) {
+      return require $fileName;
+    };
+
+    /** @var \Symfony\Component\Finder\SplFileInfo $file */
+    foreach ($files as $file) {
+      $coverage = $require($file->getRealPath());
+      if ($coverage instanceof CodeCoverage) {
+        $codeCoverage->merge($coverage);
+      }
+    }
+
+    return $codeCoverage;
   }
 
 }

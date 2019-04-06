@@ -8,7 +8,9 @@ use Drupal\marvin\StatusReport\StatusReportEntry;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Drupal\marvin\StatusReport\StatusReportEntry
+ * @group marvin
+ *
+ * @covers \Drupal\marvin\StatusReport\StatusReportEntry<extended>
  */
 class StatusReportEntryTest extends TestCase {
 

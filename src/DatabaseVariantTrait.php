@@ -6,16 +6,23 @@ namespace Drupal\marvin;
 
 trait DatabaseVariantTrait {
 
-  protected function getConfigDatabaseVariants(): array {
-    $phpVariants = [];
+  /**
+   * @return \Consolidation\Config\ConfigInterface
+   *
+   * @see \Robo\Common\ConfigAwareTrait::getConfig
+   */
+  abstract public function getConfig();
 
-    $items = (array) $this->getConfig()->get('command.marvin.settings.database.variant', []);
+  protected function getConfigDatabaseVariants(): array {
+    $databaseVariants = [];
+
+    $items = (array) $this->getConfig()->get('marvin.database.variant', []);
 
     foreach ($items as $id => $item) {
-      $phpVariants[$id] = $this->loadDatabaseVariant($id, $item);
+      $databaseVariants[$id] = $this->loadDatabaseVariant($id, $item);
     }
 
-    return $phpVariants;
+    return $databaseVariants;
   }
 
   protected function loadDatabaseVariant(string $id, array $item): array {

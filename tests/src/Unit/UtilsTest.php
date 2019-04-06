@@ -13,9 +13,20 @@ use PHPUnit\Framework\TestCase;
 use Webmozart\PathUtil\Path;
 
 /**
- * @covers \Drupal\marvin\Utils
+ * @group marvin
+ *
+ * @covers \Drupal\marvin\Utils<extended>
  */
 class UtilsTest extends TestCase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function tearDown() {
+    parent::tearDown();
+
+    putenv('COMPOSER');
+  }
 
   public function casesIsDrupalPackage(): array {
     return [
@@ -93,6 +104,10 @@ class UtilsTest extends TestCase {
       'without leading backslash - Phpunit' => [
         'marvin.test.phpunit',
         'Drush\Commands\Marvin\Test\PhpunitCommands',
+      ],
+      'multi word - FooBar' => [
+        'marvin.foo-bar',
+        'Drush\Commands\Marvin\FooBarCommands',
       ],
     ];
   }
@@ -880,6 +895,20 @@ class UtilsTest extends TestCase {
    */
   public function testGetTriStateCliOption(string $expected, ?bool $state, string $optionName): void {
     static::assertSame($expected, Utils::getTriStateCliOption($state, $optionName));
+  }
+
+  public static function casesGetExitCodeBasedOnSeverity(): array {
+    return [
+      'basic' => [0, RfcLogLevel::WARNING],
+      'lowest error level' => [5, RfcLogLevel::WARNING, RfcLogLevel::WARNING],
+    ];
+  }
+
+  /**
+   * @dataProvider casesGetExitCodeBasedOnSeverity
+   */
+  public function testGetExitCodeBasedOnSeverity($expected, ?int ...$args): void {
+    static::assertSame($expected, Utils::getExitCodeBasedOnSeverity(...$args));
   }
 
 }

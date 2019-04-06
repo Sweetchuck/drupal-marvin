@@ -6,11 +6,14 @@ namespace Drupal\marvin\StatusReport;
 
 use Consolidation\AnnotatedCommand\ExitCodeInterface;
 use Consolidation\AnnotatedCommand\OutputDataInterface;
+use Countable;
+use IteratorAggregate;
+use JsonSerializable;
 
 interface StatusReportInterface extends
-    \JsonSerializable,
-    \IteratorAggregate,
-    \Countable,
+    JsonSerializable,
+    IteratorAggregate,
+    Countable,
     OutputDataInterface,
     ExitCodeInterface {
 
@@ -30,5 +33,11 @@ interface StatusReportInterface extends
    * @return $this
    */
   public function removeAllEntries();
+
+  /**
+   * @return int|null
+   *   Returns NULL or one of the constants from \Drupal\marvin\RfcLogLevel.
+   */
+  public function getHighestSeverity(): ?int;
 
 }

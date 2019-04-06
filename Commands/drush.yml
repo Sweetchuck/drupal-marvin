@@ -1,241 +1,285 @@
 
-command:
-  marvin:
-    settings:
-      ##
-      # Name of the directory where the generated artifacts should be stored.
-      #
-      # Relative directory path from the project root.
-      #
-      # @var string
-      ##
-      artifactDir: 'artifact'
+marvin:
 
-      ##
-      # Name of the directory where every build log should be stored.
-      #
-      # Relative directory path from the project root.
-      #
-      # @var string
-      ##
-      reportsDir: 'reports'
+  ##
+  # Name of the current environment.
+  #
+  # Allowed (recommended) values: "dev", "prod", "ci".
+  # @todo Check that this config is really used somewhere or not.
+  #
+  # @var string
+  ##
+  environment: 'dev'
 
-      ##
-      # Name of the current environment.
-      #
-      # Allowed values: "dev", "prod", "ci".
-      # @todo Check that this config is really used somewhere or not.
-      #
-      # @var string
-      ##
-      environment: 'dev'
+  ##
+  # Name of the directory where the generated artifacts should be stored.
+  #
+  # Relative directory path from the project root.
+  #
+  # @var string
+  ##
+  artifactDir: 'artifacts'
 
-      ##
-      # Name of the git hook which triggered the drush command.
-      # For example "pre-commit".
-      #
-      # @var null|string
-      ##
-      gitHook: null
+  ##
+  # Path to a directory where every release artifact should be stored.
+  #
+  # @var string
+  ##
+  buildDir: '../../../artifacts'
 
-      ##
-      # @todo
-      #
-      # @var null|string
-      ##
-      ci: null
+  ##
+  # Name of the directory where every build log should be stored.
+  #
+  # Relative directory path from the project root.
+  #
+  # @var string
+  ##
+  reportsDir: 'reports'
 
-      ##
-      # @var string
-      ##
-      composerExecutable: 'composer'
+  ##
+  # Name of the git hook the Drush command was triggered by.
+  # For example "pre-commit".
+  #
+  # @var null|string
+  ##
+  gitHookName: null
 
-      ##
-      # Path to the "git" executable.
-      #
-      # @var string
-      ##
-      gitExecutable: 'git'
+  ##
+  # @todo
+  #
+  # @var null|string
+  ##
+  ci: null
 
-      rubyExecutable: ''
-      bundleExecutable: ''
+  ##
+  # @var string
+  ##
+  composerExecutable: 'composer'
 
-      # @todo Remove command.marvin.settings.database.
-      database:
-        variant: {}
-          #my0506:
-          #  type: 'mysql'
-          #pg1002:
-          #  type: 'pgsql'
+  ##
+  # Path to the "git" executable.
+  #
+  # @var string
+  ##
+  gitExecutable: 'git'
 
-      php:
-        extension:
-          profile: true
-          module: true
-          theme: true
-          engine: true
-          install: true
-          php: true
+  # @todo Remove marvin.database.
+  database:
+    variant: {}
+      #my0506:
+      #  type: 'mysql'
+      #pg1002:
+      #  type: 'pgsql'
+
+  php:
+
+    ##
+    # Key is a file name extension, value indicates that it is enabled or not.
+    #
+    # @var bool[]
+    ##
+    extension:
+      profile: true
+      module: true
+      theme: true
+      engine: true
+      install: true
+      php: true
+      inc: true
+
+    ##
+    # Keys are custom.
+    #
+    # However keys are custom,
+    # currently the PHP version detection is based on the key.
+    # So it has to be provided in the following format:
+    # {PHP_VERSION_ID}-(zts|nts)
+    #
+    # Examples: 70102-zts or 70303-nts
+    #
+    # @todo Improve phpVariant version detection.
+    #
+    # @var array
+    ##
+    variant: {}
+      #70203-nts:
 
         ##
-        # Keys are custom.
+        # Same as the key in the marvin.php.variant.
+        #
+        # Automatically populated.
+        #
+        # @var string
+        ##
+        #id: ''
+
+        ##
+        # @todo
+        #
+        # @var bool
+        ##
+        #enabled: true
+
+        ##
+        # @todo
+        #
+        # @var string
+        ##
+        #binDir: '${env.home}/.phpbrew/php/70203/bin'
+
+        ##
+        # @todo
+        #
+        # @var string
+        ##
+        #phpExecutable: ''
+
+        ##
+        # @todo
+        #
+        # @var string
+        ##
+        #phpdbgExecutable: ''
+
+        ##
+        # Path to php.ini file to use.
+        #
+        # @var string
+        ##
+        #phpIni: ''
+
+        ##
+        # ID of PHP variant which is the CLI counterpart of this PHP variant.
+        #
+        # Most of the time the HTTP server uses a PHP with different configuration
+        # than the PHP available in the terminal.
+        #
+        # @var null|string
+        ##
+        #cli: ~
+
+        ##
+        # @todo
         #
         # @var array
         ##
-        variant: {}
-          #70203-nts:
+        #version:
+          #id: 70102
+          #major: 7
+          #minor: 1
+          #patch: 2
+          #majorMinor: 701
+          #full: 7.1.2
 
-            ##
-            # @todo
-            #
-            # @var bool
-            ##
-            #enabled: true
-
-            ##
-            # @todo
-            #
-            # @var string
-            ##
-            #binDir: '${env.home}/.phpbrew/php/70203/bin'
-
-            ##
-            # @todo
-            #
-            # @var string
-            ##
-            #phpExecutable: ''
-
-            ##
-            # @todo
-            #
-            # @var string
-            ##
-            #phpdbgExecutable: ''
-
-            ##
-            # Path to php.ini file to use.
-            #
-            # @var string
-            ##
-            #phpIni: ''
-
+  lint:
+    ##
+    # Keys are custom.
+    #
+    # @var array
+    ##
+    reporterCombination:
       ##
-      # Path to a directory where every release artifact should be stored.
+      # Keys are come from "../reporterConfig" configuration.
       #
-      # @var string
+      # @var bool[]
       ##
-      buildDir: '../../../artifact'
+      dev:
+        verboseStdOutput: true
+      devPreCommit:
+        verboseStdOutput: true
+      watch:
+        verboseStdOutput: true
+      ci:
+        # @todo summaryStdOutput.
+        # @todo checkstyleFile.
+        verboseStdOutput: true
+    reporterConfig:
+      verboseStdOutput:
+        service: 'lintVerboseReporter'
+        options:
+          filePathStyle: 'relative'
 
-    lint:
-      settings:
-        ##
-        # Keys are custom.
-        #
-        # @var array
-        ##
-        reporterCombination:
+  phpcs:
+    ##
+    # Keys are environment names.
+    #
+    # The values come from the "./preset" configuration.
+    #
+    # @var string[]
+    ##
+    defaultPreset:
+      dev: 'default'
+      devPreCommit: 'default'
+      watch: 'default'
+      ci: 'default'
+      ciJenkins: 'default'
+    preset:
+      default:
+        failOn: 'warning'
+        standards:
+          Drupal: true
+          DrupalPractice: true
+      ciJenkins:
+        failOn: 'never'
+
+  ##
+  # Keys are the official Git hook names.
+  #
+  # @var array
+  ##
+  gitHook:
+    commit-msg:
+      rules: {}
+        #customKey01:
           ##
-          # Keys are come from "../reporterConfig" configuration.
+          # @var bool
+          ##
+          #enabled: true
+
+          ##
+          # This will be auto-populated from the array key.
+          #
+          # @var string
+          ##
+          #name: 'customKey01'
+
+          ##
+          # RegExp pattern. Required.
+          #
+          # @var string
+          ##
+          #pattern: "/^.+$/u"
+
+          ##
+          # Human readable description.
+          #
+          # @var string
+          ##
+          #description: 'Lorem ipsum.'
+
+          ##
+          # The key is an example for a valid commit message.
           #
           # @var bool[]
           ##
-          dev:
-            verboseStdOutput: true
-          devPreCommit:
-            verboseStdOutput: true
-          watch:
-            verboseStdOutput: true
-          ci:
-            # @todo summaryStdOutput.
-            # @todo checkstyleFile.
-            verboseStdOutput: true
-        reporterConfig:
-          verboseStdOutput:
-            service: 'lintVerboseReporter'
-            options:
-              filePathStyle: 'relative'
-      phpcs:
-        ##
-        # Keys are environment names.
-        #
-        # The values come from the "./preset" configuration.
-        #
-        # @var string[]
-        ##
-        defaultPreset:
-          dev: 'default'
-          devPreCommit: 'default'
-          watch: 'default'
-          ci: 'default'
-          ciJenkins: 'default'
-        preset:
-          default:
-            failOn: 'warning'
-            standards:
-              Drupal: true
-              DrupalPractice: true
-          ciJenkins:
-            failOn: 'never'
+          #examples:
+          #  'Issue #42 - Something': true
 
-    git-hook:
-      commit-msg:
-        settings:
-          rules: {}
-            #customKey01:
-              ##
-              # @var bool
-              ##
-              #enabled: true
-
-              ##
-              # This will be auto-populated from the array key.
-              #
-              # @var string
-              ##
-              #name: 'customKey01'
-
-              ##
-              # RegExp pattern. Required.
-              #
-              # @var string
-              ##
-              #pattern: "/^.+$/u"
-
-              ##
-              # Human readable description.
-              #
-              # @var string
-              ##
-              #description: 'Lorem ipsum.'
-
-              ##
-              # The key is an example for a valid commit message.
-              #
-              # @var bool[]
-              ##
-              #examples:
-              #  'Issue #42 - Something': true
-
-    test:
-      phpunit:
-        ##
-        # Keys are environment names.
-        #
-        # @var array
-        ##
-        testSuite:
-          ##
-          #   - null Run all.
-          #   - true Run all.
-          #   - false Run none
-          #   - bool[] Run all "true" test suite.
-          #           If all of them is "false" then run none.
-          #
-          # @var null|bool|bool[]
-          ##
-          devPreCommit:
-            Unit: true
-#    release:
-#      options:
-#        releaseDir: '../../../vendor.release'
+  phpunit:
+    ##
+    # Keys are environment variant names.
+    #
+    # @var array
+    ##
+    testSuite:
+      ##
+      #   - null Run all.
+      #   - true Run all.
+      #   - false Run none
+      #   - bool[] Run all "true" test suite.
+      #           If all of them is "false" then run none.
+      #
+      # @var null|bool|bool[]
+      ##
+      devPreCommit:
+        Unit: true

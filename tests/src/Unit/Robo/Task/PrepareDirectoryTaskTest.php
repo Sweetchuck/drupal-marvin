@@ -9,7 +9,10 @@ use org\bovigo\vfs\vfsStream;
 use Webmozart\PathUtil\Path;
 
 /**
- * @covers \Drupal\marvin\Robo\Task\PrepareDirectoryTask
+ * @group marvin
+ * @group robo-task
+ *
+ * @covers \Drupal\marvin\Robo\Task\PrepareDirectoryTask<extended>
  * @covers \Drupal\marvin\Robo\PrepareDirectoryTaskLoader
  */
 class PrepareDirectoryTaskTest extends TaskTestBase {

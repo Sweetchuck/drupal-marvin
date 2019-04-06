@@ -27,17 +27,28 @@ class CommandsBase extends Tasks implements
   // @todo Almost every ConfigAwareTrait method is overwritten. Custom trait?
   // @todo Those methods that are not part of the ConfigAwareInterface only used
   // in consolidation/robo tests.
-  use ConfigAwareTrait;
+  use ConfigAwareTrait {
+    getClassKey as protected;
+  }
   use LoggerAwareTrait;
   use ComposerTaskLoader;
   use CommandDelegatorTrait;
   use CustomEventAwareTrait;
 
   /**
+   * @var string
+   */
+  protected static $classKeyPrefix = 'marvin';
+
+  /**
    * {@inheritdoc}
    */
   protected static function configPrefix() {
-    return 'command.';
+    return static::$classKeyPrefix . '.';
+  }
+
+  protected static function getClassKey(string $key): string {
+    return static::$classKeyPrefix . ($key === '' ? '' : ".$key");
   }
 
   /**
@@ -72,20 +83,6 @@ class CommandsBase extends Tasks implements
     return $this
       ->initComposerInfo()
       ->composerInfo;
-  }
-
-  protected static function getClassKey(string $key): string {
-    $configPrefix = static::configPrefix();
-    $configClass = Utils::commandClassNameToConfigIdentifier(get_called_class());
-    $configPostFix = static::configPostfix();
-
-    $classKey = sprintf('%s%s%s.%s', $configPrefix, $configClass, $configPostFix, $key);
-
-    return rtrim($classKey, '.');
-  }
-
-  protected static function configName(): string {
-    return static::getClassKey('');
   }
 
   /**
@@ -127,8 +124,8 @@ class CommandsBase extends Tasks implements
   }
 
   protected function getEnvironment(): string {
-    return getenv('DRUSH_MARVIN_SETTINGS_ENVIRONMENT') ?:
-      $this->getConfig()->get('command.marvin.settings.environment', 'dev');
+    return getenv('DRUSH_MARVIN_ENVIRONMENT') ?:
+      $this->getConfig()->get('marvin.environment', 'dev');
   }
 
   /**
@@ -137,13 +134,17 @@ class CommandsBase extends Tasks implements
   protected function getEnvironmentVariants(): array {
     $config = $this->getConfig();
     $environment = $this->getEnvironment();
-    $gitHook = $config->get('command.marvin.settings.gitHook');
+    $gitHook = $config->get('marvin.gitHookName');
+    $ci = $environment === 'ci' ? $config->get('marvin.ci') : '';
 
     $environmentVariants = [];
-    if ($environment === 'dev' && $gitHook) {
-      $environmentVariants[] = StaticStringy::camelize("$environment-$gitHook");
+
+    $modifiers = array_filter([$environment, $ci, $gitHook]);
+    while ($modifiers) {
+      $environmentVariants[] = StaticStringy::camelize(implode('-', $modifiers));
+      array_pop($modifiers);
     }
-    $environmentVariants[] = $environment;
+
     $environmentVariants[] = 'default';
 
     return $environmentVariants;
@@ -152,12 +153,9 @@ class CommandsBase extends Tasks implements
   protected function getGitExecutable(): string {
     return $this
       ->getConfig()
-      ->get('command.marvin.settings.gitExecutable', 'git');
+      ->get('marvin.gitExecutable', 'git');
   }
 
-  /**
-   * @return bool|null
-   */
   protected function getTriStateOptionValue(string $optionName): ?bool {
     if ($this->input()->getOption($optionName)) {
       return TRUE;

@@ -7,7 +7,10 @@ use org\bovigo\vfs\vfsStream;
 use Stringy\StaticStringy;
 
 /**
- * @covers \Drupal\marvin\Robo\Task\ArtifactCollectFilesTask
+ * @group marvin
+ * @group robo-task
+ *
+ * @covers \Drupal\marvin\Robo\Task\ArtifactCollectFilesTask<extended>
  * @covers \Drupal\marvin\Robo\ArtifactCollectFilesTaskLoader
  */
 class ArtifactCollectFilesTaskTest extends TaskTestBase {
@@ -27,7 +30,7 @@ class ArtifactCollectFilesTaskTest extends TaskTestBase {
    */
   public function testRunSuccess(array $expected, array $structure): void {
     $vfs = vfsStream::setup(__FUNCTION__, NULL, $structure);
-    $this->config->set('command.marvin.settings.buildDir', 'build');
+    $this->config->set('marvin.buildDir', 'build');
 
     $options = [
       'composerJsonFileName' => 'composer.json',
