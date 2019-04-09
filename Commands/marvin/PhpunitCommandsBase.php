@@ -24,6 +24,11 @@ class PhpunitCommandsBase extends CommandsBase {
    * @return \Sweetchuck\Robo\PHPUnit\Task\RunTask|\Robo\Collection\CollectionBuilder
    */
   protected function getTaskPhpUnit(array $options): CollectionBuilder {
+    $this->initComposerInfo();
+    $options += [
+      'phpunitExecutable' => $this->composerInfo['config']['bin-dir'] . '/phpunit',
+    ];
+
     $task = $this->taskPHPUnitRun($options);
 
     $gitHook = $this->getConfig()->get('marvin.gitHook');
