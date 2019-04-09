@@ -131,7 +131,7 @@ class ArtifactCollectFilesTask extends BaseTask {
           "$docrootSafe/sites/[^/]+/libraries",
           "drush/Commands",
           "$docrootSafe/sites/[^/]+/drush/Commands",
-          "patches"
+          "patches",
         ];
 
         $files = (new Finder())
