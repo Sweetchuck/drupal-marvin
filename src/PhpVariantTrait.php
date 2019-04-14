@@ -17,9 +17,15 @@ trait PhpVariantTrait {
     $phpVariants = [];
 
     $items = (array) $this->getConfig()->get('marvin.php.variant', []);
-
     foreach ($items as $id => $item) {
       $phpVariants[$id] = $this->loadPhpVariant($id, $item);
+    }
+
+    if (!$phpVariants) {
+      $item = $this->getPhpVariantFromCurrentPhp();
+      $phpVariants = [
+        $item['id'] => $item,
+      ];
     }
 
     return $phpVariants;
@@ -80,6 +86,29 @@ trait PhpVariantTrait {
     $parts['full'] = sprintf('%d.%d.%d', $parts['major'], $parts['minor'], $parts['patch']);
 
     return $parts;
+  }
+
+  protected function getPhpVariantFromCurrentPhp(): array {
+    $id = $this->getPhpIdFromCurrentPhp();
+
+    return $this->loadPhpVariant(
+      $id,
+      [
+        'id' => $id,
+        'enabled' => TRUE,
+        'binDir' => PHP_BINDIR,
+        // If the current PHP is pgpdbg then it can cause surprises.
+        'phpExecutable' => PHP_BINARY,
+        'phpdbgExecutable' => '',
+        'phpIni' => '',
+        'cli' => NULL,
+        'version' => [],
+      ]
+    );
+  }
+
+  protected function getPhpIdFromCurrentPhp(): string {
+    return PHP_VERSION_ID . '-' . (ZEND_THREAD_SAFE ? 'zts' : 'nts');
   }
 
 }

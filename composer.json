@@ -49,7 +49,7 @@
         "weitzman/drupal-test-traits": "^1.1"
     },
     "suggest": {
-        "drush/drush": "9.6.*"
+        "drush/drush": "^9.6"
     },
     "autoload": {
         "psr-4": {

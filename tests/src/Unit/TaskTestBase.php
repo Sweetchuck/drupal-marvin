@@ -48,7 +48,7 @@ class TaskTestBase extends TestCase {
     Drush::unsetContainer();
 
     $this->container = new LeagueContainer();
-    $application = new SymfonyApplication('MarvinIncubator - DrushUnit', '1.0.0');
+    $application = new SymfonyApplication('Marvin - Unit', '1.0.0');
     $this->config = (new DrushConfig())
       ->set('drush.vendor-dir', '.');
     $input = NULL;

@@ -129,9 +129,9 @@ class ArtifactCollectFilesTask extends BaseTask {
           "$docrootSafe/sites/[^/]+/themes",
           "$docrootSafe/sites/[^/]+/profiles",
           "$docrootSafe/sites/[^/]+/libraries",
-          "drush/Commands",
+          'drush/Commands',
           "$docrootSafe/sites/[^/]+/drush/Commands",
-          "patches",
+          'patches',
         ];
 
         $files = (new Finder())

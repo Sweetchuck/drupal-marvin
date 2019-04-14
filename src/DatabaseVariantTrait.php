@@ -17,9 +17,15 @@ trait DatabaseVariantTrait {
     $databaseVariants = [];
 
     $items = (array) $this->getConfig()->get('marvin.database.variant', []);
-
     foreach ($items as $id => $item) {
       $databaseVariants[$id] = $this->loadDatabaseVariant($id, $item);
+    }
+
+    if (!$databaseVariants) {
+      $id = 'sqlite';
+      $databaseVariants = [
+        $id => $this->loadDatabaseVariant($id, ['type' => 'sqlite']),
+      ];
     }
 
     return $databaseVariants;
@@ -27,11 +33,21 @@ trait DatabaseVariantTrait {
 
   protected function loadDatabaseVariant(string $id, array $item): array {
     $item['id'] = $id;
+
     $item += [
-      'enabled' => TRUE,
       'type' => 'mysql',
-      'binDir' => '/usr/bin',
+      'enabled' => TRUE,
     ];
+
+    switch ($item['type']) {
+      case 'mysql':
+      case 'pgsql':
+        $item += [
+          'binDir' => '/usr/bin',
+        ];
+        break;
+
+    }
 
     return $item;
   }

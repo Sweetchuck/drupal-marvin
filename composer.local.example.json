@@ -12,11 +12,6 @@
         "sort-packages": true
     },
     "repositories": {
-        "drush/drush": {
-            "type": "git",
-            "url": "https://github.com/drush-ops/drush.git",
-            "reference": "d3e5b475da82a89ad81f11ba5b5768856f55b861"
-        },
         "sweetchuck/robo-composer": {
             "type": "path",
             "url": "../../sweetchuck/robo-composer"
@@ -78,7 +73,7 @@
         "sweetchuck/git-hooks": "^0.0"
     },
     "suggest": {
-        "drush/drush": "9.6.*"
+        "drush/drush": "^9.6"
     },
     "autoload": {
         "psr-4": {
