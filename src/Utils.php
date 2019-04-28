@@ -206,7 +206,7 @@ class Utils {
   }
 
   /**
-   * @deprecated Use Stringy.
+   * @todo Deprecated. Use Stringy.
    */
   public static function ensureTrailingEol(string &$text): void {
     if (!preg_match('/[\r\n]$/u', $text)) {
@@ -503,6 +503,13 @@ class Utils {
 
   public static function getExitCodeBasedOnSeverity(?int $severity, int $lowestError = RfcLogLevel::ERROR): int {
     return $severity === NULL || $severity > $lowestError ? 0 : $severity + 1;
+  }
+
+  public static function explodeCommaSeparatedList(string $items): array {
+    return array_filter(
+      preg_split('/\s*,\s*/', trim($items)),
+      'mb_strlen'
+    );
   }
 
 }

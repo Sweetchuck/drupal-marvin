@@ -6,11 +6,6 @@ use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
 use Robo\Collection\CollectionBuilder;
 use Sweetchuck\GitHooksStdInputReader\ReaderFactory;
 
-/**
- * Class GitHookCommandsBase.
- *
- * @package Drush\Commands\marvin
- */
 class GitHookCommandsBase extends CommandsBase implements CustomEventAwareInterface {
 
   /**

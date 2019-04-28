@@ -680,16 +680,16 @@
         },
         {
             "name": "drupal/coder",
-            "version": "8.3.1",
+            "version": "8.3.3",
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/coder.git",
-                "reference": "29a25627e7148b3119c84f18e087fc3b8c85b959"
+                "reference": "a33d3388fb2e1d94bd2aee36a8ff79186e9d8f43"
             },
             "require": {
                 "ext-mbstring": "*",
-                "php": ">=5.4.0",
-                "squizlabs/php_codesniffer": "^3.0.1",
+                "php": ">=5.5.9",
+                "squizlabs/php_codesniffer": "^3.4.1",
                 "symfony/yaml": ">=2.0.0"
             },
             "require-dev": {
@@ -699,7 +699,7 @@
             "autoload": {
                 "psr-0": {
                     "Drupal\\": "coder_sniffer/Drupal/",
-                    "DrupalPractice\\": "coder_sniffer/Drupal/"
+                    "DrupalPractice\\": "coder_sniffer/DrupalPractice/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -713,7 +713,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-09-21T14:22:49+00:00"
+            "time": "2019-04-16T18:56:06+00:00"
         },
         {
             "name": "grasmash/expander",
@@ -1170,16 +1170,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.4.0",
+            "version": "3.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "379deb987e26c7cd103a7b387aea178baec96e48"
+                "reference": "b8a7362af1cc1aadb5bd36c3defc4dda2cf5f0a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/379deb987e26c7cd103a7b387aea178baec96e48",
-                "reference": "379deb987e26c7cd103a7b387aea178baec96e48",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/b8a7362af1cc1aadb5bd36c3defc4dda2cf5f0a8",
+                "reference": "b8a7362af1cc1aadb5bd36c3defc4dda2cf5f0a8",
                 "shasum": ""
             },
             "require": {
@@ -1212,12 +1212,12 @@
                 }
             ],
             "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
-            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
             "keywords": [
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-12-19T23:57:18+00:00"
+            "time": "2019-04-10T23:49:02+00:00"
         },
         {
             "name": "sweetchuck/cli-cmd-builder",
@@ -2144,7 +2144,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.4.24",
+            "version": "v3.4.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
@@ -4024,6 +4024,12 @@
                 "url": "https://github.com/drush-ops/drush.git",
                 "reference": "65d36cf542308d0b88f77c80f818a978d2844b80"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/65d36cf542308d0b88f77c80f818a978d2844b80",
+                "reference": "65d36cf542308d0b88f77c80f818a978d2844b80",
+                "shasum": ""
+            },
             "require": {
                 "chi-teck/drupal-code-generator": "^1.28.1",
                 "composer/semver": "^1.4",
@@ -4112,56 +4118,7 @@
                     "Drush\\Internal\\": "src/internal-forks"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Unish\\": "tests/unish"
-                },
-                "files": [
-                    "tests/load.environment.php"
-                ]
-            },
-            "scripts": {
-                "cs": [
-                    "phpcs"
-                ],
-                "cbf": [
-                    "phpcbf"
-                ],
-                "lint": [
-                    "find includes -name '*.inc' -print0 | xargs -0 -n1 php -l",
-                    "find src -name '*.php' -print0 | xargs -0 -n1 php -l",
-                    "find tests -name '*.php' -print0 | xargs -0 -n1 php -l"
-                ],
-                "test": [
-                    "@lint",
-                    "@phpunit",
-                    "@cs"
-                ],
-                "api": [
-                    "PATH=$HOME/bin:$PATH sami.phar --ansi update sami-config.php"
-                ],
-                "sami-install": [
-                    "mkdir -p $HOME/bin && curl --output $HOME/bin/sami.phar http://get.sensiolabs.org/sami.phar && chmod +x $HOME/bin/sami.phar"
-                ],
-                "sut": [
-                    "./drush --uri=dev"
-                ],
-                "sut:si": [
-                    "./drush site:install testing --uri=dev --sites-subdir=dev --db-url=${UNISH_DB_URL:-mysql://root:password@mariadb}/unish_dev -v"
-                ],
-                "phpunit": [
-                    "php -d sendmail_path='true' vendor/bin/phpunit --colors=always --configuration tests"
-                ],
-                "unit": [
-                    "composer phpunit -- --testsuite unit"
-                ],
-                "integration": [
-                    "composer phpunit -- --testsuite integration"
-                ],
-                "functional": [
-                    "composer phpunit -- --testsuite functional"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0-or-later"
             ],
@@ -4201,11 +4158,6 @@
             ],
             "description": "Drush is a command line shell and scripting interface for Drupal, a veritable Swiss Army knife designed to make life easier for those of us who spend some of our working hours hacking away at the command prompt.",
             "homepage": "http://www.drush.org",
-            "support": {
-                "forum": "http://drupal.stackexchange.com/questions/tagged/drush",
-                "irc": "irc://irc.freenode.org/drush",
-                "slack": "https://drupal.slack.com/messages/C62H9CWQM"
-            },
             "time": "2019-04-03T11:17:00+00:00"
         },
         {
@@ -4720,12 +4672,12 @@
             "version": "v1.6.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/mikey179/vfsStream.git",
+                "url": "https://github.com/bovigo/vfsStream.git",
                 "reference": "d5fec95f541d4d71c4823bb5e30cf9b9e5b96145"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/d5fec95f541d4d71c4823bb5e30cf9b9e5b96145",
+                "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/d5fec95f541d4d71c4823bb5e30cf9b9e5b96145",
                 "reference": "d5fec95f541d4d71c4823bb5e30cf9b9e5b96145",
                 "shasum": ""
             },

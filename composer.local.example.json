@@ -67,7 +67,7 @@
         "cweagans/composer-patches": "^1.6",
         "drupal-composer/drupal-scaffold": "^2.5",
         "drupal/core": "^8.5",
-        "drush/drush": "dev-master#d3e5b475da82a89ad81f11ba5b5768856f55b861",
+        "drush/drush": "^9.6",
         "mikey179/vfsStream": "^1.6",
         "phpunit/phpunit": "^6.3",
         "sweetchuck/git-hooks": "^0.0"
@@ -105,11 +105,6 @@
         },
         "enable-patching": true,
         "composer-exit-on-patch-failure": true,
-        "patches": {
-            "drush/drush": {
-                "Unish tests": "https://patch-diff.githubusercontent.com/raw/drush-ops/drush/pull/3962.diff"
-            }
-        },
         "drupal-scaffold": {
             "excludes": [
                 ".csslintrc",
