@@ -815,12 +815,12 @@
             "version": "1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/IcecaveStudios/parity.git",
+                "url": "https://github.com/icecave/parity.git",
                 "reference": "0109fef58b3230d23b20b2ac52ecdf477218d300"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/IcecaveStudios/parity/zipball/0109fef58b3230d23b20b2ac52ecdf477218d300",
+                "url": "https://api.github.com/repos/icecave/parity/zipball/0109fef58b3230d23b20b2ac52ecdf477218d300",
                 "reference": "0109fef58b3230d23b20b2ac52ecdf477218d300",
                 "shasum": ""
             },
@@ -871,12 +871,12 @@
             "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/IcecaveStudios/repr.git",
+                "url": "https://github.com/icecave/repr.git",
                 "reference": "8a3d2953adf5f464a06e3e2587aeacc97e2bed07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/IcecaveStudios/repr/zipball/8a3d2953adf5f464a06e3e2587aeacc97e2bed07",
+                "url": "https://api.github.com/repos/icecave/repr/zipball/8a3d2953adf5f464a06e3e2587aeacc97e2bed07",
                 "reference": "8a3d2953adf5f464a06e3e2587aeacc97e2bed07",
                 "shasum": ""
             },
@@ -922,12 +922,12 @@
             "version": "3.0.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/IcecaveStudios/semver.git",
+                "url": "https://github.com/icecave/semver.git",
                 "reference": "ca4277fb4000019e0cb50e72b272904d9e3d4557"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/IcecaveStudios/semver/zipball/ca4277fb4000019e0cb50e72b272904d9e3d4557",
+                "url": "https://api.github.com/repos/icecave/semver/zipball/ca4277fb4000019e0cb50e72b272904d9e3d4557",
                 "reference": "ca4277fb4000019e0cb50e72b272904d9e3d4557",
                 "shasum": ""
             },
@@ -969,6 +969,7 @@
                 "semver",
                 "version"
             ],
+            "abandoned": "composer/semver",
             "time": "2015-03-09T04:51:38+00:00"
         },
         {

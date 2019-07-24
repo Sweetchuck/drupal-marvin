@@ -11,6 +11,8 @@ use Webmozart\PathUtil\Path;
  * @property-read string $name
  * @property-read string $packageVendor
  * @property-read string $packageName
+ *
+ * @todo A "write" or a "dump" method would be handy.
  */
 class ComposerInfo implements \ArrayAccess {
 
@@ -270,6 +272,24 @@ class ComposerInfo implements \ArrayAccess {
     }
 
     return NULL;
+  }
+
+  public function getDrupalRootDir(): string {
+    $installerPaths = $this['extra']['installer-paths'] ?? [];
+    foreach ($installerPaths as $installDir => $rules) {
+      if (in_array('drupal/core', $rules) || in_array('type:drupal-core', $rules)) {
+        $installDir = strtr(
+          $installDir,
+          [
+            '{$name}' => 'core',
+          ]
+        );
+
+        return dirname($installDir);
+      }
+    }
+
+    return $this['config']['vendor-dir'] . '/drupal';
   }
 
   /**

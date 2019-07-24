@@ -3,7 +3,6 @@
 namespace Drupal\marvin\Robo\Task;
 
 use Drupal\marvin\ComposerInfo;
-use Drupal\marvin\Utils as MarvinUtils;
 use Sweetchuck\Utils\Filter\ArrayFilterFileSystemExists;
 use Symfony\Component\Finder\Finder;
 
@@ -114,11 +113,19 @@ class ArtifactCollectFilesTask extends BaseTask {
     switch ($composerInfo['type']) {
       case 'project':
       case 'drupal-project':
-        $docroot = MarvinUtils::detectDrupalRootDir($composerInfo);
+        $docroot = $composerInfo->getDrupalRootDir();
         $docrootSafe = preg_quote($docroot, '@');
 
         $outerSitesDir = 'sites';
         $outerSitesDirSafe = preg_quote($outerSitesDir, '@');
+
+        $files = (new Finder())
+          ->in($packagePath)
+          ->notPath("@^{$artifactDirSafe}@")
+          ->notPath("@^{$docrootSafe}/sites/simpletest/@")
+          ->name('*.yml')
+          ->name('*.twig')
+          ->files();
 
         $dirs = [
           "$docrootSafe/modules",
@@ -131,16 +138,7 @@ class ArtifactCollectFilesTask extends BaseTask {
           "$docrootSafe/sites/[^/]+/libraries",
           'drush/Commands',
           "$docrootSafe/sites/[^/]+/drush/Commands",
-          'patches',
         ];
-
-        $files = (new Finder())
-          ->in($packagePath)
-          ->notPath("@^{$artifactDirSafe}@")
-          ->name('*.yml')
-          ->name('*.twig')
-          ->files();
-
         foreach ($dirs as $dir) {
           $files
             ->path("@^$dir/custom/@")
@@ -161,6 +159,7 @@ class ArtifactCollectFilesTask extends BaseTask {
         $this->assets['files'][] = (new Finder())
           ->in($packagePath)
           ->notPath("@^{$artifactDirSafe}@")
+          ->notPath("@^{$docrootSafe}/sites/simpletest/@")
           ->path("@$docrootSafe/sites/[^/]+/@")
           ->name('settings.php')
           ->name('services.yml')
@@ -169,6 +168,7 @@ class ArtifactCollectFilesTask extends BaseTask {
         $files = (new Finder())
           ->in($packagePath)
           ->notPath("@^{$artifactDirSafe}@")
+          ->notPath("@^{$docrootSafe}/sites/simpletest/@")
           ->path("@^{$outerSitesDirSafe}/[^/]+/translations/@")
           ->path("@^{$outerSitesDirSafe}/[^/]+/config/@")
           ->files();
@@ -182,6 +182,13 @@ class ArtifactCollectFilesTask extends BaseTask {
           ->name('*.yml')
           ->files();
 
+        $this->assets['files'][] = (new Finder)
+          ->in($packagePath)
+          ->notPath("@^{$artifactDirSafe}@")
+          ->notPath("@^{$docrootSafe}/sites/simpletest/@")
+          ->path('@^patches/@')
+          ->name('*.patch')
+          ->files();
         $this->assets['files'][] = 'composer.json';
         $this->assets['files'][] = 'composer.lock';
         $this->assets['files'][] = "{$docroot}/autoload.php";
@@ -192,6 +199,7 @@ class ArtifactCollectFilesTask extends BaseTask {
           array_filter(
             [
               "$docroot/.htaccess",
+              "$docroot/favicon.ico",
               "$docroot/robots.txt",
             ],
             (new ArrayFilterFileSystemExists())->setBaseDir($packagePath)
