@@ -8,6 +8,8 @@ use Drupal\marvin\Utils as MarvinUtils;
 use Robo\Collection\CollectionBuilder;
 use Robo\State\Data as RoboStateData;
 use Sweetchuck\Robo\Git\GitTaskLoader;
+use Symfony\Component\Finder\Finder;
+use Webmozart\PathUtil\Path;
 
 abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
 
@@ -60,6 +62,11 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   protected $versionPartToBump = '';
 
   /**
+   * @var int
+   */
+  protected $highestBuildStepWeight = -250;
+
+  /**
    * @var string
    */
   protected $versionTagNamePattern = '/^(v){0,1}(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(|-(?P<special>[\da-zA-Z.]+))(|\+(?P<metadata>[\da-zA-Z.]+))$/';
@@ -67,46 +74,56 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   abstract protected function isApplicable(string $projectType): bool;
 
   protected function getBuildSteps(): array {
+    $this->highestBuildStepWeight = -250;
+
     return [
-      'marvin.initStateData' => [
-        'weight' => -240,
+      'initStateData.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
         'task' => $this->getTaskInitStateData(),
       ],
-      'marvin.detectLatestVersionNumber' => [
-        'weight' => -230,
+      'detectLatestVersionNumber.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
         'task' => $this->getTaskDetectLatestVersionNumber(),
       ],
-      'marvin.composeNextVersionNumber' => [
-        'weight' => -220,
+      'composeNextVersionNumber.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
         'task' => $this->getTaskComposeNextVersionNumber(),
       ],
-      'marvin.composeBuildDirPath' => [
-        'weight' => -210,
+      'composeBuildDirPath.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
         'task' => $this->getTaskComposeBuildDir(),
       ],
-      'marvin.prepareDirectory' => [
-        'weight' => -200,
+      'prepareDirectory.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
         'task' => $this->getTaskPrepareDirectory(),
       ],
-      'marvin.collectFiles' => [
-        'weight' => -190,
-        'task' => $this->getTaskCollectFiles(),
+      'copyFilesCollect.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
+        'task' => $this->getTaskCopyFilesCollect(),
       ],
-      'marvin.copyFiles' => [
-        'weight' => -180,
+      'copyFiles.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
         'task' => $this->getTaskCopyFiles(),
       ],
-      'marvin.bumpVersionNumber.root' => [
-        'weight' => 200,
+      'bumpVersionNumber.root.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
         'task' => $this->getTaskBumpVersionNumberRoot(),
       ],
-      'marvin.collectCustomExtensionDirs' => [
-        'weight' => 210,
+      'collectCustomExtensionDirs.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
         'task' => $this->getTaskCollectChildExtensionDirs(),
       ],
-      'marvin.bumpVersionNumber.extensions' => [
-        'weight' => 220,
+      'bumpVersionNumber.extensions.marvin' => [
+        'weight' => $this->incrementBuildStepWeight(),
         'task' => $this->getTaskBumpVersionNumberExtensions('customExtensionDirs', 'nextVersionNumber.drupal'),
+      ],
+      'cleanupFilesCollect.marvin' => [
+        'weight' => $this->highestBuildStepWeight + 9990,
+        'task' => $this->getTaskCleanupCollect(),
+      ],
+      'cleanupFiles.marvin' => [
+        'weight' => $this->highestBuildStepWeight + 9999,
+        'task' => $this->getTaskCleanup(),
       ],
     ];
   }
@@ -117,6 +134,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
       'artifactType' => $this->artifactType,
       'versionPartToBump' => $this->versionPartToBump,
       'composerInfo' => ComposerInfo::create($this->srcDir),
+      'filesToCleanup' => [],
     ];
   }
 
@@ -243,7 +261,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   /**
    * @return \Closure|\Robo\Contract\TaskInterface
    */
-  protected function getTaskCollectFiles() {
+  protected function getTaskCopyFilesCollect() {
     return $this
       ->taskMarvinArtifactCollectFiles()
       ->setPackagePath($this->srcDir);
@@ -311,6 +329,39 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
     return $forEachTask;
   }
 
+  /**
+   * @return \Closure|\Robo\Contract\TaskInterface
+   */
+  protected function getTaskCleanupCollect() {
+    return function (RoboStateData $data): int {
+      $buildDir = $data['buildDir'];
+
+      $data['filesToCleanup'][] = Path::join($buildDir, 'patches');
+
+      /** @var \Symfony\Component\Finder\SplFileInfo[] $gitDirs */
+      $gitDirs =  (new Finder())
+        ->in($buildDir)
+        ->depth('> 0')
+        ->ignoreDotFiles(false)
+        ->ignoreVCS(false)
+        ->name('.git');
+      foreach ($gitDirs as $gitDir) {
+        $data['filesToCleanup'][] = $gitDir->getPathname();
+      }
+
+      return 0;
+    };
+  }
+
+  /**
+   * @return \Closure|\Robo\Contract\TaskInterface
+   */
+  protected function getTaskCleanup() {
+    return $this
+      ->taskFilesystemStack()
+      ->deferTaskConfiguration('remove', 'filesToCleanup');
+  }
+
   protected function getVersionTagNameFilter(): callable {
     return function ($version): bool {
       return preg_match($this->versionTagNamePattern, (string) $version) === 1;
@@ -319,6 +370,12 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
 
   protected function getVersionTagNameComparer(): callable {
     return 'version_compare';
+  }
+
+  protected function incrementBuildStepWeight(): int {
+    $this->highestBuildStepWeight += 10;
+
+    return $this->highestBuildStepWeight;
   }
 
 }

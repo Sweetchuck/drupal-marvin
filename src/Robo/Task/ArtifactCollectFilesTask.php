@@ -171,6 +171,7 @@ class ArtifactCollectFilesTask extends BaseTask {
           ->notPath("@^{$docrootSafe}/sites/simpletest/@")
           ->path("@^{$outerSitesDirSafe}/[^/]+/translations/@")
           ->path("@^{$outerSitesDirSafe}/[^/]+/config/@")
+          ->ignoreDotFiles(FALSE)
           ->files();
         $this->assets['files'][] = $files;
 
