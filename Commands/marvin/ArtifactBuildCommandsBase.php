@@ -202,7 +202,6 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
 
       $logger->notice('{taskName}', $logContext);
 
-
       $data['nextVersionNumber.semver'] = NULL;
       $data['nextVersionNumber.drupal'] = NULL;
 
@@ -314,6 +313,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
         $versionStateKey
       ) {
         if (!file_exists($extensionDir)) {
+          // phpcs:ignore Drupal.Commenting.FunctionComment.InvalidReturnNotVoid
           return;
         }
 
@@ -339,11 +339,11 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
       $data['filesToCleanup'][] = Path::join($buildDir, 'patches');
 
       /** @var \Symfony\Component\Finder\SplFileInfo[] $gitDirs */
-      $gitDirs =  (new Finder())
+      $gitDirs = (new Finder())
         ->in($buildDir)
         ->depth('> 0')
-        ->ignoreDotFiles(false)
-        ->ignoreVCS(false)
+        ->ignoreDotFiles(FALSE)
+        ->ignoreVCS(FALSE)
         ->name('.git');
       foreach ($gitDirs as $gitDir) {
         $data['filesToCleanup'][] = $gitDir->getPathname();

@@ -16,6 +16,9 @@ use Webmozart\PathUtil\Path;
  */
 class ComposerInfo implements \ArrayAccess {
 
+  /**
+   * @var static[]
+   */
   protected static $instances = [];
 
   /**

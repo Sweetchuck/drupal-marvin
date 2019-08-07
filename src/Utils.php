@@ -32,6 +32,9 @@ class Utils {
     'drupal-theme' => TRUE,
   ];
 
+  /**
+   * @var bool[]
+   */
   public static $drupalPhpExtensions = [
     'engine' => TRUE,
     'install' => TRUE,
@@ -376,7 +379,9 @@ class Utils {
   }
 
   /**
-   * @deprecated Use \Drupal\marvin\ComposerInfo::getDrupalRootDir instead.
+   * @deprecated
+   *
+   * @see \Drupal\marvin\ComposerInfo::getDrupalRootDir
    */
   public static function detectDrupalRootDir(ComposerInfo $composerInfo): string {
     return $composerInfo->getDrupalRootDir();
