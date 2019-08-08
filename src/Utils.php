@@ -32,6 +32,9 @@ class Utils {
     'drupal-theme' => TRUE,
   ];
 
+  /**
+   * @var bool[]
+   */
   public static $drupalPhpExtensions = [
     'engine' => TRUE,
     'install' => TRUE,
@@ -376,17 +379,12 @@ class Utils {
   }
 
   /**
-   * @todo This could be a method on the ComposerInfo class.
+   * @deprecated
+   *
+   * @see \Drupal\marvin\ComposerInfo::getDrupalRootDir
    */
   public static function detectDrupalRootDir(ComposerInfo $composerInfo): string {
-    $installerPaths = $composerInfo['extra']['installer-paths'] ?? [];
-    foreach ($installerPaths as $installDir => $rules) {
-      if (in_array('drupal/core', $rules) || in_array('type:drupal-core', $rules)) {
-        return dirname($installDir);
-      }
-    }
-
-    return $composerInfo['config']['vendor-dir'] . '/drupal';
+    return $composerInfo->getDrupalRootDir();
   }
 
   public static function semverToDrupal(string $core, string $semver): string {

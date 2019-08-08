@@ -196,8 +196,21 @@ marvin:
     reporterConfig:
       verboseStdOutput:
         service: 'lintVerboseReporter'
+
+        ##
+        # Available options are depend on the "service".
+        #
+        # The following options are available for \Sweetchuck\LintReport\Reporter\VerboseReporter.
+        #
+        # @var array
+        ##
         options:
           filePathStyle: 'relative'
+          #showSeverity: true
+          #showSource: false
+          #showLineNumber: true
+          #showColumnNumber: false
+          #showMessage: true
 
   phpcs:
     ##
