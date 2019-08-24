@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Unit\Commands;
 
-use Drush\Commands\marvin\ComposerCommandsBase;
+use Drush\Commands\marvin\ComposerScriptsCommands;
 use ReflectionClass;
 use Robo\Config\Config;
 
@@ -12,25 +12,25 @@ use Robo\Config\Config;
  * @group marvin
  * @group drush-command
  *
- * @covers \Drush\Commands\marvin\ComposerScriptsCommands<extended>
+ * @covers \Drush\Commands\marvin\ComposerCommandsBase<extended>
  */
-class ComposerCommandsTest extends CommandsTestBase {
+class ComposerScriptsCommandsTest extends CommandsTestBase {
 
   public function testGetClassKey(): void {
-    $commands = new ComposerCommandsBase($this->composerInfo);
+    $commands = new ComposerScriptsCommands($this->composerInfo);
 
     $methodName = 'getClassKey';
     $class = new ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
-    static::assertSame('marvin.composer.a', $method->invokeArgs($commands, ['a']));
+    static::assertSame('marvin.composerScripts.a', $method->invokeArgs($commands, ['a']));
   }
 
   public function testGetConfigValue(): void {
     $configData = [
       'marvin' => [
-        'composer' => [
+        'composerScripts' => [
           'my_key' => 'my_value',
         ],
       ],
@@ -42,7 +42,7 @@ class ComposerCommandsTest extends CommandsTestBase {
     );
     $config = new Config($configData);
 
-    $commands = new ComposerCommandsBase($this->composerInfo);
+    $commands = new ComposerScriptsCommands($this->composerInfo);
     $commands->setConfig($config);
 
     $methodName = 'getConfigValue';
@@ -54,13 +54,13 @@ class ComposerCommandsTest extends CommandsTestBase {
   }
 
   public function testGetCustomEventNamePrefix(): void {
-    $commands = new ComposerCommandsBase($this->composerInfo);
+    $commands = new ComposerScriptsCommands($this->composerInfo);
     $methodName = 'getCustomEventNamePrefix';
     $class = new ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
-    static::assertSame('marvin:composer', $method->invokeArgs($commands, []));
+    static::assertSame('marvin:composer-scripts', $method->invokeArgs($commands, []));
   }
 
 }

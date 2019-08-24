@@ -175,12 +175,14 @@ class ArtifactCollectFilesTask extends BaseTask {
           ->files();
         $this->assets['files'][] = $files;
 
-        $this->assets['files'][] = 'drush/drush.yml';
         $this->assets['files'][] = (new Finder())
           ->in($packagePath)
+          ->path("@^drush/@")
           ->notPath("@^{$artifactDirSafe}@")
-          ->path('@^drush/sites/@')
+          ->notPath("@^drush/Commands/@")
           ->name('*.yml')
+          ->notName('drush.local.example.yml')
+          ->notName('drush.local.yml')
           ->files();
 
         $this->assets['files'][] = (new Finder)
