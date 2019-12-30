@@ -44,7 +44,7 @@
         "drupal/core": "^8.5",
         "drush/drush": "^9.6.2",
         "mikey179/vfsstream": "^1.6",
-        "phpunit/phpunit": "^6.3",
+        "phpunit/phpunit": "^7.5",
         "sweetchuck/git-hooks": "^0.0",
         "weitzman/drupal-test-traits": "^1.1"
     },
@@ -64,9 +64,9 @@
             "Drupal\\Tests\\marvin\\Helper\\": "tests/src/Helper/",
             "Drupal\\Tests\\marvin\\Unit\\": "tests/src/Unit/",
             "Drupal\\Tests\\marvin\\Integration\\": "tests/src/Integration/",
-            "Unish\\": "vendor/drush/drush/tests/unish/",
 
             "Drupal\\Tests\\": "tests/fixtures/project_01/docroot/core/tests/Drupal/Tests/",
+            "Drupal\\TestTools\\": "tests/fixtures/project_01/docroot/core/tests/Drupal/TestTools/",
             "Drupal\\KernelTests\\": "tests/fixtures/project_01/docroot/core/tests/Drupal/KernelTests"
         }
     },
@@ -118,11 +118,13 @@
         ],
         "clean": [
             "rm -rf bin/ reports/ vendor/",
+            "chmod -R u+w tests/fixtures/project_01/docroot/sites/default/",
             "git clean --force -d -x -- tests/",
             "git clean --force -d -X -- tests/"
         ],
+        "clean:reports": "[ ! -d ./reports] || find ./reports -mindepth 1 -maxdepth 1 -exec rm -rf {} \\;",
         "test": [
-            "rm -rf ./reports/",
+            "@clean:reports",
             "@test:unit",
             "@test:integration"
         ],
