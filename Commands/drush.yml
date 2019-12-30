@@ -9,7 +9,7 @@ marvin:
   #
   # @var string
   ##
-  environment: 'dev'
+  environment: 'local'
 
   ##
   # Name of the directory where the generated artifacts should be stored.
@@ -183,9 +183,9 @@ marvin:
       #
       # @var bool[]
       ##
-      dev:
+      local:
         verboseStdOutput: true
-      devPreCommit:
+      localPreCommit:
         verboseStdOutput: true
       watch:
         verboseStdOutput: true
@@ -221,8 +221,8 @@ marvin:
     # @var string[]
     ##
     defaultPreset:
-      dev: 'default'
-      devPreCommit: 'default'
+      local: 'default'
+      localPreCommit: 'default'
       watch: 'default'
       ci: 'default'
       ciJenkins: 'default'
@@ -294,5 +294,5 @@ marvin:
       #
       # @var null|bool|bool[]
       ##
-      devPreCommit:
+      localPreCommit:
         Unit: true
