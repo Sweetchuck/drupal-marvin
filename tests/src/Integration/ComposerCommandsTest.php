@@ -19,9 +19,9 @@ class ComposerCommandsTest extends UnishIntegrationTestCase {
     $expected = [
       'exitCode' => 0,
       'stdError' => implode(PHP_EOL, [
-        '[notice] Validating composer.json: composer validate',
-        " [notice] Running composer validate in $root/tests/fixtures/project_01",
-        ' [success] Done in ',
+        '[Composer\Validate] Validating composer.json: composer validate',
+        " [Composer\Validate] Running composer validate in $root/tests/fixtures/project_01",
+        ' [Composer\Validate] Done in ',
       ]),
       'stdOutput' => './composer.json is valid',
     ];

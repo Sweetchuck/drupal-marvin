@@ -13,24 +13,24 @@
     },
     "repositories": {},
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pcre": "*",
+        "consolidation/robo": "^2.0",
         "danielstjules/stringy": "^3.1",
         "drupal/coder": "^8.3",
         "icecave/semver": "^3.0",
-        "squizlabs/php_codesniffer": "^3.3",
-        "sweetchuck/git-hooks-stdinput-reader": "^0.0",
-        "sweetchuck/robo-composer": "dev-master",
-        "sweetchuck/robo-git": "dev-master",
-        "sweetchuck/robo-nvm": "dev-master",
-        "sweetchuck/robo-phpcs": "^0.0",
-        "sweetchuck/robo-phpunit": "dev-master",
-        "sweetchuck/robo-stringy": "^0.0",
-        "sweetchuck/robo-yarn": "dev-master",
-        "sweetchuck/utils": "dev-master",
-        "symfony/yaml": "^3.4 || ^4.0",
+        "squizlabs/php_codesniffer": "^3.5",
+        "sweetchuck/git-hooks-stdinput-reader": "^0.1",
+        "sweetchuck/robo-composer": "^0.1",
+        "sweetchuck/robo-git": "^0.2",
+        "sweetchuck/robo-nvm": "^0.1",
+        "sweetchuck/robo-phpcs": "^0.1",
+        "sweetchuck/robo-phpunit": "^0.1",
+        "sweetchuck/robo-stringy": "^0.1",
+        "sweetchuck/robo-yarn": "^0.2",
+        "sweetchuck/utils": "^0.1",
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
@@ -41,15 +41,17 @@
         "composer/installers": "^1.5",
         "cweagans/composer-patches": "^1.6",
         "drupal-composer/drupal-scaffold": "^2.5",
-        "drupal/core": "^8.5",
-        "drush/drush": "^9.6.2",
+        "drupal/core-recommended": "^8.8",
+        "drush/drush": "^10.1",
         "mikey179/vfsstream": "^1.6",
         "phpunit/phpunit": "^7.5",
         "sweetchuck/git-hooks": "^0.0",
-        "weitzman/drupal-test-traits": "^1.1"
+        "weitzman/drupal-test-traits": "^1.1",
+        "oomphinc/composer-installers-extender": "^1.1",
+        "zaporylie/composer-drupal-optimizations": "^1.0"
     },
     "suggest": {
-        "drush/drush": "^9.6"
+        "drush/drush": "^10.1"
     },
     "autoload": {
         "psr-4": {
@@ -117,6 +119,10 @@
             "\\Drupal\\Dev\\marvin\\Composer\\Scripts::postUpdateCmd"
         ],
         "clean": [
+            "@clean:reports",
+            "@clean:composer"
+        ],
+        "clean:composer": [
             "rm -rf bin/ reports/ vendor/",
             "chmod -R u+w tests/fixtures/project_01/docroot/sites/default/",
             "git clean --force -d -x -- tests/",
