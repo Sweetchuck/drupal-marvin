@@ -21,10 +21,10 @@ class PhpcsCommandsTest extends UnishIntegrationTestCase {
     $expected = [
       'exitCode' => 2,
       'stdError' => implode(PHP_EOL, [
-        '[notice] ',
-        " [notice] notice runs cd '$root/tests/fixtures/project_01' && ../../../bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'drush/custom/' 'docroot/modules/custom/' 'docroot/themes/custom/'",
-        ' [error]  PHP Code Sniffer found some errors :-( ',
-        ' [error]  Exit code 2',
+        '[Marvin - PHP_CodeSniffer config fallback] ',
+        " [PHP_CodeSniffer] PHP_CodeSniffer runs cd '$root/tests/fixtures/project_01' && ../../../bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'drush/custom/' 'docroot/modules/custom/' 'docroot/themes/custom/'",
+        ' [Sweetchuck\Robo\Phpcs\Task\PhpcsLintFiles]  PHP Code Sniffer found some errors :-( ',
+        ' [Sweetchuck\Robo\Phpcs\Task\PhpcsLintFiles]  Exit code 2',
       ]),
       'stdOutput' => 'Missing class doc comment',
     ];
@@ -53,10 +53,10 @@ class PhpcsCommandsTest extends UnishIntegrationTestCase {
     $expected = [
       'exitCode' => 2,
       'stdError' => implode(PHP_EOL, [
-        '[notice] ',
-        " [notice] notice runs cd '$root/tests/fixtures/project_01/docroot/modules/custom/dummy_m1' && ../../../../../../../bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'Commands/' 'tests/' 'dummy_m1.module'",
-        ' [error]  PHP Code Sniffer found some errors :-( ',
-        ' [error]  Exit code 2',
+        '[Marvin - PHP_CodeSniffer config fallback] ',
+        " [PHP_CodeSniffer] PHP_CodeSniffer runs cd '$root/tests/fixtures/project_01/docroot/modules/custom/dummy_m1' && ../../../../../../../bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'Commands/' 'tests/' 'dummy_m1.module'",
+        ' [Sweetchuck\Robo\Phpcs\Task\PhpcsLintFiles]  PHP Code Sniffer found some errors :-( ',
+        ' [Sweetchuck\Robo\Phpcs\Task\PhpcsLintFiles]  Exit code 2',
       ]),
       'stdOutput' => 'Missing class doc comment',
     ];

@@ -26,10 +26,10 @@ class NpmCommandsTest extends UnishIntegrationTestCase {
     $expected = [
       'exitCode' => 0,
       'stdError' => implode(PHP_EOL, [
-        '[notice] themes/custom/dummy_t1/package.json',
-        ' [notice] ',
-        " [notice] runs \". '$nvmDir/nvm.sh'; nvm which '11.5.0'\"",
-        " [notice] cd 'themes/custom/dummy_t1' && $nvmDir/versions/node/v11.5.0/bin/node $nvmDir/versions/node/v11.5.0/bin/yarn install",
+        '[Progress] themes/custom/dummy_t1/package.json',
+        ' [Marvin - Node detector] ',
+        " [NVM - Which] runs \". '$nvmDir/nvm.sh'; nvm which '11.5.0'\"",
+        " [Yarn - Install] cd 'themes/custom/dummy_t1' && $nvmDir/versions/node/v11.5.0/bin/node $nvmDir/versions/node/v11.5.0/bin/yarn install",
       ]),
       'stdOutput' => '',
     ];

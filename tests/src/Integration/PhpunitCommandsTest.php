@@ -23,7 +23,7 @@ class PhpunitCommandsTest extends UnishIntegrationTestCase {
         [
           'exitCode' => 0,
           'stdError' => implode(' ', [
-            '[notice] runs',
+            '[PHPUnit - Run] runs',
             "\"cd '$root/tests/fixtures/project_01'",
             '&&',
             "$phpBinDir/phpdbg -qrr",
@@ -42,7 +42,7 @@ class PhpunitCommandsTest extends UnishIntegrationTestCase {
         [
           'exitCode' => 1,
           'stdError' => implode(' ', [
-            '[notice] runs',
+            '[PHPUnit - Run] runs',
             "\"cd '$root/tests/fixtures/project_01'",
             '&&',
             "$phpBinDir/phpdbg -qrr",
@@ -50,8 +50,8 @@ class PhpunitCommandsTest extends UnishIntegrationTestCase {
             "--colors='never'",
             "--testsuite='Unit'",
             "'docroot/modules/custom/dummy_m1/tests/src/Unit/DummyM1BadTest.php'\"" . PHP_EOL,
-            '[error]   ' . PHP_EOL,
-            '[error]  Exit code 1',
+            '[Sweetchuck\Robo\PHPUnit\Task\RunTask]   ' . PHP_EOL,
+            '[Sweetchuck\Robo\PHPUnit\Task\RunTask]  Exit code 1',
           ]),
           'stdOutput' => 'Tests: 1, Assertions: 1, Failures: 1.',
         ],
