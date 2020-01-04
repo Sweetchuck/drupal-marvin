@@ -8,10 +8,12 @@ use Consolidation\AnnotatedCommand\CommandError;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 use Drupal\marvin\StatusReport\StatusReportInterface;
 use Icecave\SemVer\Version;
+use InvalidArgumentException;
 use Stringy\StaticStringy;
 use Stringy\Stringy;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
+use UnexpectedValueException;
 use Webmozart\PathUtil\Path;
 
 /**
@@ -163,7 +165,7 @@ class Utils {
     $matches = [];
     preg_match($pattern, $versionNumber, $matches);
     if (!$matches) {
-      throw new \InvalidArgumentException('@todo', 1);
+      throw new InvalidArgumentException('@todo', 1);
     }
 
     $default = [
@@ -426,7 +428,7 @@ class Utils {
         break;
 
       default:
-        throw new \UnexpectedValueException('@todo Not implemented yet', 1);
+        throw new UnexpectedValueException('@todo Not implemented yet', 1);
     }
 
     switch ($fragment) {

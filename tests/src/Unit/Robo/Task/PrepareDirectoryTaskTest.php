@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Unit\Robo\Task;
 
+use DirectoryIterator;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
 use Webmozart\PathUtil\Path;
@@ -113,7 +114,7 @@ class PrepareDirectoryTaskTest extends TaskTestBase {
     static::assertDirectoryExists($options['workingDirectory']);
     static::assertCount(
       2,
-      new \DirectoryIterator($options['workingDirectory']),
+      new DirectoryIterator($options['workingDirectory']),
       sprintf('There are no any items in the "%s" directory', $options['workingDirectory'])
     );
 

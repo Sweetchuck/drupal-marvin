@@ -147,9 +147,9 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
     }
 
     if (array_key_exists('assets', $expected)) {
-      foreach ($expected['assets'] as $key => $value) {
+      foreach ($expected['assets'] as $key => $expectedValue) {
         static::assertSame(
-          $expected['assets'][$key],
+          $expectedValue,
           $result[$key],
           "result.assets.$key"
         );

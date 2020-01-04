@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Drupal\marvin\Robo\Task;
 
 use Drupal\marvin\Utils as MarvinUtils;
+use InvalidArgumentException;
 use Stringy\StaticStringy;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -194,14 +195,14 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
   protected function runValidatePackagePath() {
     $packagePath = $this->options['packagePath']['value'];
     if (!$packagePath) {
-      throw new \InvalidArgumentException(
+      throw new InvalidArgumentException(
         'The package path cannot be empty.',
         static::ERROR_CODE_PACKAGE_PATH_EMPTY
       );
     }
 
     if (!is_dir($packagePath)) {
-      throw new \InvalidArgumentException(
+      throw new InvalidArgumentException(
         sprintf('The package path "%s" is not exists.', $packagePath),
         static::ERROR_CODE_PACKAGE_PATH_NOT_EXISTS
       );
@@ -216,7 +217,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
   protected function runValidateVersionNumber() {
     $versionNumber = $this->options['versionNumber']['value'];
     if (!$versionNumber) {
-      throw new \InvalidArgumentException(
+      throw new InvalidArgumentException(
         'The version number cannot be empty.',
         static::ERROR_CODE_VERSION_NUMBER_EMPTY
       );
@@ -224,7 +225,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
 
     if (!MarvinUtils::isValidDrupalExtensionVersionNumber($versionNumber)) {
       // @todo Give a hint what's the problem with given version number.
-      throw new \InvalidArgumentException(
+      throw new InvalidArgumentException(
         sprintf('The version number "%s" is invalid.', $versionNumber),
         static::ERROR_CODE_VERSION_NUMBER_INVALID
       );
