@@ -75,6 +75,7 @@ trait PhpVariantTrait {
       'patch' => 0,
     ];
 
+    $matches = [];
     preg_match('/^(?P<major>\d)(?P<minor>\d\d)(?P<patch>\d\d)$/', (string) $parts['id'], $matches);
     if ($matches) {
       $parts['major'] = (int) $matches['major'];

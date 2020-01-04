@@ -1,127 +1,201 @@
+version: 2.1
 
-version: 2
+.env_composer: &env_composer
+  COMPOSER_NO_INTERACTION: '1'
+  COMPOSER_MEMORY_LIMIT: '-1'
+  COMPOSER_DISABLE_XDEBUG_WARN: '1'
 
-_custom:
-    step__run__install_php_extensions: &step__run__install_php_extensions
-        name: 'Install PHP extensions'
-        command: |
-            sudo apt-get -y update
-            sudo apt-get -y install \
-                libpng-dev \
-                zlib1g-dev
+.env_test: &env_test
+  SIMPLETEST_BASE_URL: 'http://localhost:8888'
+  DTT_BASE_URL: 'http://localhost:8888'
+  SIMPLETEST_DB: 'sqlite://sites/default/db.default.default.sqlite'
+  UNISH_DB_URL: 'sqlite://sites/default/db.default.default.sqlite'
+  UNISH_NO_TIMEOUTS: 'y'
 
-            sudo docker-php-ext-install \
-                gd \
-                zip
-    step__run__install_composer: &step__run__install_composer
-        name: 'Install composer'
-        command: |
-            cd /tmp
-            EXPECTED_SIGNATURE=$(curl -q https://composer.github.io/installer.sig)
-            php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-            ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');")
+orbs:
+  codecov: 'codecov/codecov@1.0.4'
 
-            if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]
-            then
-                >&2 echo 'ERROR: Invalid installer signature'
-                rm composer-setup.php
+executors:
+  php704:
+    environment:
+      <<: *env_composer
+      <<: *env_test
 
-                exit 1
-            fi
+    docker:
+      -
+        name: 'main'
+        image: 'misterio92/ci-php-node:4.0'
 
-            sudo php composer-setup.php --quiet --install-dir /usr/local/bin --filename composer
-            RESULT=$?
-            rm composer-setup.php
+  php703:
+    environment:
+      <<: *env_composer
+      <<: *env_test
 
-            exit $RESULT
-    step__restore_cache: &step__restore_cache
-        name: 'Cache restore - "./vendor"'
-        keys:
-            - 'v1-dependencies-{{ checksum "composer.lock" }}'
-            - 'v1-dependencies-'
-    step__run__composer_install: &step__run__composer_install
-        name: 'Build'
-        command: 'composer install --no-interaction'
-    step__run__composer_validate: &step__run__composer_validate
-        name: 'Composer validate'
-        command: 'composer validate'
-    step__save_cache: &step__save_cache
-        name: 'Cache save - "./vendor"'
-        paths:
-            - './vendor'
-        key: 'v1-dependencies-{{ checksum "composer.lock" }}'
-    step__run__phpcs: &step__run__phpcs
-        name: 'Run linters'
-        command: 'bin/phpcs'
-    step__run__phpunit: &step__run__phpunit
-        name: 'PHPUnit'
-        command: |
+    docker:
+      -
+        name: 'main'
+        image: 'misterio92/ci-php-node:3.0'
+
+  php702:
+    environment:
+      <<: *env_composer
+      <<: *env_test
+
+    docker:
+      -
+        name: 'main'
+        image: 'misterio92/ci-php-node:2.0'
+
+commands:
+  install_yarn:
+    description: 'Install "yarn" NPM package'
+    steps:
+      -
+        run:
+          name: 'Install Yarn'
+          command: 'npm install -g yarn@1.15.2'
+
+  install_php_requirements:
+    description: ''
+    steps:
+      -
+        run:
+          name: 'Install required PHP extensions'
+          command: |
+            apt-get update
+            apt-get install -y \
+              php-xdebug \
+              "php$(php -r 'echo mb_substr(PHP_VERSION, 0, 3);')-phpdbg"
+
+  composer_install:
+    description: 'Install Composer dependencies with cache restore and save'
+    steps:
+      -
+        restore_cache:
+          name: 'Composer - cache restore'
+          keys:
+            - 'composer-{{ checksum "./composer.lock" }}-v1'
+      -
+        run:
+          name: 'Composer - install'
+          command: >
+            [[ -d "$(composer config vendor-dir)" ]] || composer install --no-progress
+      -
+        run:
+          name: 'Composer - run post-install-cmd'
+          command: >
+            composer run post-install-cmd
+      -
+        save_cache:
+          name: 'Composer - cache save'
+          key: 'composer-{{ checksum "./composer.lock" }}-v1'
+          paths:
+            - './bin/'
+            - './tests/fixtures/project_01/docroot/core'
+            - './tests/fixtures/project_01/docroot/libraries'
+            - './tests/fixtures/project_01/docroot/modules/contrib'
+            - './tests/fixtures/project_01/docroot/themes/contrib'
+            - './tests/fixtures/project_01/drush/contrib'
+            - './vendor/'
+
+  lint:
+    description: 'Run linters'
+    steps:
+      -
+        run:
+          name: 'Run linters'
+          command: 'bin/robo lint'
+
+  test:
+    description: 'Run tests'
+    steps:
+      -
+        run:
+          name: 'Run tests - Unit'
+          command: 'bin/robo test:phpunit Unit'
+      -
+        codecov/upload:
+          flags: 'unit'
+          file: './reports/machine/coverage/coverage.unit.xml'
+      -
+        run:
+          name: 'Run tests - Integration'
+          command: |
             cd tests/fixtures/project_01/docroot
             php -S localhost:8888 .ht.router.php 1>/dev/null 2>/dev/null &
             cd ../../../..
-            bin/phpunit
-    step__store_test_results: &step__store_test_results
-        path: 'reports/machine/unit/junit.xml'
-    step__run__codecov: &step__run__codecov
-        name: 'Publish the code coverage report on Codecov.io'
-        when: 'always'
-        command: >
-            [ ! -s tests/_output/machine/coverage/*/coverage.xml ]
-            || bash <(curl -s https://codecov.io/bash)
-            || true
-
-    job__lint_and_test: &job__lint_and_test
-        working_directory: '~/repo'
-        steps:
-            - 'checkout'
-            -
-                run:
-                    <<: *step__run__install_php_extensions
-            -
-                run:
-                    <<: *step__run__install_composer
-            -
-                restore_cache:
-                    <<: *step__restore_cache
-            -
-                run:
-                    <<: *step__run__composer_validate
-            -
-                run:
-                    <<: *step__run__composer_install
-            -
-                save_cache:
-                    <<: *step__save_cache
-            -
-                run:
-                    <<: *step__run__phpcs
-            -
-                run:
-                    <<: *step__run__phpunit
-            -
-                store_test_results:
-                    <<: *step__store_test_results
-            -
-                run:
-                    <<: *step__run__codecov
+            bin/robo test:phpunit Integration
+      -
+        codecov/upload:
+          flags: 'integration'
+          file: './reports/machine/coverage/coverage.integration.xml'
+      -
+        store_test_results:
+          name: 'Store unit test results'
+          path: './reports/machine/unit'
 
 jobs:
-    php702__lint_and_test:
-        <<: *job__lint_and_test
-        docker:
-            -
-                image: 'circleci/php:7.2'
-    php703__lint_and_test:
-        <<: *job__lint_and_test
-        docker:
-            -
-                image: 'circleci/php:7.3'
+  build:
+    executor: 'php702'
+    working_directory: '~/repo'
+    steps:
+      - 'checkout'
+      - 'composer_install'
+  lint:
+    executor: 'php702'
+    working_directory: '~/repo'
+    steps:
+      - 'checkout'
+      - 'composer_install'
+      - 'lint'
+  test_php704:
+    executor: 'php704'
+    working_directory: '~/repo'
+    steps: &test_steps
+      - 'checkout'
+      - 'install_yarn'
+      - 'install_php_requirements'
+      - 'composer_install'
+      - 'test'
+  test_php703:
+    executor: 'php703'
+    working_directory: '~/repo'
+    steps:
+      #<<: *test_steps
+      - 'checkout'
+      - 'install_yarn'
+      - 'install_php_requirements'
+      - 'composer_install'
+      - 'test'
+  test_php702:
+    executor: 'php702'
+    working_directory: '~/repo'
+    steps:
+      # <<: *test_steps
+      - 'checkout'
+      - 'install_yarn'
+      - 'install_php_requirements'
+      - 'composer_install'
+      - 'test'
 
 workflows:
-    version: 2
-    php702__lint_and_test:
-        jobs:
-            - 'php702__lint_and_test'
-    php703__lint_and_test:
-        jobs:
-            - 'php703__lint_and_test'
+  lint_and_test:
+    jobs:
+      -
+        build: {}
+      -
+        lint:
+          requires:
+            - build
+      -
+        test_php704:
+          requires:
+            - build
+      -
+        test_php703:
+          requires:
+            - build
+      -
+        test_php702:
+          requires:
+            - build

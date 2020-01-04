@@ -204,10 +204,10 @@ class ComposerInfoTest extends TestCase {
       ]
     );
 
-    $p1 = ComposerInfo::create($vfs->url() . '/p1');
-    $p2 = ComposerInfo::create($vfs->url() . '/p2');
-    static::assertEquals('a', $p1['type']);
-    static::assertEquals('b', $p2['type']);
+    $project1 = ComposerInfo::create($vfs->url() . '/p1');
+    $project2 = ComposerInfo::create($vfs->url() . '/p2');
+    static::assertEquals('a', $project1['type']);
+    static::assertEquals('b', $project2['type']);
   }
 
   public function casesGetDrupalExtensionInstallDir(): array {

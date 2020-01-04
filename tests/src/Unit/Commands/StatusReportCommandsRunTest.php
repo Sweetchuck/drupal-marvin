@@ -20,22 +20,22 @@ use Drush\Commands\marvin\StatusReportCommands;
 class StatusReportCommandsRunTest extends TaskTestBase {
 
   public static function casesStatusReport(): array {
-    $n1 = StatusReportEntry::__set_state([
+    $notice1 = StatusReportEntry::__set_state([
       'id' => 'n1',
       'severity' => RfcLogLevel::NOTICE,
     ]);
 
-    $n2 = StatusReportEntry::__set_state([
+    $notice2 = StatusReportEntry::__set_state([
       'id' => 'n2',
       'severity' => RfcLogLevel::NOTICE,
     ]);
 
-    $w1 = StatusReportEntry::__set_state([
+    $warning1 = StatusReportEntry::__set_state([
       'id' => 'w1',
       'severity' => RfcLogLevel::WARNING,
     ]);
 
-    $e1 = StatusReportEntry::__set_state([
+    $error1 = StatusReportEntry::__set_state([
       'id' => 'e1',
       'severity' => RfcLogLevel::ERROR,
     ]);
@@ -44,12 +44,12 @@ class StatusReportCommandsRunTest extends TaskTestBase {
       'empty' => [[], []],
       'basic' => [
         [
-          $e1->getId() => $e1,
-          $n1->getId() => $n1,
-          $n2->getId() => $n2,
-          $w1->getId() => $w1,
+          $error1->getId() => $error1,
+          $notice1->getId() => $notice1,
+          $notice2->getId() => $notice2,
+          $warning1->getId() => $warning1,
         ],
-        [[$n1], [$w1, $n2], [$e1]],
+        [[$notice1], [$warning1, $notice2], [$error1]],
       ],
     ];
   }

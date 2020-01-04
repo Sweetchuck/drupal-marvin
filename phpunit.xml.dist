@@ -1,76 +1,80 @@
 <phpunit
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-  bootstrap="tests/src/bootstrap.php"
-  verbose="true"
-  colors="true">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="tests/src/bootstrap.php"
+    verbose="true"
+    colors="true">
 
-  <php>
-    <!-- Set error reporting to E_ALL. -->
-    <ini name="error_reporting" value="32767"/>
+    <php>
+        <!-- Set error reporting to E_ALL. -->
+        <ini name="error_reporting" value="32767" />
 
-    <!-- Do not limit the amount of memory tests take to run. -->
-    <ini name="memory_limit" value="-1"/>
+        <!-- Do not limit the amount of memory tests take to run. -->
+        <ini name="memory_limit" value="-1" />
 
-    <!-- Example SIMPLETEST_BASE_URL value: http://localhost -->
-    <!-- <env name="SIMPLETEST_BASE_URL" value=""/> -->
-    <!-- <env name="DTT_BASE_URL" value=""/> -->
+        <!-- Example SIMPLETEST_BASE_URL value: http://localhost -->
+        <!-- <env name="SIMPLETEST_BASE_URL" value=""/> -->
+        <!-- <env name="DTT_BASE_URL" value=""/> -->
 
-    <!-- Example SIMPLETEST_DB value: mysql://username:password@localhost/databasename#table_prefix -->
-    <!-- <env name="SIMPLETEST_DB" value=""/> -->
+        <!-- Example SIMPLETEST_DB value: mysql://username:password@localhost/databasename#table_prefix -->
+        <!-- <env name="SIMPLETEST_DB" value=""/> -->
 
-    <!-- Example UNISH_DB_URL value: mysql://me:my_password@127.0.0.1:3306/my_db_01 -->
-    <!-- <env name="UNISH_DB_URL" value=""/> -->
+        <!-- Example UNISH_DB_URL value: mysql://me:my_password@127.0.0.1:3306/my_db_01 -->
+        <!-- <env name="UNISH_DB_URL" value=""/> -->
 
-    <env name="UNISH_NO_TIMEOUTS" value="y"/>
+        <env name="UNISH_NO_TIMEOUTS" value="y" />
 
-    <!-- Example BROWSERTEST_OUTPUT_DIRECTORY value: /path/to/webroot/sites/simpletest/browser_output -->
-    <!-- <env name="BROWSERTEST_OUTPUT_DIRECTORY" value=""/> -->
+        <!-- Example BROWSERTEST_OUTPUT_DIRECTORY value: /path/to/webroot/sites/simpletest/browser_output -->
+        <!-- <env name="BROWSERTEST_OUTPUT_DIRECTORY" value=""/> -->
 
-    <!-- Example REAL_NVM_DIR value: /home/me/.nvm -->
-    <!-- <env name="REAL_NVM_DIR" value=""/>-->
-  </php>
+        <!-- Example REAL_NVM_DIR value: /home/me/.nvm -->
+        <!-- <env name="REAL_NVM_DIR" value=""/>-->
+    </php>
 
-  <testsuites>
-    <testsuite name="Unit">
-      <directory>tests/src/Unit/</directory>
-    </testsuite>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/src/Unit/</directory>
+        </testsuite>
 
-    <testsuite name="Integration">
-      <directory>tests/src/Integration/</directory>
-    </testsuite>
-  </testsuites>
+        <testsuite name="Integration">
+            <directory>tests/src/Integration/</directory>
+        </testsuite>
+    </testsuites>
 
-  <filter>
-    <whitelist processUncoveredFilesFromWhitelist="true">
-      <directory>Commands/</directory>
-      <directory>src/</directory>
-    </whitelist>
-  </filter>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory>Commands/</directory>
+            <directory>src/</directory>
+        </whitelist>
+    </filter>
 
-  <logging>
-    <log
-      type="coverage-text"
-      target="php://stdout"/>
+    <logging>
+        <log
+            type="coverage-text"
+            target="php://stdout" />
 
-    <log
-      type="coverage-html"
-      target="reports/human/coverage/overall/html"/>
+        <log
+            type="coverage-html"
+            target="reports/human/coverage/all/html" />
 
-    <log
-      type="coverage-clover"
-      target="reports/machine/coverage/overall.xml"/>
+        <log
+            type="coverage-clover"
+            target="reports/machine/coverage/all/clover.xml" />
 
-    <log
-      type="coverage-php"
-      target="reports/machine/coverage-php/overall.php"/>
+        <log
+            type="coverage-xml"
+            target="reports/machine/coverage/all/xml" />
 
-    <log
-      type="testdox-html"
-      target="reports/human/unit/junit.html"/>
+        <log
+            type="coverage-php"
+            target="reports/machine/coverage-php/all.php" />
 
-    <log
-      type="junit"
-      target="reports/machine/unit/junit.xml"/>
-  </logging>
+        <log
+            type="testdox-html"
+            target="reports/human/unit/junit.all.html" />
+
+        <log
+            type="junit"
+            target="reports/machine/unit/junit.all.xml" />
+    </logging>
 </phpunit>

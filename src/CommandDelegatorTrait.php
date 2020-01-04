@@ -58,6 +58,11 @@ trait CommandDelegatorTrait {
     return $taskDefinitions;
   }
 
+  /**
+   * @return $this
+   *
+   * @SuppressWarnings(UnusedFormalParameter)
+   */
   protected function delegatePrepareCollectionBuilder(CollectionBuilder $cb, string $eventBaseName, array $args) {
     return $this;
   }
