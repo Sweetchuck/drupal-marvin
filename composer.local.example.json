@@ -28,6 +28,10 @@
             "type": "path",
             "url": "../../sweetchuck/robo-phpcs"
         },
+        "sweetchuck/robo-phpmd": {
+            "type": "path",
+            "url": "../../sweetchuck/robo-phpmd"
+        },
         "sweetchuck/robo-phpunit": {
             "type": "path",
             "url": "../../sweetchuck/robo-phpunit"
@@ -50,12 +54,14 @@
         "danielstjules/stringy": "^3.1",
         "drupal/coder": "^8.3",
         "icecave/semver": "^3.0",
+        "phpmd/phpmd": "^2.8",
         "squizlabs/php_codesniffer": "^3.5",
         "sweetchuck/git-hooks-stdinput-reader": "^0.1",
         "sweetchuck/robo-composer": "*",
         "sweetchuck/robo-git": "*",
         "sweetchuck/robo-nvm": "*",
         "sweetchuck/robo-phpcs": "*",
+        "sweetchuck/robo-phpmd": "*",
         "sweetchuck/robo-phpunit": "*",
         "sweetchuck/robo-stringy": "*",
         "sweetchuck/robo-yarn": "*",

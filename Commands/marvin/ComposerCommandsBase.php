@@ -26,6 +26,15 @@ class ComposerCommandsBase extends CommandsBase {
       ->dir($packagePath);
   }
 
+  /**
+   * @return \Robo\Collection\CollectionBuilder|\Sweetchuck\Robo\Composer\Task\RemoveIndirectDependenciesTask
+   */
+  protected function getTaskComposerRemoveIndirectDependencies(string $packagePath): CollectionBuilder {
+    return $this
+      ->taskComposerRemoveIndirectDependencies()
+      ->setWorkingDirectory($packagePath);
+  }
+
   protected function getComposerExecutable(): string {
     return $this
       ->getConfig()

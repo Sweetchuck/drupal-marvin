@@ -125,12 +125,12 @@
             "@clean:composer"
         ],
         "clean:composer": [
-            "rm -rf bin/ reports/ vendor/",
+            "rm -rf bin/ vendor/",
             "chmod -R u+w tests/fixtures/project_01/docroot/sites/default/",
             "git clean --force -d -x -- tests/",
             "git clean --force -d -X -- tests/"
         ],
-        "clean:reports": "[ ! -d ./reports] || find ./reports -mindepth 1 -maxdepth 1 -exec rm -rf {} \\;",
+        "clean:reports": "[ ! -d ./reports ] || find ./reports -mindepth 1 -maxdepth 1 -exec rm -rf {} \\;",
         "test": [
             "@clean:reports",
             "@test:unit",
