@@ -42,14 +42,14 @@
         "behat/mink-goutte-driver": "^1.2",
         "composer/installers": "^1.5",
         "cweagans/composer-patches": "^1.6",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
         "drupal-composer/drupal-scaffold": "^2.5",
         "drupal/core-recommended": "^8.8",
         "drush/drush": "^10.1",
         "mikey179/vfsstream": "^1.6",
-        "phpunit/phpunit": "^7.5",
-        "sweetchuck/git-hooks": "^0.0",
-        "weitzman/drupal-test-traits": "^1.1",
         "oomphinc/composer-installers-extender": "^1.1",
+        "phpunit/phpunit": "^7.5",
+        "weitzman/drupal-test-traits": "^1.1",
         "zaporylie/composer-drupal-optimizations": "^1.0"
     },
     "suggest": {

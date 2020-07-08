@@ -16,7 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
-use Sweetchuck\GitHooks\Composer\Scripts as GitHooks;
 use Sweetchuck\Utils\Filter\ArrayFilterFileSystemExists;
 
 class Scripts {
@@ -28,8 +27,6 @@ class Scripts {
     $self = new static($event);
 
     $self
-      ->gitHooksDeploy()
-      ->phpcsConfigSet()
       ->preparePhpunitXml()
       ->prepareProject();
 
@@ -43,8 +40,6 @@ class Scripts {
     $self = new static($event);
 
     $self
-      ->gitHooksDeploy()
-      ->phpcsConfigSet()
       ->preparePhpunitXml()
       ->prepareProject();
 
@@ -154,51 +149,7 @@ class Scripts {
   /**
    * @return $this
    */
-  protected function gitHooksDeploy() {
-    if ($this->event->isDevMode()) {
-      GitHooks::deploy($this->event);
-    }
-
-    return $this;
-  }
-
-  /**
-   * @return $this
-   */
-  protected function phpcsConfigSet() {
-    /** @var \Composer\Config $config */
-    $config = $this->event->getComposer()->getConfig();
-
-    $phpcsExecutable = $config->get('bin-dir') . '/phpcs';
-    if (!$this->fs->exists($phpcsExecutable)) {
-      $this->logger->info("phpcs executable not exists: '$phpcsExecutable'");
-
-      return $this;
-    }
-
-    $rulesDir = $config->get('vendor-dir') . '/drupal/coder/coder_sniffer';
-    if (!$this->fs->exists($rulesDir)) {
-      $this->logger->info("phpcs rules not exists: '$rulesDir'");
-
-      return $this;
-    }
-
-    $cmdPattern = '%s --config-set installed_paths %s';
-    $cmdArgs = [
-      escapeshellcmd($phpcsExecutable),
-      escapeshellcmd($rulesDir),
-    ];
-
-    $this->processRun('.', vsprintf($cmdPattern, $cmdArgs));
-
-    return $this;
-  }
-
-  /**
-   * @return $this
-   */
   protected function preparePhpunitXml() {
-    /** @var \Composer\Config $config */
     $config = $this->event->getComposer()->getConfig();
 
     $phpunitExecutable = $config->get('bin-dir') . '/phpunit';
@@ -223,9 +174,10 @@ class Scripts {
     }
 
     $basePattern = '<env name="%s" value="%s"/>';
+    $oldPattern = "<!-- $basePattern -->";
     $replacementPairs = [];
     foreach ($this->getPhpunitEnvVars() as $envVarName => $envVarValue) {
-      $placeholder = sprintf("<!-- $basePattern -->", $envVarName, '');
+      $placeholder = sprintf($oldPattern, $envVarName, '');
       $replacementPairs[$placeholder] = sprintf($basePattern, $envVarName, $this->escapeXmlAttribute($envVarValue));
     }
 
