@@ -17,6 +17,7 @@ use Robo\Contract\ConfigAwareInterface;
 use Robo\Tasks;
 use Stringy\StaticStringy;
 use Sweetchuck\Robo\Composer\ComposerTaskLoader;
+use Symfony\Component\Process\Process;
 use Webmozart\PathUtil\Path;
 
 class CommandsBase extends Tasks implements
@@ -166,6 +167,15 @@ class CommandsBase extends Tasks implements
     }
 
     return NULL;
+  }
+
+  protected function logArgsFromProcess(Process $process): array {
+    return [
+      'nl' => PHP_EOL,
+      'command' => $process->getCommandLine(),
+      'stdOutput' => $process->getOutput(),
+      'stdError' => $process->getErrorOutput(),
+    ];
   }
 
 }
