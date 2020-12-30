@@ -6,7 +6,6 @@ namespace Drupal\Tests\marvin\Unit\Commands;
 
 use Drush\Commands\marvin\CommandsBase;
 use League\Container\Container;
-use ReflectionClass;
 use Robo\Config\Config;
 
 /**
@@ -47,7 +46,7 @@ class CommandsBaseTest extends CommandsTestBase {
     $commands->setContainer($container);
 
     $methodName = 'getEnvironment';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -91,7 +90,7 @@ class CommandsBaseTest extends CommandsTestBase {
     $this->commands->setContainer($container);
 
     $methodName = 'getEnvironmentVariants';
-    $class = new ReflectionClass($this->commands);
+    $class = new \ReflectionClass($this->commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 

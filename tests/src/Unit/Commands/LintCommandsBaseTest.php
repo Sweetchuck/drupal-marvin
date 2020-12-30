@@ -6,7 +6,6 @@ namespace Drupal\Tests\marvin\Unit\Commands;
 
 use Drush\Commands\marvin\LintCommandsBase;
 use League\Container\Container;
-use ReflectionClass;
 use Robo\Config\Config;
 use Sweetchuck\LintReport\Reporter\BaseReporter as LintBaseReporter;
 use Sweetchuck\LintReport\Reporter\VerboseReporter;
@@ -39,7 +38,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
     $commands->setConfig($config);
 
     $methodName = 'getConfigValue';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -49,7 +48,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
   public function testGetCustomEventNamePrefix(): void {
     $commands = new LintCommandsBase($this->composerInfo);
     $methodName = 'getCustomEventNamePrefix';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -85,7 +84,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
     $commands->setConfig($config);
 
     $methodName = 'getLintReporterConfigNamesByEnvironmentVariant';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -129,7 +128,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
     $commands->setContainer($container);
 
     $methodName = 'getLintReporters';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -160,7 +159,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
     $commands->setContainer($container);
 
     $methodName = 'parseLintReporterConfigs';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -201,7 +200,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
     $commands->setContainer($container);
 
     $methodName = 'parseLintReporterConfig';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 

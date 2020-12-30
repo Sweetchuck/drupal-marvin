@@ -31,3 +31,4 @@
 /composer.local.example.lock
 /composer.local.json
 /composer.local.lock
+/.gitattributes

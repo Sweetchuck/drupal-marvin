@@ -72,7 +72,6 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
    * {@inheritdoc}
    */
   protected function runAction() {
-    /** @var \Robo\State\Data $state */
     $state = $this->getState();
 
     $assetNamePrefix = $this->getAssetNamePrefix();
@@ -100,7 +99,7 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
     switch ($composerInfo['type']) {
       case 'project':
       case 'drupal-project':
-        $drupalRootDir = MarvinUtils::detectDrupalRootDir($composerInfo) ?: '.';
+        $drupalRootDir = $composerInfo->getDrupalRootDir();
         $filePaths['files']['drush/custom/'] = TRUE;
         $filePaths['files']["$drupalRootDir/modules/custom/"] = TRUE;
         $filePaths['files']["$drupalRootDir/profiles/custom/"] = TRUE;

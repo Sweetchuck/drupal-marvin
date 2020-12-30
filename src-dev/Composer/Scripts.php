@@ -2,14 +2,11 @@
 
 namespace Drupal\Dev\marvin\Composer;
 
-use Composer\IO\IOInterface;
 use Composer\Script\Event;
-use DrupalComposer\DrupalScaffold\Handler as DrupalScaffoldHandler;
-use Exception;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Report\Html\Facade as HtmlCodeCoverageReporter;
+use Sweetchuck\Utils\Filesystem as FilesystemUtils;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -181,7 +178,7 @@ class Scripts {
       $replacementPairs[$placeholder] = sprintf($basePattern, $envVarName, $this->escapeXmlAttribute($envVarValue));
     }
 
-    $content = $this->fileGetContents($srcFileName);
+    $content = FilesystemUtils::fileGetContents($srcFileName);
     $this->fs->dumpFile($dstFileName, strtr($content, $replacementPairs));
 
     return $this;
@@ -199,7 +196,6 @@ class Scripts {
       ->prepareProjectComposerJson()
       ->prepareProjectSelf()
       ->prepareProjectDirs()
-      ->prepareProjectScaffold()
       ->prepareProjectSettingsPhp();
 
     return $this;
@@ -308,28 +304,6 @@ class Scripts {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function prepareProjectScaffold() {
-    $indexPhp = $this->projectRoot . '/docroot/index.php';
-    $io = $this->event->getIO();
-    if ($this->fs->exists("{$this->cwd}/$indexPhp")) {
-      $io->write(
-        "File '<info>$indexPhp</info>' already exists.",
-        IOInterface::VERBOSE
-      );
-
-      return $this;
-    }
-
-    $handler = new DrupalScaffoldHandler($this->event->getComposer(), $io);
-    $handler->downloadScaffold();
-    $handler->generateAutoload();
-
-    return $this;
-  }
-
   protected function prepareProjectSettingsPhp() {
     $src = "{$this->projectRoot}/docroot/sites/default/default.settings.php";
     if (!$this->fs->exists($src)) {
@@ -368,19 +342,19 @@ $databases = [
 ];
 PHP;
 
-    $this->fs->dumpFile($dst, strtr($this->fileGetContents($src), $replacementPairs));
+    $this->fs->dumpFile($dst, strtr(FilesystemUtils::fileGetContents($src), $replacementPairs));
 
     return $this;
   }
 
   protected function getProjectSelfDestination(): string {
-    return "{$this->projectRoot}/drush/custom/" . $this->getComposerPackageName();
+    return "{$this->projectRoot}/drush/Commands/custom/" . $this->getComposerPackageName();
   }
 
   protected function getComposerPackageName(): string {
     $parts = explode('/', $this->event->getComposer()->getPackage()->getName(), 2);
     if (empty($parts[1])) {
-      throw new Exception('Invalid package name', 1);
+      throw new \Exception('Invalid package name', 1);
     }
 
     return $parts[1];
@@ -410,12 +384,13 @@ PHP;
       'Commands' => TRUE,
       'src' => TRUE,
       'composer.json' => TRUE,
-      'drush9.services.yml' => TRUE,
       'drush.services.yml' => TRUE,
+      'drush9.services.yml' => TRUE,
+      'drush10.services.yml' => TRUE,
     ];
   }
 
-  protected function processRun(string $workingDirectory, string $command): Process {
+  protected function processRun(string $workingDirectory, array $command): Process {
     $this->event->getIO()->write("Run '$command' in '$workingDirectory'");
     $process = new Process($command, NULL, NULL, NULL, 0);
     $process->setWorkingDirectory($workingDirectory);
@@ -432,15 +407,6 @@ PHP;
 
   protected function escapeXmlAttribute(string $value): string {
     return htmlentities($value, ENT_QUOTES);
-  }
-
-  protected function fileGetContents(string $fileName): string {
-    $content = file_get_contents($fileName);
-    if ($content === FALSE) {
-      throw new RuntimeException("File '$fileName' is not readable.", 1);
-    }
-
-    return $content;
   }
 
   protected function getPhpunitEnvVars(): array {

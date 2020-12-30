@@ -7,7 +7,6 @@ namespace Drupal\marvin\Robo\Task;
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Contract\TaskInterface;
 use Robo\State\Data as RoboStateData;
-use RuntimeException;
 use Sweetchuck\Robo\Stringy\StringyTaskLoader;
 use Sweetchuck\Utils\ArrayFilterInterface;
 use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
@@ -115,7 +114,7 @@ class GitCommitMsgValidatorTask extends BaseTask implements BuilderAwareInterfac
     return function (RoboStateData $data) use ($commitMsgFileName): int {
       $content = @file_get_contents($commitMsgFileName);
       if ($content === FALSE) {
-        throw new RuntimeException(
+        throw new \RuntimeException(
           sprintf('Read file content from "%s" file failed', $commitMsgFileName),
           1
         );

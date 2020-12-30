@@ -11,7 +11,6 @@ use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 use Drupal\Tests\marvin\Helper\DummyOutput;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use Drush\Commands\marvin\ArtifactTypesCommands;
-use ReflectionClass;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
@@ -25,7 +24,7 @@ use Symfony\Component\Console\Input\InputOption;
 class ArtifactTypesCommandsTest extends TaskTestBase {
 
   public function testGetCustomEventNamePrefix(): void {
-    $reflection = new ReflectionClass(ArtifactTypesCommands::class);
+    $reflection = new \ReflectionClass(ArtifactTypesCommands::class);
     $method = $reflection->getMethod('getCustomEventNamePrefix');
     $method->setAccessible(TRUE);
     $commands = new ArtifactTypesCommands();
@@ -44,7 +43,7 @@ class ArtifactTypesCommandsTest extends TaskTestBase {
    * @dataProvider casesGetCustomEventName
    */
   public function testGetCustomEventName(string $expected, string $eventBaseName): void {
-    $reflection = new ReflectionClass(ArtifactTypesCommands::class);
+    $reflection = new \ReflectionClass(ArtifactTypesCommands::class);
     $method = $reflection->getMethod('getCustomEventName');
     $method->setAccessible(TRUE);
     $commands = new ArtifactTypesCommands();

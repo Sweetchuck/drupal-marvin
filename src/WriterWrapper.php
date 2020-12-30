@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Drupal\marvin;
 
-use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Filesystem\Filesystem;
@@ -106,7 +105,7 @@ class WriterWrapper {
 
       $this->destinationResource = fopen($destination, $this->getDestinationMode());
       if ($this->destinationResource === FALSE) {
-        throw new RuntimeException("File '$destination' could not be opened.");
+        throw new \RuntimeException("File '$destination' could not be opened.");
       }
 
       $this->destinationInstance = new StreamOutput(

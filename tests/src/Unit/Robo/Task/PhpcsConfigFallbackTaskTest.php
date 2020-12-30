@@ -7,6 +7,7 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
 use Robo\State\Data as RoboStateData;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 
 /**
  * @group marvin
@@ -203,7 +204,10 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
     static::assertSame($stateData['my.exclude-patterns'], $state['my.exclude-patterns']);
 
     if (array_key_exists('logEntries', $expected)) {
-      static::assertRoboTaskLogEntries($expected['logEntries'], $task->logger()->cleanLogs());
+      /** @var \Symfony\Component\ErrorHandler\BufferingLogger $logger */
+      $logger = $task->logger();
+      static::assertInstanceOf(BufferingLogger::class, $logger);
+      static::assertRoboTaskLogEntries($expected['logEntries'], $logger->cleanLogs());
     }
   }
 

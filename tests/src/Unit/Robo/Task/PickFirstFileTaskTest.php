@@ -7,6 +7,7 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
 use Robo\State\Data;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 
 /**
  * @group marvin
@@ -115,11 +116,8 @@ class PickFirstFileTaskTest extends TaskTestBase {
     $state = new Data('', $stateData);
     $this->taskBuilder->setState($state);
 
-    $task = $this
-      ->taskBuilder
-      ->taskMarvinPickFirstFile($options)
-      ->setContainer($this->container);
-
+    $task = $this->taskBuilder->taskMarvinPickFirstFile($options);
+    $task->setContainer($this->container);
     $task->setState($state);
     $task->original()->setState($state);
     $result = $task->run();
@@ -136,7 +134,10 @@ class PickFirstFileTaskTest extends TaskTestBase {
     }
 
     if (array_key_exists('logEntries', $expected)) {
-      static::assertRoboTaskLogEntries($expected['logEntries'], $task->logger()->cleanLogs());
+      /** @var \Symfony\Component\ErrorHandler\BufferingLogger $logger */
+      $logger = $task->logger();
+      static::assertInstanceOf(BufferingLogger::class, $logger);
+      static::assertRoboTaskLogEntries($expected['logEntries'], $logger->cleanLogs());
     }
 
     if (!empty($expected['assets'])) {

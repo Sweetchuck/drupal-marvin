@@ -6,7 +6,6 @@ namespace Drupal\Tests\marvin\Unit\Commands;
 
 use Drush\Commands\marvin\PhpcsCommandsBase;
 use org\bovigo\vfs\vfsStream;
-use ReflectionClass;
 use Robo\Config\Config;
 use Symfony\Component\Yaml\Yaml;
 
@@ -22,7 +21,7 @@ class PhpcsCommandsBaseTest extends CommandsTestBase {
     $commands = new PhpcsCommandsBase($this->composerInfo);
 
     $methodName = 'getClassKey';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -48,7 +47,7 @@ class PhpcsCommandsBaseTest extends CommandsTestBase {
     $commands->setConfig($config);
 
     $methodName = 'getConfigValue';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -58,7 +57,7 @@ class PhpcsCommandsBaseTest extends CommandsTestBase {
   public function testGetCustomEventNamePrefix(): void {
     $commands = new PhpcsCommandsBase($this->composerInfo);
     $methodName = 'getCustomEventNamePrefix';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -111,7 +110,7 @@ class PhpcsCommandsBaseTest extends CommandsTestBase {
     $commands->setConfig($config);
 
     $methodName = 'getPresetNameByEnvironmentVariant';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -161,7 +160,7 @@ class PhpcsCommandsBaseTest extends CommandsTestBase {
     $commands = new PhpcsCommandsBase($this->composerInfo);
 
     $methodName = 'getPhpcsConfigurationFileName';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 

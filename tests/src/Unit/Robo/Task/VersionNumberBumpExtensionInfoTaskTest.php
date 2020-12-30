@@ -7,6 +7,7 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use Drupal\marvin\Robo\Task\VersionNumberBumpExtensionInfoTask;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 use Webmozart\PathUtil\Path;
 
 /**
@@ -232,7 +233,10 @@ class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
     static::assertSame($expected['exitCode'], $result->getExitCode());
 
     if (array_key_exists('logEntries', $expected)) {
-      static::assertRoboTaskLogEntries($expected['logEntries'], $task->logger()->cleanLogs());
+      /** @var \Symfony\Component\ErrorHandler\BufferingLogger $logger */
+      $logger = $task->logger();
+      static::assertInstanceOf(BufferingLogger::class, $logger);
+      static::assertRoboTaskLogEntries($expected['logEntries'], $logger->cleanLogs());
     }
 
     foreach ($expected['files'] as $fileName => $fileContent) {

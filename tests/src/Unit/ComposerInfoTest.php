@@ -1,10 +1,11 @@
 <?php
 
-namespace Drupal\marvin\Tests\Unit;
+declare(strict_types = 1);
+
+namespace Drupal\Tests\marvin\Unit;
 
 use Drupal\marvin\ComposerInfo;
 use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\Error\Error as PHPUnitFrameworkError;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -30,14 +31,14 @@ class ComposerInfoTest extends TestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->fs = new Filesystem();
 
     $this->rootDir = vfsStream::setup('ComposerInfo');
   }
 
-  protected function tearDown() {
+  protected function tearDown(): void {
     $this->fs->remove($this->rootDir->getName());
     $this->rootDir = NULL;
 
@@ -303,16 +304,16 @@ class ComposerInfoTest extends TestCase {
     $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
     $ci = ComposerInfo::create($baseDir, "$baseName.json");
 
-    $this->expectException(PHPUnitFrameworkError::class);
-    $this->expectExceptionCode(E_USER_NOTICE);
+    static::expectError();
+    static::expectExceptionCode(E_USER_NOTICE);
     static::assertNull($ci->{'notExists'});
   }
 
   public function testCheckJsonExists(): void {
     $baseDir = Path::join($this->rootDir->url(), __FUNCTION__, $this->dataName());
     $ci = ComposerInfo::create($baseDir, "not-exists.json");
-    $this->expectException(FileNotFoundException::class);
-    $this->expectExceptionCode(1);
+    static::expectException(FileNotFoundException::class);
+    static::expectExceptionCode(1);
     $ci->getJson();
   }
 

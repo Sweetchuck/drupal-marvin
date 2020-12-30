@@ -41,7 +41,7 @@ class CommandsTestBase extends TestCase {
    */
   protected $commandsClass = CommandsBase::class;
 
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this
@@ -50,6 +50,9 @@ class CommandsTestBase extends TestCase {
       ->setUpCommands();
   }
 
+  /**
+   * @return $this
+   */
   protected function setUpVfs() {
     $this->vfs = vfsStream::setup(
       __FUNCTION__,
@@ -66,12 +69,18 @@ class CommandsTestBase extends TestCase {
     return $this;
   }
 
+  /**
+   * @return $this
+   */
   protected function setUpComposerInfo() {
     $this->composerInfo = ComposerInfo::create($this->vfs->url() . '/project_01');
 
     return $this;
   }
 
+  /**
+   * @return $this
+   */
   protected function setUpCommands() {
     $this->commands = new $this->commandsClass($this->composerInfo);
 

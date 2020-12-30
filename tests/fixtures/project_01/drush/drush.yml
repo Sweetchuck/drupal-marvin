@@ -1,9 +1,9 @@
 drush:
   paths:
     config:
-      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/custom/marvin/Commands/drush.yml'
+      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/Commands/custom/marvin/Commands/drush.yml'
     include:
-      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/custom/marvin'
+      - '${drush.vendor-dir}/../tests/fixtures/project_01/drush/Commands/custom/marvin'
       - '${drush.vendor-dir}/../tests/fixtures/project_01/docroot/modules/custom/dummy_m1'
 
 marvin:

@@ -6,14 +6,11 @@ namespace Drupal\marvin\StatusReport;
 
 use Consolidation\AnnotatedCommand\ExitCodeInterface;
 use Consolidation\AnnotatedCommand\OutputDataInterface;
-use Countable;
-use IteratorAggregate;
-use JsonSerializable;
 
 interface StatusReportInterface extends
-    JsonSerializable,
-    IteratorAggregate,
-    Countable,
+    \JsonSerializable,
+    \IteratorAggregate,
+    \Countable,
     OutputDataInterface,
     ExitCodeInterface {
 

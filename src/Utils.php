@@ -8,12 +8,10 @@ use Consolidation\AnnotatedCommand\CommandError;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 use Drupal\marvin\StatusReport\StatusReportInterface;
 use Icecave\SemVer\Version;
-use InvalidArgumentException;
 use Stringy\StaticStringy;
 use Stringy\Stringy;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
-use UnexpectedValueException;
 use Webmozart\PathUtil\Path;
 
 /**
@@ -165,7 +163,7 @@ class Utils {
     $matches = [];
     preg_match($pattern, $versionNumber, $matches);
     if (!$matches) {
-      throw new InvalidArgumentException('@todo', 1);
+      throw new \InvalidArgumentException('@todo', 1);
     }
 
     $default = [
@@ -380,15 +378,6 @@ class Utils {
     return $url;
   }
 
-  /**
-   * @deprecated
-   *
-   * @see \Drupal\marvin\ComposerInfo::getDrupalRootDir
-   */
-  public static function detectDrupalRootDir(ComposerInfo $composerInfo): string {
-    return $composerInfo->getDrupalRootDir();
-  }
-
   public static function semverToDrupal(string $core, string $semver): string {
     $version = Version::parse($semver);
     $version->setPatch(99999);
@@ -412,6 +401,11 @@ class Utils {
     return $semver;
   }
 
+  /**
+   * @todo Replace with sweetchuck/utils.
+   *
+   * @see \Sweetchuck\Utils\VersionNumber
+   */
   public static function incrementSemVersion(string $semver, string $fragment): Version {
     $version = Version::parse($semver);
 
@@ -428,7 +422,7 @@ class Utils {
         break;
 
       default:
-        throw new UnexpectedValueException('@todo Not implemented yet', 1);
+        throw new \UnexpectedValueException('@todo Not implemented yet', 1);
     }
 
     switch ($fragment) {

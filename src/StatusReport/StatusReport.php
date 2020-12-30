@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Drupal\marvin\StatusReport;
 
-use ArrayIterator;
 use Drupal\marvin\RfcLogLevel;
 use Drupal\marvin\Utils;
 
@@ -31,7 +30,7 @@ class StatusReport implements StatusReportInterface {
    * {@inheritdoc}
    */
   public function getIterator() {
-    return new ArrayIterator($this->entries);
+    return new \ArrayIterator($this->entries);
   }
 
   /**

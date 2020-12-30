@@ -20,7 +20,7 @@ class UnishIntegrationTestCase extends ExistingSiteBase {
   /**
    * {@inheritdoc}
    */
-  protected function convertKeyValueToFlag($key, $value) {
+  protected function convertKeyValueToFlag($key, $value): string {
     if ($value === NULL) {
       return "--$key";
     }
@@ -38,7 +38,7 @@ class UnishIntegrationTestCase extends ExistingSiteBase {
     return implode(' ', $options);
   }
 
-  protected function getCommonCommandLineOptions() {
+  protected function getCommonCommandLineOptions(): array {
     return [
       'config' => [
         Path::join($this->getDrupalRoot(), '..', 'drush'),
@@ -46,7 +46,7 @@ class UnishIntegrationTestCase extends ExistingSiteBase {
     ];
   }
 
-  protected function getCommonCommandLineEnvVars() {
+  protected function getCommonCommandLineEnvVars(): array {
     return [
       'HOME' => '/dev/null',
     ];

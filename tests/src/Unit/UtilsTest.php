@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Tests\marvin\Unit;
 
 use Consolidation\AnnotatedCommand\CommandError;
@@ -22,7 +24,7 @@ class UtilsTest extends TestCase {
   /**
    * {@inheritdoc}
    */
-  protected function tearDown() {
+  protected function tearDown(): void {
     parent::tearDown();
 
     putenv('COMPOSER');
@@ -391,7 +393,10 @@ class UtilsTest extends TestCase {
       'unit' => ['Unit', 'unit'],
       'kernel' => ['Kernel', 'kernel'],
       'functional' => ['Functional', 'functional'],
-      'functional-javascript' => ['FunctionalJavascript', 'functional-javascript'],
+      'functional-javascript' => [
+        'FunctionalJavascript',
+        'functional-javascript',
+      ],
     ];
   }
 
@@ -753,7 +758,7 @@ class UtilsTest extends TestCase {
       $vfsStructure
     );
     $composerInfo = ComposerInfo::create($vfs->url(), 'composer.json');
-    static::assertSame($expected, Utils::detectDrupalRootDir($composerInfo));
+    static::assertSame($expected, $composerInfo->getDrupalRootDir());
   }
 
   public function casesSemverToDrupal(): array {

@@ -6,6 +6,7 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -138,7 +139,10 @@ class CopyFilesTaskTest extends TaskTestBase {
     }
 
     if (array_key_exists('logEntries', $expected)) {
-      static::assertRoboTaskLogEntries($expected['logEntries'], $task->logger()->cleanLogs());
+      /** @var \Symfony\Component\ErrorHandler\BufferingLogger $logger */
+      $logger = $task->logger();
+      static::assertInstanceOf(BufferingLogger::class, $logger);
+      static::assertRoboTaskLogEntries($expected['logEntries'], $logger->cleanLogs());
     }
 
     if (!empty($expected['files'])) {

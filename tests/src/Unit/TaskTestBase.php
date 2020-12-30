@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Robo\Collection\CollectionBuilder;
 use Robo\Robo;
 use Symfony\Component\Console\Application as SymfonyApplication;
-use Symfony\Component\Debug\BufferingLogger;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 
 class TaskTestBase extends TestCase {
 
@@ -41,7 +41,7 @@ class TaskTestBase extends TestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     Robo::unsetContainer();

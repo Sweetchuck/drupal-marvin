@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Drupal\Tests\marvin\Unit\Commands;
 
 use Drush\Commands\marvin\PhpunitCommandsBase;
-use ReflectionClass;
 use Robo\Config\Config;
 use Symfony\Component\Yaml\Yaml;
 
@@ -30,7 +29,7 @@ class PhpunitCommandsBaseTest extends CommandsTestBase {
 
   public function testGetClassKey(): void {
     $methodName = 'getClassKey';
-    $class = new ReflectionClass($this->commands);
+    $class = new \ReflectionClass($this->commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -55,7 +54,7 @@ class PhpunitCommandsBaseTest extends CommandsTestBase {
     $this->commands->setConfig($config);
 
     $methodName = 'getConfigValue';
-    $class = new ReflectionClass($this->commands);
+    $class = new \ReflectionClass($this->commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -64,7 +63,7 @@ class PhpunitCommandsBaseTest extends CommandsTestBase {
 
   public function testGetCustomEventNamePrefix(): void {
     $methodName = 'getCustomEventNamePrefix';
-    $class = new ReflectionClass($this->commands);
+    $class = new \ReflectionClass($this->commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -132,7 +131,7 @@ class PhpunitCommandsBaseTest extends CommandsTestBase {
     $this->commands->setConfig(new Config($configData));
 
     $methodName = 'getTestSuiteNamesByEnvironmentVariant';
-    $class = new ReflectionClass($this->commands);
+    $class = new \ReflectionClass($this->commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 

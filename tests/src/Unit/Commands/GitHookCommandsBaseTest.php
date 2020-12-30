@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Drupal\Tests\marvin\Unit\Commands;
 
 use Drush\Commands\marvin\GitHookCommandsBase;
-use ReflectionClass;
 use Robo\Config\Config;
 
 /**
@@ -20,7 +19,7 @@ class GitHookCommandsBaseTest extends CommandsTestBase {
     $commands = new GitHookCommandsBase($this->composerInfo);
 
     $methodName = 'getClassKey';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -46,7 +45,7 @@ class GitHookCommandsBaseTest extends CommandsTestBase {
     $commands->setConfig($config);
 
     $methodName = 'getConfigValue';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 
@@ -56,7 +55,7 @@ class GitHookCommandsBaseTest extends CommandsTestBase {
   public function testGetCustomEventNamePrefix(): void {
     $commands = new GitHookCommandsBase($this->composerInfo);
     $methodName = 'getCustomEventNamePrefix';
-    $class = new ReflectionClass($commands);
+    $class = new \ReflectionClass($commands);
     $method = $class->getMethod($methodName);
     $method->setAccessible(TRUE);
 

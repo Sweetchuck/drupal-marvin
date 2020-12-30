@@ -1,30 +1,31 @@
 <?xml version="1.0"?>
-<ruleset name="DrupalCustom"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd">
+<ruleset
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd"
+  name="Custom">
 
-    <file>./Commands/</file>
-    <file>./src/</file>
-    <file>./src-dev/Composer/</file>
-    <file>./tests/src/</file>
-    <file>./RoboFile.php</file>
+  <file>./Commands/</file>
+  <file>./src/</file>
+  <file>./src-dev/Composer/</file>
+  <file>./tests/src/</file>
+  <file>./RoboFile.php</file>
 
-    <arg
-        name="extensions"
-        value="inc/PHP,install/PHP,module/PHP,php/PHP,profile/PHP,test/PHP,theme/PHP" />
+  <arg
+    name="extensions"
+    value="inc/PHP,install/PHP,module/PHP,php/PHP,profile/PHP,test/PHP,theme/PHP" />
 
-    <rule ref="Drupal">
-        <exclude name="Drupal.Commenting.ClassComment.Missing" />
-        <exclude name="Drupal.Commenting.FunctionComment.Missing" />
-        <exclude name="Drupal.Commenting.DocComment.MissingShort" />
-        <exclude name="Drupal.Commenting.FunctionComment.MissingParamComment" />
-        <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment" />
-        <exclude name="Drupal.Commenting.Deprecated" />
-    </rule>
+  <rule ref="Drupal">
+    <exclude name="Drupal.Commenting.ClassComment.Missing" />
+    <exclude name="Drupal.Commenting.FunctionComment.Missing" />
+    <exclude name="Drupal.Commenting.DocComment.MissingShort" />
+    <exclude name="Drupal.Commenting.FunctionComment.MissingParamComment" />
+    <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment" />
+    <exclude name="Drupal.Commenting.Deprecated" />
+  </rule>
 
-    <rule ref="DrupalPractice" />
+  <rule ref="DrupalPractice" />
 
-    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
-        <exclude-pattern>./RoboFile.php</exclude-pattern>
-    </rule>
+  <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+    <exclude-pattern>./RoboFile.php</exclude-pattern>
+  </rule>
 </ruleset>
