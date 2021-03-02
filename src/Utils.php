@@ -10,6 +10,9 @@ use Drupal\marvin\StatusReport\StatusReportInterface;
 use Icecave\SemVer\Version;
 use Stringy\StaticStringy;
 use Stringy\Stringy;
+use Symfony\Component\Console\Helper\Table as ConsoleTable;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\PathUtil\Path;
@@ -504,6 +507,47 @@ class Utils {
       preg_split('/\s*,\s*/', trim($items)),
       'mb_strlen'
     );
+  }
+
+  public static function taskDefinitionsAsTable(iterable $taskDefinitions, OutputInterface $output): ConsoleTable {
+    $table = new ConsoleTable($output);
+    $table->setHeaders([
+      'Weight',
+      'Provider',
+      'ID',
+      'Description',
+    ]);
+    foreach ($taskDefinitions as $id => $taskDefinition) {
+      $table->addRow([
+        'weight' => new TableCell(
+          (string) ($taskDefinition['weight'] ?? 0),
+          []
+        ),
+        'provider' => $taskDefinition['provider'] ?? '',
+        'id' => $id,
+        'description' => $taskDefinition['description'] ?? '',
+      ]);
+    }
+
+    return $table;
+  }
+
+  public static function callableToString($callable): string {
+    if (is_string($callable)) {
+      return $callable;
+    }
+
+    if (is_array($callable)) {
+      $class = is_string($callable[0]) ? $callable[0] : get_class($callable[0]);
+
+      return "$class::{$callable[1]}";
+    }
+
+    if (is_object($callable)) {
+      return get_class($callable) . '::__invoke';
+    }
+
+    return '';
   }
 
 }
