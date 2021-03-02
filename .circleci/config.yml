@@ -1,9 +1,15 @@
 version: 2.1
 
+.env_app: &env_app
+  APP_COMPOSER_VERSION: '1.10.20'
+  APP_COMPOSER_HASH: '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3'
+  SHELL: '/bin/bash'
+
 .env_composer: &env_composer
   COMPOSER_NO_INTERACTION: '1'
   COMPOSER_MEMORY_LIMIT: '-1'
   COMPOSER_DISABLE_XDEBUG_WARN: '1'
+  COMPOSER_CACHE_DIR: '/home/circleci/.cache/composer'
 
 .env_test: &env_test
   SIMPLETEST_BASE_URL: 'http://localhost:8888'
@@ -18,6 +24,7 @@ orbs:
 executors:
   php704:
     environment:
+      <<: *env_app
       <<: *env_composer
       <<: *env_test
 
@@ -28,6 +35,7 @@ executors:
 
   php703:
     environment:
+      <<: *env_app
       <<: *env_composer
       <<: *env_test
 
@@ -36,17 +44,29 @@ executors:
         name: 'main'
         image: 'misterio92/ci-php-node:3.0'
 
-  php702:
-    environment:
-      <<: *env_composer
-      <<: *env_test
-
-    docker:
-      -
-        name: 'main'
-        image: 'misterio92/ci-php-node:2.0'
-
 commands:
+  install_composer:
+    description: 'Install Composer CLI tool'
+    steps:
+      -
+        run:
+          name: ''
+          command: |2
+            mkdir -p "${HOME}/.local/bin"
+            php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+            php -r "if (hash_file('sha384', 'composer-setup.php') === getenv('APP_COMPOSER_HASH')) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+            php composer-setup.php \
+                --filename    'composer' \
+                --install-dir "${HOME}/.local/bin" \
+                --version     "${APP_COMPOSER_VERSION}"
+            php -r "unlink('composer-setup.php');"
+            rm -rf '/usr/local/bin/composer'
+            cp "${HOME}/.local/bin/composer" '/usr/local/bin/composer'
+            whereis composer
+            which composer
+            type composer
+            composer --version
+
   install_yarn:
     description: 'Install "yarn" NPM package'
     steps:
@@ -79,24 +99,13 @@ commands:
         run:
           name: 'Composer - install'
           command: >
-            [[ -d "$(composer config vendor-dir)" ]] || composer install --no-progress
-      -
-        run:
-          name: 'Composer - run post-install-cmd'
-          command: >
-            composer run post-install-cmd
+            composer install --no-progress
       -
         save_cache:
           name: 'Composer - cache save'
           key: 'composer-{{ checksum "./composer.lock" }}-v1'
           paths:
-            - './bin/'
-            - './tests/fixtures/project_01/docroot/core'
-            - './tests/fixtures/project_01/docroot/libraries'
-            - './tests/fixtures/project_01/docroot/modules/contrib'
-            - './tests/fixtures/project_01/docroot/themes/contrib'
-            - './tests/fixtures/project_01/drush/contrib'
-            - './vendor/'
+            - '~/.cache/composer'
 
   lint:
     description: 'Run linters'
@@ -136,23 +145,26 @@ commands:
 
 jobs:
   build:
-    executor: 'php702'
+    executor: 'php703'
     working_directory: '~/repo'
     steps:
       - 'checkout'
+      - 'install_composer'
       - 'composer_install'
   lint:
-    executor: 'php702'
+    executor: 'php703'
     working_directory: '~/repo'
     steps:
       - 'checkout'
+      - 'install_composer'
       - 'composer_install'
       - 'lint'
   test_php704:
     executor: 'php704'
     working_directory: '~/repo'
-    steps: &test_steps
+    steps:
       - 'checkout'
+      - 'install_composer'
       - 'install_yarn'
       - 'install_php_requirements'
       - 'composer_install'
@@ -161,18 +173,8 @@ jobs:
     executor: 'php703'
     working_directory: '~/repo'
     steps:
-      #<<: *test_steps
       - 'checkout'
-      - 'install_yarn'
-      - 'install_php_requirements'
-      - 'composer_install'
-      - 'test'
-  test_php702:
-    executor: 'php702'
-    working_directory: '~/repo'
-    steps:
-      # <<: *test_steps
-      - 'checkout'
+      - 'install_composer'
       - 'install_yarn'
       - 'install_php_requirements'
       - 'composer_install'
@@ -193,9 +195,5 @@ workflows:
             - build
       -
         test_php703:
-          requires:
-            - build
-      -
-        test_php702:
           requires:
             - build

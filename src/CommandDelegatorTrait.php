@@ -5,6 +5,7 @@ namespace Drupal\marvin;
 use Sweetchuck\Utils\Comparer\ArrayValueComparer;
 use Robo\Collection\CollectionBuilder;
 use Robo\Contract\TaskInterface;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * @property null|\Psr\Log\LoggerInterface $logger
@@ -31,9 +32,11 @@ trait CommandDelegatorTrait {
   protected function delegate(string $eventBaseName, ...$args): CollectionBuilder {
     $cb = $this->collectionBuilder();
 
+    $taskDefinitions = $this->delegateCollectTaskDefinitions($eventBaseName, $args);
     $this
+      ->delegateLogTaskDefinitions($eventBaseName, $taskDefinitions)
       ->delegatePrepareCollectionBuilder($cb, $eventBaseName, $args)
-      ->delegateAddTasks($cb, $this->delegateCollectTaskDefinitions($eventBaseName, $args));
+      ->delegateAddTasks($cb, $taskDefinitions);
 
     return $cb;
   }
@@ -51,7 +54,16 @@ trait CommandDelegatorTrait {
     /** @var callable[] $eventHandlers */
     $eventHandlers = $this->getCustomEventHandlers($eventName);
     foreach ($eventHandlers as $eventHandler) {
-      $taskDefinitions += $eventHandler($this->input(), $this->output(), ...$args);
+      $provider = Utils::callableToString($eventHandler);
+      $tasks = $eventHandler($this->input(), $this->output(), ...$args);
+      foreach ($tasks as &$task) {
+        $task += [
+          'provider' => $provider,
+          'weight' => 0,
+          'description' => '',
+        ];
+      }
+      $taskDefinitions += $tasks;
     }
     uasort($taskDefinitions, new ArrayValueComparer(['weight' => 0]));
 
@@ -105,6 +117,21 @@ trait CommandDelegatorTrait {
     }
 
     $cb->addCode($task);
+
+    return $this;
+  }
+
+  protected function delegateLogTaskDefinitions(string $eventBaseName, iterable $taskDefinitions) {
+    $output = new BufferedOutput();
+    $table = Utils::taskDefinitionsAsTable($taskDefinitions, $output);
+    $table->render();
+    $this->getLogger()->debug(
+      "tasks to run on event: {eventName}\n{taskDefinitionsTable}",
+      [
+        'eventName' => $this->getCustomEventName($eventBaseName),
+        'taskDefinitionsTable' => $output->fetch(),
+      ]
+    );
 
     return $this;
   }
