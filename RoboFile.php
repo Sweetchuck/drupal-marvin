@@ -9,6 +9,8 @@ use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
 use Sweetchuck\Robo\PhpMessDetector\PhpmdTaskLoader;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
+use Webmozart\PathUtil\Path;
 
 class RoboFile extends Tasks {
 
@@ -97,8 +99,8 @@ class RoboFile extends Tasks {
   /**
    * Run all kind of tests.
    */
-  public function test(): CollectionBuilder {
-    return $this->getTaskPhpunitRun();
+  public function test(string $testsuite = ''): CollectionBuilder {
+    return $this->getTaskPhpunitRun($testsuite);
   }
 
   /**
@@ -255,6 +257,10 @@ class RoboFile extends Tasks {
   }
 
   protected function getTaskPhpunitRun(string $suite = 'all'): CollectionBuilder {
+    if ($suite === '') {
+      $suite = 'all';
+    }
+
     $cmdArgs = [];
 
     $cmdPattern = '%s';
@@ -293,10 +299,6 @@ class RoboFile extends Tasks {
       ->addTask($this->taskExec(vsprintf($cmdPattern, $cmdArgs)));
   }
 
-  protected function getPhpExecutable(): string {
-    return getenv($this->getEnvVarName('php_executable')) ?: PHP_BINARY;
-  }
-
   protected function getTaskPhpmdLint(): CollectionBuilder {
     $ruleSetName = 'custom';
 
@@ -312,6 +314,20 @@ class RoboFile extends Tasks {
     }
 
     return $task;
+  }
+
+  protected function getPhpExecutable(): string {
+    return getenv($this->getEnvVarName('php_executable')) ?: PHP_BINARY;
+  }
+
+  protected function getPhpdbgExecutable(): string {
+    return getenv($this->getEnvVarName('phpdbg_executable')) ?: Path::join(PHP_BINDIR, 'phpdbg');
+  }
+
+  protected function isPhpDbgAvailable(): bool {
+    $command = [$this->getPhpdbgExecutable(), '-qrr'];
+
+    return (new Process($command))->run() === 0;
   }
 
   protected function errorOutput(): ?OutputInterface {

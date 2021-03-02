@@ -8,6 +8,7 @@ version: 2.1
   COMPOSER_NO_INTERACTION: '1'
   COMPOSER_MEMORY_LIMIT: '-1'
   COMPOSER_DISABLE_XDEBUG_WARN: '1'
+  COMPOSER_CACHE_DIR: '/root/.cache/composer'
 
 .env_yarn: &env_yarn
   YARN_CACHE_FOLDER: '/root/.cache/yarn'

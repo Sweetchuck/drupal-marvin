@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\Dev\marvin\Composer;
 
 use Composer\Script\Event;

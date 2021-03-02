@@ -3,6 +3,23 @@
     "description": "Set of developer helper Drush commands",
     "type": "drupal-drush",
     "license": "GPL-2.0-or-later",
+    "keywords": [
+        "drupal",
+        "drush",
+        "marvin"
+    ],
+    "authors": [
+        {
+            "name": "Dávid Andor",
+            "role": "Maintainer",
+            "homepage": "https://github.com/Sweetchuck"
+        }
+    ],
+    "homepage": "https://github.com/Sweetchuck/drupal-marvin",
+    "support": {
+        "source": "https://github.com/Sweetchuck/drupal-marvin",
+        "issues": "https://github.com/Sweetchuck/drupal-marvin/issues"
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
@@ -74,7 +91,8 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-8.x-1.x": "1.x.x-dev"
+            "dev-8.x-1.x": "1.x-dev",
+            "dev-9.x-2.x": "2.x-dev"
         },
         "drush": {
             "services": {
