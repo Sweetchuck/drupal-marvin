@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3fd014b650f525e4c131cba7f6a421db",
+    "content-hash": "27f8e39428a2c1289ed383d865f01f26",
     "packages": [
         {
             "name": "composer/xdebug-handler",
@@ -3171,12 +3171,12 @@
             "version": "1.9.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webmozart/assert.git",
+                "url": "https://github.com/webmozarts/assert.git",
                 "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/bafc69caeb4d49c39fd0779086c03a3738cbb389",
                 "reference": "bafc69caeb4d49c39fd0779086c03a3738cbb389",
                 "shasum": ""
             },
@@ -3214,8 +3214,8 @@
                 "validate"
             ],
             "support": {
-                "issues": "https://github.com/webmozart/assert/issues",
-                "source": "https://github.com/webmozart/assert/tree/master"
+                "issues": "https://github.com/webmozarts/assert/issues",
+                "source": "https://github.com/webmozarts/assert/tree/1.9.1"
             },
             "time": "2020-07-08T17:02:28+00:00"
         },
@@ -9046,6 +9046,71 @@
             "time": "2020-01-30T12:17:27+00:00"
         },
         {
+            "name": "sweetchuck/composer-suite",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sweetchuck/composer-suite.git",
+                "reference": "37fcab6c7f92d4ee00cc3a94b3e297cf4ad2447d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sweetchuck/composer-suite/zipball/37fcab6c7f92d4ee00cc3a94b3e297cf4ad2447d",
+                "reference": "37fcab6c7f92d4ee00cc3a94b3e297cf4ad2447d",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^2.0",
+                "ext-json": "*",
+                "php": ">=7.4",
+                "symfony/finder": "^4.4 || ^5.0",
+                "webmozart/path-util": "^2.3"
+            },
+            "require-dev": {
+                "codeception/codeception": "^4.0",
+                "codeception/module-asserts": "^1.1",
+                "codeception/module-cli": "^1.1",
+                "codeception/module-filesystem": "^1.0",
+                "composer/composer": "^2.0",
+                "mikey179/vfsstream": "^1.6",
+                "nuvoleweb/robo-config": "2.x-dev",
+                "squizlabs/php_codesniffer": "^3.5",
+                "stecman/symfony-console-completion": "^0.11.0",
+                "sweetchuck/git-hooks": "2.x-dev",
+                "sweetchuck/robo-git": "1.x-dev",
+                "sweetchuck/robo-phpcs": "1.x-dev",
+                "sweetchuck/robo-phpmd": "1.x-dev",
+                "symfony/error-handler": "^5.0"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "\\Sweetchuck\\ComposerSuite\\Composer\\Plugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Sweetchuck\\ComposerSuite\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dávid Andor",
+                    "homepage": "https://github.com/Sweetchuck",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "@todo project description",
+            "homepage": "https://github.com/Sweetchuck/composer-suite",
+            "support": {
+                "issues": "https://github.com/Sweetchuck/composer-suite/issues",
+                "source": "https://github.com/Sweetchuck/composer-suite"
+            },
+            "time": "2021-01-21T22:14:19+00:00"
+        },
+        {
             "name": "symfony-cmf/routing",
             "version": "2.3.3",
             "source": {
@@ -11208,7 +11273,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pcre": "*"

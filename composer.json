@@ -30,7 +30,7 @@
     },
     "repositories": {},
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pcre": "*",
@@ -67,6 +67,7 @@
         "oomphinc/composer-installers-extender": "^2.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.0",
+        "sweetchuck/composer-suite": "^1.1",
         "weitzman/drupal-test-traits": "^1.1"
     },
     "suggest": {
@@ -208,6 +209,127 @@
                 "sites/default/default.services.yml": "sites/default/services.yml",
                 "sites/default/default.settings.php": "sites/default/settings.php"
             }
+        },
+        "composer-suite": {
+            "local": [
+                {
+                    "type": "prepend",
+                    "config": {
+                        "parents": ["repositories"],
+                        "items": {
+                            "sweetchuck/lint-report": {
+                                "type": "path",
+                                "url": "../../sweetchuck/lint-report-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/lint-report.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            },
+                            "sweetchuck/robo-composer": {
+                                "type": "path",
+                                "url": "../../sweetchuck/robo-composer-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/robo-composer.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            },
+                            "sweetchuck/robo-git": {
+                                "type": "path",
+                                "url": "../../sweetchuck/robo-git-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/robo-git.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            },
+                            "sweetchuck/robo-nvm": {
+                                "type": "path",
+                                "url": "../../sweetchuck/robo-nvm-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/robo-nvm.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            },
+                            "sweetchuck/robo-phpcs": {
+                                "type": "path",
+                                "url": "../../sweetchuck/robo-phpcs-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/robo-phpcs.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            },
+                            "sweetchuck/robo-phpmd": {
+                                "type": "path",
+                                "url": "../../sweetchuck/robo-phpmd-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/robo-phpmd.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            },
+                            "sweetchuck/robo-phpunit": {
+                                "type": "path",
+                                "url": "../../sweetchuck/robo-phpunit-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/robo-phpunit.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            },
+                            "sweetchuck/robo-stringy": {
+                                "type": "path",
+                                "url": "../../sweetchuck/robo-stringy-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/robo-stringy.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            },
+                            "sweetchuck/robo-yarn": {
+                                "type": "path",
+                                "url": "../../sweetchuck/robo-yarn-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/robo-yarn.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            },
+                            "sweetchuck/utils": {
+                                "type": "path",
+                                "url": "../../sweetchuck/utils-1.x",
+                                "options": {
+                                    "repo-path": {
+                                        "url": "https://github.com/Sweetchuck/utils.git",
+                                        "branch": "1.x"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "replaceRecursive",
+                    "config": {
+                        "parents": ["require"],
+                        "items": {
+                            "sweetchuck/lint-report": "1.x-dev"
+                        }
+                    }
+                }
+            ]
         },
         "marvin": {
             "drushUnish": {
