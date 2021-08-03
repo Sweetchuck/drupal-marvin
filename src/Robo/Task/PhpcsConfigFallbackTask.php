@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\marvin\Robo\Task;
 
 use Drupal\marvin\ComposerInfo;
@@ -13,10 +15,7 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
 
   use StateAwareTrait;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $taskName = 'Marvin - PHP_CodeSniffer config fallback';
+  protected string $taskName = 'Marvin - PHP_CodeSniffer config fallback';
 
   /**
    * {@inheritdoc}
@@ -37,10 +36,7 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $workingDirectory = '';
+  protected string $workingDirectory = '';
 
   public function getWorkingDirectory(): string {
     return $this->workingDirectory;

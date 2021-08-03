@@ -13,15 +13,9 @@ class NodeDetectorTask extends BaseTask implements BuilderAwareInterface {
   use NvmTaskLoader;
   use YarnTaskLoader;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $taskName = 'Marvin - Node detector';
+  protected string $taskName = 'Marvin - Node detector';
 
-  /**
-   * @var string
-   */
-  protected $rootDirectory = '';
+  protected string $rootDirectory = '';
 
   public function getRootDirectory(): string {
     return $this->rootDirectory;
@@ -36,10 +30,7 @@ class NodeDetectorTask extends BaseTask implements BuilderAwareInterface {
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $workingDirectory = '.';
+  protected string $workingDirectory = '.';
 
   public function getWorkingDirectory(): string {
     return $this->workingDirectory;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Consolidation\AnnotatedCommand\CommandData;
@@ -10,15 +12,9 @@ use Drupal\marvin\Utils as MarvinUtils;
 
 class StatusReportCommands extends CommandsBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.statusReport';
+  protected static string $classKeyPrefix = 'marvin.statusReport';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:status-report';
+  protected string $customEventNamePrefix = 'marvin:status-report';
 
   /**
    * @command marvin:status-report

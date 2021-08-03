@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
@@ -16,15 +18,9 @@ class PhpcsCommandsBase extends LintCommandsBase {
   use PhpcsConfigFallbackTaskLoader;
   use GitTaskLoader;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.phpcs';
+  protected static string $classKeyPrefix = 'marvin.phpcs';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:phpcs';
+  protected string $customEventNamePrefix = 'marvin:phpcs';
 
   /**
    * @return \Robo\Contract\TaskInterface|\Robo\Collection\CollectionBuilder

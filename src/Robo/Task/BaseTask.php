@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\marvin\Robo\Task;
 
+use Consolidation\AnnotatedCommand\Output\OutputAwareInterface;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use Robo\Common\IO;
-use Robo\Contract\OutputAwareInterface;
 use Robo\Result;
 use Robo\Task\BaseTask as RoboBaseTask;
 use Robo\TaskAccessor;
@@ -21,24 +23,17 @@ abstract class BaseTask extends RoboBaseTask implements
   use TaskAccessor;
 
   /**
-   * @var string
+   * Human-readable name of the task.
+   *
+   * @abstract
    */
-  protected $taskName = '';
+  protected string $taskName = '';
 
-  /**
-   * @var array
-   */
-  protected $assets = [];
+  protected array $assets = [];
 
-  /**
-   * @var array
-   */
-  protected $options = [];
+  protected array $options = [];
 
-  /**
-   * @var string
-   */
-  protected $assetNamePrefix = '';
+  protected string $assetNamePrefix = '';
 
   public function getAssetNamePrefix(): string {
     return $this->assetNamePrefix;
@@ -53,10 +48,7 @@ abstract class BaseTask extends RoboBaseTask implements
     return $this;
   }
 
-  /**
-   * @var bool
-   */
-  protected $visibleStdOutput = FALSE;
+  protected bool $visibleStdOutput = FALSE;
 
   public function isStdOutputVisible(): bool {
     return $this->visibleStdOutput;
@@ -71,20 +63,11 @@ abstract class BaseTask extends RoboBaseTask implements
     return $this;
   }
 
-  /**
-   * @var int
-   */
-  protected $actionExitCode = 0;
+  protected int $actionExitCode = 0;
 
-  /**
-   * @var string
-   */
-  protected $actionStdOutput = '';
+  protected string $actionStdOutput = '';
 
-  /**
-   * @var string
-   */
-  protected $actionStdError = '';
+  protected string $actionStdError = '';
 
   public function getTaskName(): string {
     return $this->taskName ?: TaskInfo::formatTaskName($this);

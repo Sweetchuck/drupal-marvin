@@ -11,19 +11,16 @@ use Sweetchuck\Robo\Stringy\StringyTaskLoader;
 use Sweetchuck\Utils\ArrayFilterInterface;
 use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
 
+/**
+ * @todo This task shouldn't deal with a file, just with the commit message string directly.
+ */
 class GitCommitMsgValidatorTask extends BaseTask implements BuilderAwareInterface {
 
   use StringyTaskLoader;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $taskName = 'Marvin - Git commit message validator';
+  protected string $taskName = 'Marvin - Git commit message validator';
 
-  /**
-   * @var string
-   */
-  protected $fileName = '';
+  protected string $fileName = '';
 
   public function getFileName(): string {
     return $this->fileName;
@@ -38,10 +35,7 @@ class GitCommitMsgValidatorTask extends BaseTask implements BuilderAwareInterfac
     return $this;
   }
 
-  /**
-   * @var array
-   */
-  protected $rules = [];
+  protected array $rules = [];
 
   public function getRules(): array {
     return $this->rules;
@@ -104,13 +98,16 @@ class GitCommitMsgValidatorTask extends BaseTask implements BuilderAwareInterfac
       ->run();
 
     $this->actionExitCode = $result->getExitCode();
-    $this->actionStdOutput = $result->getOutputData();
+    $this->actionStdOutput = $result->getOutputData() ?? '';
     $this->actionStdError = $result->getMessage();
 
     return $this;
   }
 
-  protected function getTaskRead(string $commitMsgFileName): \Closure {
+  /**
+   * @return callable|\Robo\Contract\TaskInterface
+   */
+  protected function getTaskRead(string $commitMsgFileName) {
     return function (RoboStateData $data) use ($commitMsgFileName): int {
       $content = @file_get_contents($commitMsgFileName);
       if ($content === FALSE) {

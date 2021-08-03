@@ -19,15 +19,9 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
 
   const ERROR_CODE_PACKAGE_PATH_NOT_EXISTS = 4;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $taskName = 'Marvin - Bump version number - extension info';
+  protected string $taskName = 'Marvin - Bump version number - extension info';
 
-  /**
-   * @var string
-   */
-  protected $packagePath = '';
+  protected string $packagePath = '';
 
   public function getPackagePath(): string {
     return $this->packagePath;
@@ -42,10 +36,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $versionNumber = '';
+  protected string $versionNumber = '';
 
   public function getVersionNumber(): string {
     return $this->versionNumber;
@@ -64,10 +55,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @var bool
-   */
-  protected $bumpExtensionInfo = TRUE;
+  protected bool $bumpExtensionInfo = TRUE;
 
   public function getBumpExtensionInfo(): bool {
     return $this->bumpExtensionInfo;
@@ -82,10 +70,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @var bool
-   */
-  protected $bumpComposerJson = TRUE;
+  protected bool $bumpComposerJson = TRUE;
 
   public function getBumpComposerJson(): bool {
     return $this->bumpComposerJson;
@@ -152,10 +137,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @var \Symfony\Component\Filesystem\Filesystem
-   */
-  protected $fs;
+  protected Filesystem $fs;
 
   public function __construct(?Filesystem $fs = NULL) {
     $this->fs = $fs ?: new Filesystem();
@@ -320,7 +302,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     $composerInfo = json_decode(file_get_contents($composerJsonFilePath), TRUE);
     $composerInfo['version'] = $versionNumber;
 
-    $jsonString = json_encode($composerInfo, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    $jsonString = json_encode($composerInfo, \JSON_UNESCAPED_SLASHES | \JSON_PRETTY_PRINT);
     $this->fs->dumpFile(
       $composerJsonFilePath,
       StaticStringy::ensureRight($jsonString, "\n")

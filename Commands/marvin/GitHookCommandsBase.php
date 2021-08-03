@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
@@ -8,15 +10,9 @@ use Sweetchuck\GitHooksStdInputReader\ReaderFactory;
 
 class GitHookCommandsBase extends CommandsBase implements CustomEventAwareInterface {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.gitHook';
+  protected static string $classKeyPrefix = 'marvin.gitHook';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:git-hook';
+  protected string $customEventNamePrefix = 'marvin:git-hook';
 
   /**
    * {@inheritdoc}

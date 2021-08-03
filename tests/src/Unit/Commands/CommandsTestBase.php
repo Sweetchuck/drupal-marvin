@@ -6,8 +6,11 @@ namespace Drupal\Tests\marvin\Unit\Commands;
 
 use Drupal\marvin\ComposerInfo;
 use Drush\Commands\marvin\CommandsBase;
+use League\Container\Container;
+use League\Container\ContainerInterface;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Sweetchuck\LintReport\Reporter\BaseReporter as LintBaseReporter;
 use Webmozart\PathUtil\Path;
 
 class CommandsTestBase extends TestCase {
@@ -93,6 +96,19 @@ class CommandsTestBase extends TestCase {
         'vendor-dir' => $this->vfs->url() . '/vendor',
       ],
     ];
+  }
+
+  protected function initContainerLintReporters(ContainerInterface $container) {
+    $lintServices = LintBaseReporter::getServices();
+    foreach ($lintServices as $name => $class) {
+      if ($container->has($name)) {
+        continue;
+      }
+
+      if ($container instanceof Container) {
+        $container->share($name, $class);
+      }
+    }
   }
 
 }

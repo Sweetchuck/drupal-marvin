@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\marvin\Robo\Task;
 
 use Symfony\Component\Filesystem\Filesystem;
@@ -13,17 +15,11 @@ class CopyFilesTask extends BaseTask {
   /**
    * {@inheritdoc}
    */
-  protected $taskName = 'Marvin - Copy files';
+  protected string $taskName = 'Marvin - Copy files';
 
-  /**
-   * @var \Symfony\Component\Filesystem\Filesystem
-   */
-  protected $fs;
+  protected Filesystem $fs;
 
-  /**
-   * @var string
-   */
-  protected $srcDir = '';
+  protected string $srcDir = '';
 
   public function getSrcDir(): string {
     return $this->srcDir;
@@ -38,10 +34,7 @@ class CopyFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $dstDir = '';
+  protected string $dstDir = '';
 
   public function getDstDir(): string {
     return $this->dstDir;

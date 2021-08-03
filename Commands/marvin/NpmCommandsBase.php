@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Drupal\marvin\Robo\NodeDetectorTaskLoader;
@@ -18,15 +20,9 @@ class NpmCommandsBase extends CommandsBase {
   use YarnTaskLoader;
   use NodeDetectorTaskLoader;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.npm';
+  protected static string $classKeyPrefix = 'marvin.npm';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:npm';
+  protected string $customEventNamePrefix = 'marvin:npm';
 
   protected function getTaskNpmInstallPackages(array $packages): CollectionBuilder {
     $cb = $this->collectionBuilder();

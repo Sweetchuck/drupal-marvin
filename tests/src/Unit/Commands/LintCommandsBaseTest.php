@@ -7,7 +7,6 @@ namespace Drupal\Tests\marvin\Unit\Commands;
 use Drush\Commands\marvin\LintCommandsBase;
 use League\Container\Container;
 use Robo\Config\Config;
-use Sweetchuck\LintReport\Reporter\BaseReporter as LintBaseReporter;
 use Sweetchuck\LintReport\Reporter\VerboseReporter;
 use Symfony\Component\Yaml\Yaml;
 
@@ -120,7 +119,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
     $config = new Config($configData);
 
     $container = new Container();
-    LintBaseReporter::lintReportConfigureContainer($container);
+    $this->initContainerLintReporters($container);
     $container->add('lintVerboseReporter', VerboseReporter::class);
 
     $commands = new LintCommandsBase($this->composerInfo);
@@ -149,7 +148,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
 
   public function testParseLintReporterConfigs(): void {
     $container = new Container();
-    LintBaseReporter::lintReportConfigureContainer($container);
+    $this->initContainerLintReporters($container);
     $container->add('lintVerboseReporter', VerboseReporter::class);
 
     $config = new Config($this->getDefaultConfigData());
@@ -190,7 +189,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
 
   public function testParseLintReporterConfig(): void {
     $container = new Container();
-    LintBaseReporter::lintReportConfigureContainer($container);
+    $this->initContainerLintReporters($container);
     $container->add('lintVerboseReporter', VerboseReporter::class);
 
     $config = new Config($this->getDefaultConfigData());

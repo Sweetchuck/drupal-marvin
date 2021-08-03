@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\marvin\Robo\Task;
 
 use Drupal\marvin\Utils as MarvinUtils;
@@ -13,20 +15,11 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
 
   use StateAwareTrait;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $taskName = 'Marvin - Pick first file';
+  protected string $taskName = 'Marvin - Pick first file';
 
-  /**
-   * @var \Symfony\Component\Filesystem\Filesystem
-   */
-  protected $fs;
+  protected Filesystem $fs;
 
-  /**
-   * @var array
-   */
-  protected $dirSuggestions = [];
+  protected array $dirSuggestions = [];
 
   public function getDirSuggestions(): array {
     return $this->dirSuggestions;
@@ -64,7 +57,7 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
   /**
    * @var array
    */
-  protected $fileNameSuggestions = [];
+  protected array $fileNameSuggestions = [];
 
   public function getFileNameSuggestions(): array {
     return $this->fileNameSuggestions;
@@ -99,10 +92,7 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $assetNameBase = 'firstFile';
+  protected string $assetNameBase = 'firstFile';
 
   public function getAssetNameBase(): string {
     return $this->assetNameBase;
@@ -146,7 +136,6 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
    * {@inheritdoc}
    */
   protected function runAction() {
-    /** @var \Robo\State\Data $state */
     $state = $this->getState();
 
     $assetNamePrefix = $this->getAssetNamePrefix();

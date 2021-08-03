@@ -1,20 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Robo\Collection\CollectionBuilder;
 
 class ComposerCommandsBase extends CommandsBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.composer';
+  protected static string $classKeyPrefix = 'marvin.composer';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:composer';
+  protected string $customEventNamePrefix = 'marvin:composer';
 
   /**
    * @return \Robo\Collection\CollectionBuilder|\Robo\Task\Composer\Validate

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Drupal\marvin\ComposerInfo;
@@ -16,24 +18,19 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   use GitTaskLoader;
   use VersionNumberTaskLoader;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:artifact:build';
+  protected string $customEventNamePrefix = 'marvin:artifact:build';
 
   /**
-   * @var string
-   *
    * @abstract
    */
-  protected $artifactType = '';
+  protected string $artifactType = '';
 
   /**
    * @var string[]
    *
    * @todo This should be available from everywhere.
    */
-  protected $versionPartNames = [
+  protected array $versionPartNames = [
     'major',
     'minor',
     'patch',
@@ -41,35 +38,17 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
     'meta-data',
   ];
 
-  /**
-   * @var string
-   */
-  protected $defaultVersionPartToBump = 'minor';
+  protected string $defaultVersionPartToBump = 'minor';
 
-  /**
-   * @var string
-   */
-  protected $srcDir = '.';
+  protected string $srcDir = '.';
 
-  /**
-   * @var string
-   */
-  protected $artifactDir = '';
+  protected string $artifactDir = '';
 
-  /**
-   * @var string
-   */
-  protected $versionPartToBump = '';
+  protected string $versionPartToBump = '';
 
-  /**
-   * @var int
-   */
-  protected $highestBuildStepWeight = -250;
+  protected int $highestBuildStepWeight = -250;
 
-  /**
-   * @var string
-   */
-  protected $versionTagNamePattern = '/^(v){0,1}(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(|-(?P<special>[\da-zA-Z.]+))(|\+(?P<metadata>[\da-zA-Z.]+))$/';
+  protected string $versionTagNamePattern = '/^(v){0,1}(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(|-(?P<special>[\da-zA-Z.]+))(|\+(?P<metadata>[\da-zA-Z.]+))$/';
 
   abstract protected function isApplicable(string $projectType): bool;
 
@@ -139,7 +118,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    *
    * @todo Create native Robo task.
    */
@@ -152,7 +131,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    *
    * @todo Create native Robo task.
    */
@@ -189,7 +168,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    *
    * @todo Create native Robo task.
    */
@@ -229,7 +208,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    *
    * @todo Create native Robo task.
    */
@@ -249,7 +228,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    */
   protected function getTaskPrepareDirectory() {
     return $this
@@ -258,7 +237,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    */
   protected function getTaskCopyFilesCollect() {
     return $this
@@ -267,7 +246,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    */
   protected function getTaskCopyFiles() {
     return $this
@@ -278,7 +257,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    */
   protected function getTaskBumpVersionNumberRoot() {
     return $this
@@ -289,12 +268,12 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    */
   abstract protected function getTaskCollectChildExtensionDirs();
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    */
   protected function getTaskBumpVersionNumberExtensions(
     string $iterableStateKey,
@@ -330,7 +309,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    */
   protected function getTaskCleanupCollect() {
     return function (RoboStateData $data): int {
@@ -354,7 +333,7 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
   }
 
   /**
-   * @return \Closure|\Robo\Contract\TaskInterface
+   * @return callable|\Robo\Contract\TaskInterface
    */
   protected function getTaskCleanup() {
     return $this

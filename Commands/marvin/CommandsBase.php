@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Consolidation\AnnotatedCommand\Events\CustomEventAwareInterface;
@@ -36,10 +38,7 @@ class CommandsBase extends Tasks implements
   use CommandDelegatorTrait;
   use CustomEventAwareTrait;
 
-  /**
-   * @var string
-   */
-  protected static $classKeyPrefix = 'marvin';
+  protected static string $classKeyPrefix = 'marvin';
 
   /**
    * {@inheritdoc}
@@ -52,10 +51,7 @@ class CommandsBase extends Tasks implements
     return static::$classKeyPrefix . ($key === '' ? '' : ".$key");
   }
 
-  /**
-   * @var \Drupal\marvin\ComposerInfo
-   */
-  protected $composerInfo;
+  protected ?ComposerInfo $composerInfo = NULL;
 
   public function __construct(?ComposerInfo $composerInfo = NULL) {
     $this->composerInfo = $composerInfo;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Drupal\marvin\Robo\CopyFilesTaskLoader;
@@ -12,14 +14,8 @@ class ArtifactCommandsBase extends CommandsBase {
   use CopyFilesTaskLoader;
   use PrepareDirectoryTaskLoader;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.artifact';
+  protected static string $classKeyPrefix = 'marvin.artifact';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:artifact';
+  protected string $customEventNamePrefix = 'marvin:artifact';
 
 }

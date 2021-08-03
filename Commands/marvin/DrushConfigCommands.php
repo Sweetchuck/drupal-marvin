@@ -6,15 +6,9 @@ namespace Drush\Commands\marvin;
 
 class DrushConfigCommands extends CommandsBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.drushConfig';
+  protected static string $classKeyPrefix = 'marvin.drushConfig';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:drush-config';
+  protected string $customEventNamePrefix = 'marvin:drush-config';
 
   /**
    * Prints out the current Drush configuration.

@@ -24,6 +24,18 @@ orbs:
   codecov: 'codecov/codecov@1.1.2'
 
 executors:
+  php800:
+    environment:
+      <<: *env_xdebug
+      <<: *env_composer
+      <<: *env_yarn
+      <<: *env_test
+
+    docker:
+      -
+        name: 'main'
+        image: 'misterio92/ci-php-node:5.0'
+
   php704:
     environment:
       <<: *env_xdebug
@@ -35,18 +47,6 @@ executors:
       -
         name: 'main'
         image: 'misterio92/ci-php-node:4.0'
-
-  php703:
-    environment:
-      <<: *env_xdebug
-      <<: *env_composer
-      <<: *env_yarn
-      <<: *env_test
-
-    docker:
-      -
-        name: 'main'
-        image: 'misterio92/ci-php-node:3.0'
 
 commands:
   install_yarn:
@@ -142,20 +142,20 @@ commands:
 
 jobs:
   build:
-    executor: 'php703'
+    executor: 'php704'
     working_directory: '~/repo'
     steps:
       - 'checkout'
       - 'composer_install'
   lint:
-    executor: 'php703'
+    executor: 'php704'
     working_directory: '~/repo'
     steps:
       - 'checkout'
       - 'composer_install'
       - 'lint'
-  test_php704:
-    executor: 'php704'
+  test_php800:
+    executor: 'php800'
     working_directory: '~/repo'
     steps:
       - 'checkout'
@@ -163,8 +163,8 @@ jobs:
       - 'install_php_requirements'
       - 'composer_install'
       - 'test'
-  test_php703:
-    executor: 'php703'
+  test_php704:
+    executor: 'php704'
     working_directory: '~/repo'
     steps:
       - 'checkout'
@@ -187,6 +187,6 @@ workflows:
           requires:
             - build
       -
-        test_php703:
+        test_php800:
           requires:
             - build

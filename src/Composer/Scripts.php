@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\marvin\Composer;
 
 use Composer\Script\Event;
@@ -11,7 +13,7 @@ class Scripts {
   /**
    * @var string[]
    */
-  protected static $drushConfigDirs = [
+  protected static array $drushConfigDirs = [
     'drush/contrib/marvin/Commands',
     'drush',
   ];
@@ -19,15 +21,12 @@ class Scripts {
   /**
    * @var string[]
    */
-  protected static $drushIncludeDirs = [];
+  protected static array $drushIncludeDirs = [];
+
+  protected static Event $event;
 
   /**
-   * @var \Composer\Script\Event
-   */
-  protected static $event;
-
-  /**
-   * @var \Closure
+   * @var callable
    */
   protected static $processCallbackWrapper;
 
@@ -52,33 +51,29 @@ class Scripts {
     $composerConfig = static::$event->getComposer()->getConfig();
     $binDirAbs = $composerConfig->get('bin-dir');
     $binDir = Path::makeRelative($binDirAbs, getcwd());
-    $cmdPattern = '%s';
-    $cmdArgs = [
+    $cmd = [
       escapeshellcmd("$binDir/drush"),
     ];
 
     if (static::$event->getIO()->isDecorated()) {
-      $cmdPattern .= ' --ansi';
+      $cmd[] = '--ansi';
     }
 
     foreach (static::getDrushConfigDirs() as $drushConfigDir) {
-      $cmdPattern .= ' --config=%s';
-      $cmdArgs[] = escapeshellarg($drushConfigDir);
+      $cmd[] = '--config=' . $drushConfigDir;
     }
 
     foreach (static::getDrushIncludeDirs() as $drushIncludeDir) {
-      $cmdPattern .= ' --include=%s';
-      $cmdArgs[] = escapeshellarg($drushIncludeDir);
+      $cmd[] = '--include=' . $drushIncludeDir;
     }
 
-    $cmdPattern .= ' %s';
-    $cmdArgs[] = escapeshellcmd("marvin:composer:$hook");
+    $cmd[] = "marvin:composer:$hook";
 
     if (static::$event->isDevMode()) {
-      $cmdPattern .= ' --dev-mode';
+      $cmd[] = '--dev-mode';
     }
 
-    $process = new Process(vsprintf($cmdPattern, $cmdArgs));
+    $process = new Process($cmd);
 
     $exitCode = $process->run(static::$processCallbackWrapper);
     if ($exitCode === 0) {
@@ -97,11 +92,17 @@ class Scripts {
     };
   }
 
+  /**
+   * @return string[]
+   */
   protected static function getDrushConfigDirs(): array {
     // @todo Dynamically detect the install path from composer.json.
     return static::$drushConfigDirs;
   }
 
+  /**
+   * @return string[]
+   */
   protected static function getDrushIncludeDirs(): array {
     // @todo Dynamically detect the install path from composer.json.
     return static::$drushIncludeDirs;

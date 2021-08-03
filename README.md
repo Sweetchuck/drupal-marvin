@@ -1,7 +1,8 @@
 
 # Drupal - Marvin
 
-@todo
+[![CircleCI](https://circleci.com/gh/Sweetchuck/drupal-marvin/tree/2.x.svg?style=svg)](https://circleci.com/gh/Sweetchuck/drupal-marvin/?branch=2.x)
+[![codecov](https://codecov.io/gh/Sweetchuck/drupal-marvin/branch/2.x/graph/badge.svg?token=hKwwzce33I)](https://app.codecov.io/gh/Sweetchuck/drupal-marvin/branch/2.x)
 
 
 ## @todo

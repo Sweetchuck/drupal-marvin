@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\marvin;
 
 use Sweetchuck\Utils\Comparer\ArrayValueComparer;
@@ -12,10 +14,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 trait CommandDelegatorTrait {
 
-  /**
-   * @var string
-   */
-  protected $customEventNamePrefix = 'marvin';
+  protected string $customEventNamePrefix = 'marvin';
 
   protected function getCustomEventNamePrefix(): string {
     return $this->customEventNamePrefix;

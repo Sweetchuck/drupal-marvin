@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Robo\Collection\CollectionBuilder;
@@ -10,15 +12,9 @@ class PhpunitCommandsBase extends CommandsBase {
 
   use PHPUnitTaskLoader;
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.phpunit';
+  protected static string $classKeyPrefix = 'marvin.phpunit';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:phpunit';
+  protected string $customEventNamePrefix = 'marvin:phpunit';
 
   /**
    * @return \Sweetchuck\Robo\PHPUnit\Task\RunTask|\Robo\Collection\CollectionBuilder

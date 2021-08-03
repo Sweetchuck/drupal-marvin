@@ -1,6 +1,8 @@
 <?php
 
-use League\Container\ContainerInterface;
+declare(strict_types = 1);
+
+use League\Container\ContainerInterface as LeagueContainer;
 use Robo\Tasks;
 use Robo\Collection\CollectionBuilder;
 use Sweetchuck\LintReport\Reporter\BaseReporter;
@@ -18,54 +20,29 @@ class RoboFile extends Tasks {
   use PhpcsTaskLoader;
   use PhpmdTaskLoader;
 
-  /**
-   * @var array
-   */
-  protected $composerInfo = [];
+  protected array $composerInfo = [];
 
-  /**
-   * @var string
-   */
-  protected $packageVendor = '';
+  protected string $packageVendor = '';
 
-  /**
-   * @var string
-   */
-  protected $packageName = '';
+  protected string $packageName = '';
 
-  /**
-   * @var string
-   */
-  protected $binDir = 'vendor/bin';
+  protected string $binDir = 'vendor/bin';
 
-  /**
-   * @var string
-   */
-  protected $gitHook = '';
+  protected string $gitHook = '';
 
-  /**
-   * @var string
-   */
-  protected $envVarNamePrefix = '';
+  protected string $envVarNamePrefix = '';
 
   /**
    * Allowed values: dev, ci, prod.
-   *
-   * @var string
    */
-  protected $environmentType = '';
+  protected string $environmentType = '';
 
   /**
    * Allowed values: local, jenkins, travis, circleci.
-   *
-   * @var string
    */
-  protected $environmentName = '';
+  protected string $environmentName = '';
 
-  /**
-   * @var string
-   */
-  protected $logDir = './reports';
+  protected string $logDir = './reports';
 
   /**
    * RoboFile constructor.
@@ -79,7 +56,28 @@ class RoboFile extends Tasks {
   }
 
   /**
+   * @hook pre-command @initLintReporters
+   */
+  public function initLintReporters() {
+    $lintServices = BaseReporter::getServices();
+    $container = $this->getContainer();
+    foreach ($lintServices as $name => $class) {
+      if ($container->has($name)) {
+        continue;
+      }
+
+      if ($container instanceof LeagueContainer) {
+        $container->share($name, $class);
+      }
+    }
+  }
+
+  /**
    * Run code style checkers.
+   *
+   * @command lint
+   *
+   * @initLintReporters
    */
   public function lint(): CollectionBuilder {
     return $this
@@ -88,16 +86,28 @@ class RoboFile extends Tasks {
       ->addTask($this->getTaskPhpcsLint());
   }
 
+  /**
+   * @command lint:phpcs
+   *
+   * @initLintReporters
+   */
   public function lintPhpcs(): CollectionBuilder {
     return $this->getTaskPhpcsLint();
   }
 
+  /**
+   * @command lint:phpmd
+   *
+   * @initLintReporters
+   */
   public function lintPhpmd(): CollectionBuilder {
     return $this->getTaskPhpmdLint();
   }
 
   /**
    * Run all kind of tests.
+   *
+   * @command test
    */
   public function test(string $testsuite = ''): CollectionBuilder {
     return $this->getTaskPhpunitRun($testsuite);
@@ -105,17 +115,36 @@ class RoboFile extends Tasks {
 
   /**
    * Run PHPUnit tests.
+   *
+   * @command test:phpunit
    */
   public function testPhpunit(string $suite = 'all'): CollectionBuilder {
     return $this->getTaskPhpunitRun($suite);
   }
 
   /**
+   * Git "pre-commit" hook callback.
+   *
+   * @command githook:pre-commit
+   *
+   * @initLintReporters
+   */
+  public function githookPreCommit(): CollectionBuilder {
+    $this->gitHook = 'pre-commit';
+
+    return $this
+      ->collectionBuilder()
+      ->addTask($this->taskComposerValidate())
+      ->addTask($this->getTaskPhpcsLint())
+      ->addTask($this->getTaskPhpunitRun('Unit'));
+  }
+
+  /**
    * @return $this
    */
   protected function initEnvironmentTypeAndName() {
-    $this->environmentType = getenv($this->getEnvVarName('environment_type'));
-    $this->environmentName = getenv($this->getEnvVarName('environment_name'));
+    $this->environmentType = getenv($this->getEnvVarName('environment_type')) ?: '';
+    $this->environmentName = getenv($this->getEnvVarName('environment_name')) ?: '';
 
     if (!$this->environmentType) {
       if (getenv('CI') === 'true') {
@@ -186,30 +215,6 @@ class RoboFile extends Tasks {
     }
 
     return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setContainer(ContainerInterface $container) {
-    if (!$container->has('lintCheckstyleReporter')) {
-      BaseReporter::lintReportConfigureContainer($container);
-    }
-
-    return parent::setContainer($container);
-  }
-
-  /**
-   * Git "pre-commit" hook callback.
-   */
-  public function githookPreCommit(): CollectionBuilder {
-    $this->gitHook = 'pre-commit';
-
-    return $this
-      ->collectionBuilder()
-      ->addTask($this->taskComposerValidate())
-      ->addTask($this->getTaskPhpcsLint())
-      ->addTask($this->getTaskPhpunitRun('Unit'));
   }
 
   protected function getTaskPhpcsLint(): CollectionBuilder {

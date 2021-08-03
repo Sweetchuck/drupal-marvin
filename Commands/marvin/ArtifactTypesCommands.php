@@ -10,10 +10,7 @@ use Sweetchuck\Utils\Comparer\ArrayValueComparer;
 
 class ArtifactTypesCommands extends ArtifactCommandsBase {
 
-  /**
-   * @var array
-   */
-  protected $types = [];
+  protected array $types = [];
 
   /**
    * Lists all available artifact types.

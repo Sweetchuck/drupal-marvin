@@ -1,34 +1,19 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
-use League\Container\ContainerInterface;
+use League\Container\Container as LeagueContainer;
 use Sweetchuck\LintReport\Reporter\BaseReporter;
 use Sweetchuck\LintReport\ReporterInterface;
 use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
 
 class LintCommandsBase extends CommandsBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.lint';
+  protected static string $classKeyPrefix = 'marvin.lint';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:lint';
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setContainer(ContainerInterface $container) {
-    if (!$container->has('lintCheckstyleReporter')) {
-      BaseReporter::lintReportConfigureContainer($container);
-    }
-
-    return parent::setContainer($container);
-  }
+  protected string $customEventNamePrefix = 'marvin:lint';
 
   protected function getPresetNameByEnvironmentVariant(): string {
     $environmentVariants = $this->getEnvironmentVariants();
@@ -42,6 +27,23 @@ class LintCommandsBase extends CommandsBase {
     // @todo Check if it exists.
     // @todo Choice the first one if there is no default.
     return 'default';
+  }
+
+  /**
+   * @hook pre-command @initLintReporters
+   */
+  public function initLintReporters() {
+    $lintServices = BaseReporter::getServices();
+    $container = $this->getContainer();
+    foreach ($lintServices as $name => $class) {
+      if ($container->has($name)) {
+        continue;
+      }
+
+      if ($container instanceof LeagueContainer) {
+        $container->share($name, $class);
+      }
+    }
   }
 
   /**

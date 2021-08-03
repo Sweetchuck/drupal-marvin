@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\marvin\Robo\Task;
 
 use Symfony\Component\Filesystem\Filesystem;
@@ -15,20 +17,11 @@ use Symfony\Component\Finder\Finder;
  */
 class PrepareDirectoryTask extends BaseTask {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $taskName = 'Marvin - Prepare directory';
+  protected string $taskName = 'Marvin - Prepare directory';
 
-  /**
-   * @var \Symfony\Component\Filesystem\Filesystem
-   */
-  protected $fs;
+  protected Filesystem $fs;
 
-  /**
-   * @var string
-   */
-  protected $workingDirectory = '';
+  protected string $workingDirectory = '';
 
   public function getWorkingDirectory(): string {
     return $this->workingDirectory;
@@ -43,9 +36,6 @@ class PrepareDirectoryTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
   public function __construct(Filesystem $fs = NULL) {
     $this->fs = $fs ?: new Filesystem();
   }
@@ -60,6 +50,9 @@ class PrepareDirectoryTask extends BaseTask {
     return $this;
   }
 
+  /**
+   * @return $this
+   */
   protected function runHeader() {
     $this->printTaskInfo(
       '{workingDirectory}',

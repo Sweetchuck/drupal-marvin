@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drupal\marvin\Robo\Task;
 
 use Drupal\marvin\ComposerInfo;
@@ -8,15 +10,9 @@ use Symfony\Component\Finder\Finder;
 
 class ArtifactCollectFilesTask extends BaseTask {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $taskName = 'Marvin - Collect files to release';
+  protected string $taskName = 'Marvin - Collect files to release';
 
-  /**
-   * @var string
-   */
-  protected $composerJsonFileName = 'composer.json';
+  protected string $composerJsonFileName = 'composer.json';
 
   public function getComposerJsonFileName(): string {
     return $this->composerJsonFileName;
@@ -31,10 +27,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $packagePath = '.';
+  protected string $packagePath = '.';
 
   public function getPackagePath(): string {
     return $this->packagePath;
@@ -49,10 +42,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $artifactDir = '';
+  protected string $artifactDir = '';
 
   public function getArtifactDir(): string {
     return $this->artifactDir;

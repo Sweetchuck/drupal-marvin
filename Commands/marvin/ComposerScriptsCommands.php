@@ -1,20 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Drush\Commands\marvin;
 
 use Robo\Collection\CollectionBuilder;
 
 class ComposerScriptsCommands extends CommandsBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected static $classKeyPrefix = 'marvin.composerScripts';
+  protected static string $classKeyPrefix = 'marvin.composerScripts';
 
-  /**
-   * {@inheritdoc}
-   */
-  protected $customEventNamePrefix = 'marvin:composer-scripts';
+  protected string $customEventNamePrefix = 'marvin:composer-scripts';
 
   /**
    * Do something on Composer post-install-cmd event.
