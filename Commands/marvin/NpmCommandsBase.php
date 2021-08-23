@@ -35,6 +35,9 @@ class NpmCommandsBase extends CommandsBase {
 
   protected function getTaskNpmInstallPackage(string $packageName, string $packagePath): CollectionBuilder {
     $packagePathRelative = Path::makeRelative($packagePath, getcwd());
+    if ($packagePathRelative === '') {
+      $packagePathRelative = '.';
+    }
 
     return $this
       ->collectionBuilder()
@@ -48,7 +51,7 @@ class NpmCommandsBase extends CommandsBase {
         ->iterationMessage('{packagePath}/{key}', ['packagePath' => $packagePathRelative])
         ->deferTaskConfiguration('setIterable', 'files')
         ->withBuilder(function (CollectionBuilder $builder, string $packageJsonFileName) use ($packagePathRelative) {
-          $workingDirectory = Path::join($packagePathRelative, Path::getDirectory($packageJsonFileName));
+          $workingDirectory = './' . Path::join($packagePathRelative, Path::getDirectory($packageJsonFileName));
 
           $builder
             ->addTask($this
