@@ -317,6 +317,15 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
 
       $data['filesToCleanup'][] = Path::join($buildDir, 'patches');
 
+      $patchesTxtFiles = (new Finder())
+        ->in($buildDir)
+        ->files()
+        ->name('PATCHES.txt');
+      /** @var \Symfony\Component\Finder\SplFileInfo $file */
+      foreach ($patchesTxtFiles as $file) {
+        $data['filesToCleanup'][] = $file->getPathname();
+      }
+
       /** @var \Symfony\Component\Finder\SplFileInfo[] $gitDirs */
       $gitDirs = (new Finder())
         ->in($buildDir)
