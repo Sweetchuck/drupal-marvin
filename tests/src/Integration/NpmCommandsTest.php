@@ -29,7 +29,7 @@ class NpmCommandsTest extends UnishIntegrationTestCase {
         '[Progress] themes/custom/dummy_t1/package.json',
         ' [Marvin - Node detector] ',
         " [NVM - Which] runs \". '$nvmDir/nvm.sh'; nvm which '11.5.0'\"",
-        " [Yarn - Install] cd 'themes/custom/dummy_t1' && $nvmDir/versions/node/v11.5.0/bin/node $nvmDir/versions/node/v11.5.0/bin/yarn install",
+        " [Yarn - Install] cd './themes/custom/dummy_t1' && $nvmDir/versions/node/v11.5.0/bin/node $nvmDir/versions/node/v11.5.0/bin/yarn install",
       ]),
       'stdOutput' => '',
     ];

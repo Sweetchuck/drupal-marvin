@@ -2058,12 +2058,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sweetchuck/utils.git",
-                "reference": "6655ae3522f31c2b0c00d28a52f2f353638acb9f"
+                "reference": "1b83e538c7eaa0b87e956d693fe60efe45c35894"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sweetchuck/utils/zipball/6655ae3522f31c2b0c00d28a52f2f353638acb9f",
-                "reference": "6655ae3522f31c2b0c00d28a52f2f353638acb9f",
+                "url": "https://api.github.com/repos/Sweetchuck/utils/zipball/1b83e538c7eaa0b87e956d693fe60efe45c35894",
+                "reference": "1b83e538c7eaa0b87e956d693fe60efe45c35894",
                 "shasum": ""
             },
             "require": {
@@ -2095,12 +2095,29 @@
             "license": [
                 "GPL-2.0-or-later"
             ],
+            "authors": [
+                {
+                    "name": "Andor",
+                    "homepage": "https://github.com/Sweetchuck",
+                    "role": "Maintainer"
+                }
+            ],
             "description": "Common utils",
+            "homepage": "https://github.com/Sweetchuck/utils",
+            "keywords": [
+                "comparer",
+                "filesystem",
+                "filter",
+                "iterator",
+                "string formatter",
+                "version number",
+                "walker"
+            ],
             "support": {
                 "issues": "https://github.com/Sweetchuck/utils/issues",
-                "source": "https://github.com/Sweetchuck/utils/tree/1.x"
+                "source": "https://github.com/Sweetchuck/utils"
             },
-            "time": "2021-08-01T16:29:29+00:00"
+            "time": "2021-11-27T17:29:32+00:00"
         },
         {
             "name": "symfony/config",
