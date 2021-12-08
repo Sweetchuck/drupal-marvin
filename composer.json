@@ -104,7 +104,7 @@
         "composer-exit-on-patch-failure": true,
         "patches": {
             "drupal/core": {
-                "https://www.drupal.org/project/drupal/issues/3182103": "https://www.drupal.org/files/issues/2021-08-08/drupal-3182103-9-test-setup-teardown-compatibility.patch"
+                "https://www.drupal.org/project/drupal/issues/3182103": "https://www.drupal.org/files/issues/2021-10-28/3182103-25-void-and-protected.patch"
             }
         },
         "installer-types": [
