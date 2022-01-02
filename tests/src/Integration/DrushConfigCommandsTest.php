@@ -27,14 +27,13 @@ class DrushConfigCommandsTest extends UnishIntegrationTestCase {
       $this->getCommonCommandLineEnvVars()
     );
 
-    $actualDrushConfig = (array) $this->getOutputFromJSON();
+    $actualDrushConfig = $this->getOutputFromJSON();
     $topLevelKeys = [
       'drush',
       'marvin',
       'options',
       'env',
       'runtime',
-      'backend',
     ];
 
     static::assertSame($topLevelKeys, array_keys($actualDrushConfig));

@@ -68,7 +68,7 @@ class ComposerInfoTest extends TestCase {
   public function testGetLockFileName(string $expected, string $jsonFileName): void {
     $baseDir = $this->rootDir->url();
     $ci = ComposerInfo::create($baseDir, $jsonFileName);
-    static::assertEquals(
+    static::assertSame(
       "vfs:/$expected",
       $ci->getLockFileName()
     );
@@ -97,7 +97,7 @@ class ComposerInfoTest extends TestCase {
   public function testGetWorkingDirectory(string $expected, string $jsonFileName): void {
     $baseDir = $this->rootDir->url();
     $ci = ComposerInfo::create($baseDir, $jsonFileName);
-    static::assertEquals("vfs:/$expected", $ci->getWorkingDirectory());
+    static::assertSame("vfs:/$expected", $ci->getWorkingDirectory());
   }
 
   public function casesCreate(): array {
@@ -105,12 +105,12 @@ class ComposerInfoTest extends TestCase {
       'basic' => [
         [
           'json' => [
-            'name' => 'aa/bb',
             'type' => 'library',
             'config' => [
               'bin-dir' => 'vendor/bin',
               'vendor-dir' => 'vendor',
             ],
+            'name' => 'aa/bb',
           ],
           'lock' => [
             'packages' => [
@@ -156,12 +156,12 @@ class ComposerInfoTest extends TestCase {
       'without lock' => [
         [
           'json' => [
-            'name' => 'aa/bb',
             'type' => 'library',
             'config' => [
               'bin-dir' => 'vendor/bin',
               'vendor-dir' => 'vendor',
             ],
+            'name' => 'aa/bb',
           ],
           'lock' => [],
         ],
@@ -187,8 +187,8 @@ class ComposerInfoTest extends TestCase {
     }
 
     $ci = ComposerInfo::create($baseDir, "$baseName.json");
-    static::assertEquals($expected['json'], $ci->getJson());
-    static::assertEquals($expected['lock'], $ci->getLock());
+    static::assertSame($expected['json'], $ci->getJson());
+    static::assertSame($expected['lock'], $ci->getLock());
   }
 
   public function testInstances(): void {
@@ -207,8 +207,8 @@ class ComposerInfoTest extends TestCase {
 
     $project1 = ComposerInfo::create($vfs->url() . '/p1');
     $project2 = ComposerInfo::create($vfs->url() . '/p2');
-    static::assertEquals('a', $project1['type']);
-    static::assertEquals('b', $project2['type']);
+    static::assertSame('a', $project1['type']);
+    static::assertSame('b', $project2['type']);
   }
 
   public function casesGetDrupalExtensionInstallDir(): array {
@@ -243,7 +243,7 @@ class ComposerInfoTest extends TestCase {
     $this->fs->dumpFile("$baseDir/$baseName.json", json_encode($json));
 
     $ci = ComposerInfo::create($baseDir, "$baseName.json");
-    static::assertEquals($expected, $ci->getDrupalExtensionInstallDir($type));
+    static::assertSame($expected, $ci->getDrupalExtensionInstallDir($type));
   }
 
   public function testOffsetUnset(): void {

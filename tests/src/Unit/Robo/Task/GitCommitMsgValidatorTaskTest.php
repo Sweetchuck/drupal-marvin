@@ -21,7 +21,11 @@ class GitCommitMsgValidatorTaskTest extends TaskTestBase {
         [
           'exitCode' => 0,
           'stdOutput' => '',
-          'stdError' => '',
+          'stdError' => implode("\n", [
+            ' [Marvin - Git commit message validator] ',
+            ' [Stringy] regexReplace, trim',
+            '',
+          ]),
         ],
         [
           'fileName' => $this->getDataBase64FileNameFromLines([
@@ -57,11 +61,19 @@ class GitCommitMsgValidatorTaskTest extends TaskTestBase {
     /** @var \Drupal\Tests\marvin\Helper\DummyOutput $stdOutput */
     $stdOutput = $this->container->get('output');
     if (array_key_exists('stdOutput', $expected)) {
-      static::assertSame($expected['stdOutput'], $stdOutput->output);
+      static::assertSame(
+        $expected['stdOutput'],
+        $stdOutput->output,
+        'stdOutput',
+      );
     }
 
     if (array_key_exists('stdError', $expected)) {
-      static::assertSame($expected['stdError'], $stdOutput->getErrorOutput()->output);
+      static::assertSame(
+        $expected['stdError'],
+        $stdOutput->getErrorOutput()->output,
+        'stdError',
+      );
     }
   }
 

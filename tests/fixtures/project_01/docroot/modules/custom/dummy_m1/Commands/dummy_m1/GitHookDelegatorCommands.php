@@ -8,6 +8,7 @@ use Drush\Commands\marvin\GitHookCommandsBase;
 use Robo\Collection\CollectionBuilder;
 
 class GitHookDelegatorCommands extends GitHookCommandsBase {
+
   /**
    * Git hook callback command for "./.git/hooks/applypatch-msg".
    *
@@ -205,4 +206,5 @@ class GitHookDelegatorCommands extends GitHookCommandsBase {
   public function gitHookUpdate(string $refName, string $oldObjectName, string $newObjectName): CollectionBuilder {
     return $this->delegate('update');
   }
+
 }

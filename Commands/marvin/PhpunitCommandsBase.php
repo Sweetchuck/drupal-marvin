@@ -40,10 +40,10 @@ class PhpunitCommandsBase extends CommandsBase {
     $options = [
       'colors' => $this->getColors(),
       'processTimeout' => NULL,
-      'phpExecutable' => "{$phpVariant['phpdbgExecutable']} -qrr",
+      'phpExecutable' => $phpVariant['phpExecutable'],
     ];
 
-    if (!empty($phpVariant['phpdbgExecutable'])) {
+    if (!empty($phpVariant['phpExecutable'])) {
       $options['phpunitExecutable'] = $this->getPhpUnitExecutable();
     }
 

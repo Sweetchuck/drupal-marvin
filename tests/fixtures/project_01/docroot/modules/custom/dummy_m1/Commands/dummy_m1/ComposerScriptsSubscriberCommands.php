@@ -18,7 +18,7 @@ class ComposerScriptsSubscriberCommands extends CommandsBase {
 
     return [
       'dummy_m1' => [
-        'task' => function () use ($input, $output, $method) {
+        'task' => function () use ($output, $method) {
           $class = $this->getClassName();
 
           $output->writeln("$class::$method called");
@@ -35,7 +35,7 @@ class ComposerScriptsSubscriberCommands extends CommandsBase {
 
     return [
       'dummy_m1' => [
-        'task' => function () use ($input, $output, $method) {
+        'task' => function () use ($output, $method) {
           $class = $this->getClassName();
 
           $output->writeln("$class::$method called");

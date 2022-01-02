@@ -7,6 +7,7 @@
   <file>./Commands/</file>
   <file>./src/</file>
   <file>./src-dev/Composer/</file>
+  <file>./tests/fixtures/project_01/docroot/modules/custom/</file>
   <file>./tests/src/</file>
   <file>./RoboFile.php</file>
 
@@ -21,6 +22,7 @@
     <exclude name="Drupal.Commenting.FunctionComment.Missing" />
     <exclude name="Drupal.Commenting.FunctionComment.MissingParamComment" />
     <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment" />
+    <exclude name="Drupal.Commenting.InlineComment.DocBlock" />
     <exclude name="Drupal.Commenting.VariableComment.Missing" />
     <exclude name="Drupal.Commenting.VariableComment.MissingVar" />
   </rule>

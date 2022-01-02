@@ -121,6 +121,7 @@ class ComposerInfo implements \ArrayAccess {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function offsetExists($offset) {
     return array_key_exists($offset, $this->getJson());
   }
@@ -128,6 +129,7 @@ class ComposerInfo implements \ArrayAccess {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function offsetGet($offset) {
     $this->initJson();
 
@@ -137,6 +139,7 @@ class ComposerInfo implements \ArrayAccess {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function offsetSet($offset, $value) {
     $this->initJson();
     $this->json[$offset] = $value;
@@ -145,6 +148,7 @@ class ComposerInfo implements \ArrayAccess {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function offsetUnset($offset) {
     $this->initJson();
     unset($this->json[$offset]);
@@ -167,7 +171,7 @@ class ComposerInfo implements \ArrayAccess {
           return NULL;
         }
 
-        list($packageVendor, $packageName) = explode('/', $this->json['name']) + [1 => ''];
+        [$packageVendor, $packageName] = explode('/', $this->json['name']) + [1 => ''];
 
         return $name === 'packageVendor' ? $packageVendor : $packageName;
     }

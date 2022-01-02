@@ -7,7 +7,6 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
 use Robo\State\Data as RoboStateData;
-use Symfony\Component\ErrorHandler\BufferingLogger;
 
 /**
  * @group marvin
@@ -23,6 +22,11 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
       'type.library' => [
         [
           'exitCode' => 0,
+          'stdOutput' => '',
+          'stdError' => implode("\n", [
+            ' [Marvin - PHP_CodeSniffer config fallback] ',
+            '',
+          ]),
           'assets' => [
             'files' => [],
             'exclude-patterns' => [],
@@ -38,6 +42,11 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
       'type.drupal-project' => [
         [
           'exitCode' => 0,
+          'stdOutput' => '',
+          'stdError' => implode("\n", [
+            ' [Marvin - PHP_CodeSniffer config fallback] ',
+            '',
+          ]),
           'assets' => [
             'files' => [
               'drush/custom/' => TRUE,
@@ -82,6 +91,11 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
       'type.drupal-module' => [
         [
           'exitCode' => 0,
+          'stdOutput' => '',
+          'stdError' => implode("\n", [
+            ' [Marvin - PHP_CodeSniffer config fallback] ',
+            '',
+          ]),
           'assets' => [
             'files' => [
               'Commands/' => FALSE,
@@ -101,9 +115,14 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
           'dummy_m1.module' => '<?php',
         ],
       ],
-      'type.drupal-profile' => [
+      'type.dru pal-profile' => [
         [
           'exitCode' => 0,
+          'stdOutput' => '',
+          'stdError' => implode("\n", [
+            ' [Marvin - PHP_CodeSniffer config fallback] ',
+            '',
+          ]),
           'assets' => [
             'files' => [
               'Commands/' => FALSE,
@@ -144,7 +163,29 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
       ->run();
 
     if (array_key_exists('exitCode', $expected)) {
-      static::assertSame($expected['exitCode'], $result->getExitCode());
+      static::assertSame(
+        $expected['exitCode'],
+        $result->getExitCode(),
+        'exitCode',
+      );
+    }
+
+    /** @var \Drupal\Tests\marvin\Helper\DummyOutput $stdOutput */
+    $stdOutput = $this->container->get('output');
+    if (array_key_exists('stdOutput', $expected)) {
+      static::assertSame(
+        $expected['stdOutput'],
+        $stdOutput->output,
+        'stdOutput',
+      );
+    }
+
+    if (array_key_exists('stdError', $expected)) {
+      static::assertSame(
+        $expected['stdError'],
+        $stdOutput->getErrorOutput()->output,
+        'stdError',
+      );
     }
 
     if (array_key_exists('assets', $expected)) {
@@ -162,22 +203,7 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
     $expected = [
       'exitCode' => 0,
       'stdOutput' => '',
-      'logEntries' => [
-        [
-          'notice',
-          '',
-          [
-            'name' => 'Marvin - PHP_CodeSniffer config fallback',
-          ],
-        ],
-        [
-          'debug',
-          'The PHPCS config is already available from state data.',
-          [
-            'name' => 'Marvin - PHP_CodeSniffer config fallback',
-          ],
-        ],
-      ],
+      'stdError' => implode("\n", []),
     ];
 
     $stateData = [
@@ -203,11 +229,22 @@ class PhpcsConfigFallbackTaskTest extends TaskTestBase {
     static::assertSame($stateData['my.files'], $state['my.files']);
     static::assertSame($stateData['my.exclude-patterns'], $state['my.exclude-patterns']);
 
-    if (array_key_exists('logEntries', $expected)) {
-      /** @var \Symfony\Component\ErrorHandler\BufferingLogger $logger */
-      $logger = $task->logger();
-      static::assertInstanceOf(BufferingLogger::class, $logger);
-      static::assertRoboTaskLogEntries($expected['logEntries'], $logger->cleanLogs());
+    /** @var \Drupal\Tests\marvin\Helper\DummyOutput $stdOutput */
+    $stdOutput = $this->container->get('output');
+    if (array_key_exists('stdOutput', $expected)) {
+      static::assertSame(
+        $expected['stdOutput'],
+        $stdOutput->output,
+        'stdOutput',
+      );
+    }
+
+    if (array_key_exists('stdError', $expected)) {
+      static::assertSame(
+        $expected['stdError'],
+        $stdOutput->getErrorOutput()->output,
+        'stdError',
+      );
     }
   }
 

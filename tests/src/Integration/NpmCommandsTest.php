@@ -25,14 +25,22 @@ class NpmCommandsTest extends UnishIntegrationTestCase {
 
     $expected = [
       'exitCode' => 0,
-      'stdError' => implode(PHP_EOL, [
-        '[Progress] themes/custom/dummy_t1/package.json',
-        ' [Marvin - Node detector] ',
-        " [NVM - Which] runs \". '$nvmDir/nvm.sh'; nvm which '11.5.0'\"",
-        " [Yarn - Install] cd './themes/custom/dummy_t1' && $nvmDir/versions/node/v11.5.0/bin/node $nvmDir/versions/node/v11.5.0/bin/yarn install",
+      'stdError' => implode('', [
+        '@^',
+        preg_quote('[Progress] themes/custom/dummy_t1/package.json', '@') . '\n',
+        preg_quote(' [Marvin - Node detector] ', '@') . '\n',
+        preg_quote(" [NVM - Which] runs \". '$nvmDir/nvm.sh'; nvm which '14.17'\"", '@') . '\n',
+        preg_quote(" [Yarn - Install] cd './themes/custom/dummy_t1' && $nvmDir/versions/node/v__VERSION__/bin/node $nvmDir/versions/node/v__VERSION__/bin/yarn install", '@'),
+        '$@',
       ]),
-      'stdOutput' => '',
     ];
+
+    $expected['stdError'] = strtr(
+      $expected['stdError'],
+      [
+        '__VERSION__' => '14\.17\.\d+',
+      ],
+    );
 
     $envVars = [
       'NVM_DIR' => $nvmDir,
@@ -47,14 +55,28 @@ class NpmCommandsTest extends UnishIntegrationTestCase {
       NULL,
       $expected['exitCode'],
       NULL,
-      $envVars
+      $envVars,
     );
 
     $actualStdError = $this->getErrorOutput();
     $actualStdOutput = $this->getOutput();
 
-    static::assertSame($expected['stdError'], $actualStdError, 'stdError');
-    static::assertSame($expected['stdOutput'], $actualStdOutput, 'stdOutput');
+    static::assertMatchesRegularExpression(
+      $expected['stdError'],
+      $actualStdError,
+      'stdError',
+    );
+
+    static::assertStringContainsString(
+      'yarn install',
+      $actualStdOutput,
+      'stdOutput',
+    );
+    static::assertStringContainsString(
+      'Done in ',
+      $actualStdOutput,
+      'stdOutput',
+    );
   }
 
 }

@@ -5,8 +5,10 @@ declare(strict_types = 1);
 namespace Drupal\marvin\Robo\Task;
 
 use Drupal\marvin\ComposerInfo;
+use Drupal\marvin\Utils;
 use Drupal\marvin\Utils as MarvinUtils;
-use League\Container\ContainerInterface;
+use League\Container\ContainerAwareInterface;
+use Psr\Container\ContainerInterface;
 use Robo\State\StateAwareInterface;
 use Robo\State\StateAwareTrait;
 use Sweetchuck\Utils\Walker\FileSystemExistsWalker;
@@ -18,20 +20,18 @@ class PhpcsConfigFallbackTask extends BaseTask implements StateAwareInterface {
   protected string $taskName = 'Marvin - PHP_CodeSniffer config fallback';
 
   /**
-   * {@inheritdoc}
+   * @return $this
    */
-  public function setContainer(ContainerInterface $container) {
+  public function setContainer(ContainerInterface $container): ContainerAwareInterface {
     parent::setContainer($container);
 
     $pairs = [
-      'marvin.file_system_exists_walker' => FileSystemExistsWalker::class,
+      'marvin.file_system_exists_walker' => [
+        'shared' => FALSE,
+        'class' => FileSystemExistsWalker::class,
+      ],
     ];
-
-    foreach ($pairs as $alias => $class) {
-      if (!$container->has($alias)) {
-        $container->add($alias, $class);
-      }
-    }
+    Utils::addDefinitionsToContainer($pairs, $container);
 
     return $this;
   }

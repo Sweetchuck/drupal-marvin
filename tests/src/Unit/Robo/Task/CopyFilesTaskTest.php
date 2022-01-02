@@ -6,7 +6,6 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
-use Symfony\Component\ErrorHandler\BufferingLogger;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -37,6 +36,7 @@ class CopyFilesTaskTest extends TaskTestBase {
         [
           'exitCode' => 0,
           'stdOutput' => '',
+          'stdError' => " [Marvin - Copy files] \n",
           'logEntries' => [
             [
               'notice',
@@ -54,6 +54,13 @@ class CopyFilesTaskTest extends TaskTestBase {
         [
           'exitCode' => 0,
           'stdOutput' => '',
+          'stdError' => implode("\n", [
+            ' [Marvin - Copy files] ',
+            ' [Marvin - Copy files] copy: vfs://testRunSuccess/mySrc vfs://testRunSuccess/myDst a.txt',
+            ' [Marvin - Copy files] copy: vfs://testRunSuccess/mySrc vfs://testRunSuccess/myDst b/c.txt',
+            ' [Marvin - Copy files] copy: vfs://testRunSuccess/mySrc vfs://testRunSuccess/myDst d.txt',
+            '',
+          ]),
           'logEntries' => [
             [
               'notice',
@@ -125,6 +132,7 @@ class CopyFilesTaskTest extends TaskTestBase {
       ->taskMarvinCopyFiles($options)
       ->setContainer($this->container);
 
+    /** @var \Robo\Result $result */
     $result = $task->run();
 
     if (array_key_exists('exitCode', $expected)) {
@@ -135,14 +143,19 @@ class CopyFilesTaskTest extends TaskTestBase {
     $stdOutput = $this->container->get('output');
 
     if (array_key_exists('stdOutput', $expected)) {
-      static::assertSame($expected['stdOutput'], $stdOutput->output);
+      static::assertSame(
+        $expected['stdOutput'],
+        $stdOutput->output,
+        'stdOutput',
+      );
     }
 
-    if (array_key_exists('logEntries', $expected)) {
-      /** @var \Symfony\Component\ErrorHandler\BufferingLogger $logger */
-      $logger = $task->logger();
-      static::assertInstanceOf(BufferingLogger::class, $logger);
-      static::assertRoboTaskLogEntries($expected['logEntries'], $logger->cleanLogs());
+    if (array_key_exists('stdError', $expected)) {
+      static::assertSame(
+        $expected['stdError'],
+        $stdOutput->getErrorOutput()->output,
+        'stdError',
+      );
     }
 
     if (!empty($expected['files'])) {

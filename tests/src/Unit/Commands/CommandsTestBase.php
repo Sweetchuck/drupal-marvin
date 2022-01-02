@@ -5,12 +5,12 @@ declare(strict_types = 1);
 namespace Drupal\Tests\marvin\Unit\Commands;
 
 use Drupal\marvin\ComposerInfo;
+use Drupal\marvin\Utils;
 use Drush\Commands\marvin\CommandsBase;
-use League\Container\Container;
-use League\Container\ContainerInterface;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
-use Sweetchuck\LintReport\Reporter\BaseReporter as LintBaseReporter;
+use Psr\Container\ContainerInterface;
+use Sweetchuck\LintReport\Reporter\BaseReporter;
 use Webmozart\PathUtil\Path;
 
 class CommandsTestBase extends TestCase {
@@ -99,15 +99,17 @@ class CommandsTestBase extends TestCase {
   }
 
   protected function initContainerLintReporters(ContainerInterface $container) {
-    $lintServices = LintBaseReporter::getServices();
-    foreach ($lintServices as $name => $class) {
-      if ($container->has($name)) {
-        continue;
-      }
-
-      if ($container instanceof Container) {
-        $container->share($name, $class);
-      }
+    $lintServices = BaseReporter::getServices();
+    foreach ($lintServices as $id => $class) {
+      Utils::addDefinitionsToContainer(
+        [
+          $id => [
+            'shared' => FALSE,
+            'class' => $class,
+          ],
+        ],
+        $container,
+      );
     }
   }
 

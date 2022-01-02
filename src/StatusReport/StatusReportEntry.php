@@ -146,6 +146,7 @@ class StatusReportEntry implements StatusReportEntryInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function jsonSerialize() {
     $severityNames = RfcLogLevel::getLevels();
     $severity = $this->getSeverity();

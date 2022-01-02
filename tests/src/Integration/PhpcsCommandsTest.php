@@ -22,7 +22,7 @@ class PhpcsCommandsTest extends UnishIntegrationTestCase {
       'exitCode' => 2,
       'stdError' => implode(PHP_EOL, [
         '[Marvin - PHP_CodeSniffer config fallback] ',
-        " [PHP_CodeSniffer - lint files] runs cd '$root/tests/fixtures/project_01' && ../../../bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'docroot/modules/custom/' 'docroot/themes/custom/'",
+        " [PHP_CodeSniffer - lint files] runs cd '$root/tests/fixtures/project_01' && ../../../vendor/bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'docroot/modules/custom/' 'docroot/themes/custom/'",
         ' [Sweetchuck\Robo\Phpcs\Task\PhpcsLintFiles]  PHP Code Sniffer found some errors :-( ',
         ' [Sweetchuck\Robo\Phpcs\Task\PhpcsLintFiles]  Exit code 2',
       ]),
@@ -54,7 +54,7 @@ class PhpcsCommandsTest extends UnishIntegrationTestCase {
       'exitCode' => 2,
       'stdError' => implode(PHP_EOL, [
         '[Marvin - PHP_CodeSniffer config fallback] ',
-        " [PHP_CodeSniffer - lint files] runs cd '$root/tests/fixtures/project_01/docroot/modules/custom/dummy_m1' && ../../../../../../../bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'Commands/' 'tests/' 'dummy_m1.module'",
+        " [PHP_CodeSniffer - lint files] runs cd '$root/tests/fixtures/project_01/docroot/modules/custom/dummy_m1' && ../../../../../../../vendor/bin/phpcs --standard='Drupal,DrupalPractice' --report='json' -- 'Commands/' 'tests/' 'dummy_m1.module'",
         ' [Sweetchuck\Robo\Phpcs\Task\PhpcsLintFiles]  PHP Code Sniffer found some errors :-( ',
         ' [Sweetchuck\Robo\Phpcs\Task\PhpcsLintFiles]  Exit code 2',
       ]),

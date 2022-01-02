@@ -1,5 +1,11 @@
 version: 2.1
 
+orbs:
+  codecov: 'codecov/codecov@3.0.0'
+
+.env_app: &env_app
+  SHELL: '/bin/bash'
+
 .env_xdebug: &env_xdebug
   XDEBUG_MODE: 'coverage'
 
@@ -8,10 +14,11 @@ version: 2.1
   COMPOSER_NO_INTERACTION: '1'
   COMPOSER_MEMORY_LIMIT: '-1'
   COMPOSER_DISABLE_XDEBUG_WARN: '1'
-  COMPOSER_CACHE_DIR: '/root/.cache/composer'
+  COMPOSER_CACHE_DIR: '/home/circleci/.cache/composer'
 
-.env_yarn: &env_yarn
-  YARN_CACHE_FOLDER: '/root/.cache/yarn'
+.env_node: &env_node
+  NVM_DIR: '/home/circleci/.nvm'
+  YARN_CACHE_FOLDER: '/home/circleci/.cache/yarn'
 
 .env_test: &env_test
   SIMPLETEST_BASE_URL: 'http://localhost:8888'
@@ -19,59 +26,136 @@ version: 2.1
   SIMPLETEST_DB: 'sqlite://sites/default/db.default.default.sqlite'
   UNISH_DB_URL: 'sqlite://sites/default/db.default.default.sqlite'
   UNISH_NO_TIMEOUTS: 'y'
-
-orbs:
-  codecov: 'codecov/codecov@1.1.2'
+  BROWSERTEST_OUTPUT_DIRECTORY: '/home/circleci/repo/tests/fixtures/project_01/docroot/sites/simpletest/browser_output'
+  REAL_NVM_DIR: '/home/circleci/.nvm'
 
 executors:
-  php800:
+  php_min:
     environment:
+      <<: *env_app
       <<: *env_xdebug
       <<: *env_composer
-      <<: *env_yarn
+      <<: *env_node
       <<: *env_test
-
     docker:
       -
         name: 'main'
-        image: 'misterio92/ci-php-node:5.0'
+        image: 'circleci/php:7.4'
 
-  php704:
+  php_plus1:
     environment:
+      <<: *env_app
       <<: *env_xdebug
       <<: *env_composer
-      <<: *env_yarn
+      <<: *env_node
       <<: *env_test
-
     docker:
       -
         name: 'main'
-        image: 'misterio92/ci-php-node:4.0'
+        image: 'circleci/php:8.0'
+
+  php_plus2:
+    environment:
+      <<: *env_app
+      <<: *env_xdebug
+      <<: *env_composer
+      <<: *env_node
+      <<: *env_test
+    docker:
+      -
+        name: 'main'
+        image: 'cimg/php:8.1'
 
 commands:
-  install_yarn:
-    description: 'Install "yarn" NPM package'
+  install_php_extension_gd:
+    description: 'Install required PHP extensions - GD'
     steps:
       -
         run:
-          name: 'Install Yarn'
-          command: 'npm install -g yarn@1.22.10'
-      -
-        run:
-          name: 'Yarn - Config set - cache-folder'
-          command: 'yarn config set cache-folder "${YARN_CACHE_FOLDER}"'
-
-  install_php_requirements:
-    description: ''
-    steps:
-      -
-        run:
-          name: 'Install required PHP extensions'
+          name: 'Install required PHP extensions - GD'
           command: |
-            apt-get update
-            apt-get install -y \
-              php-xdebug \
-              "php$(php -r 'echo mb_substr(PHP_VERSION, 0, 3);')-phpdbg"
+            if php -m | grep gd ; then
+                exit 0
+            fi
+
+            sudo apt-get update
+            sudo apt-get install -y libpng-dev
+            sudo docker-php-ext-install gd
+            php -m | grep gd
+
+  install_php_extension_xdebug:
+    description: 'Install required PHP extensions - xdebug'
+    steps:
+      -
+        run:
+          name: 'Install required PHP extensions - xdebug'
+          command: |
+            if php -m | grep xdebug ; then
+                exit 0
+            fi
+
+            sudo apt-get update
+            sudo apt-get install -y \
+              "php$(php -r 'echo mb_substr(PHP_VERSION, 0, 3);')-xdebug"
+
+  install_php_extension_pcov:
+    description: 'Install PCOV PHP extension'
+    steps:
+      -
+        run:
+          name: 'Install PCOV PHP extension - pecl install pcov'
+          command: |
+            if php -m | grep pcov ; then
+                exit 0
+            fi
+
+            sudo pecl install pcov
+
+            if php -m | grep pcov ; then
+                exit 0
+            fi
+
+            scanDir="$(php -i | grep --color=never --only-matching --perl-regexp '(?<=^Scan this dir for additional \.ini files => ).+')"
+            echo 'extension=pcov' | sudo tee "${scanDir}/pcov.ini"
+            php -m | grep pcov
+
+  install_php_phpdbg:
+    description: 'Install phpdbg'
+    steps:
+      -
+        run:
+          name: 'Install phpdbg'
+          command: |
+            if command -v phpdbg ; then
+                exit 0
+            fi
+
+            sudo apt-get update
+            sudo apt-get install -y "php$(php -r 'echo mb_substr(PHP_VERSION, 0, 3);')-phpdbg"
+            command -v phpdbg
+
+  nvm_install:
+    description: 'NVM install'
+    steps:
+      -
+        run:
+          name: 'NVM install - self'
+          command: |
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+      -
+        run:
+          name: 'NVM install - node version .nvmrc'
+          command: |
+            nvmRcFileName="$(git ls-files -- '**/.nvmrc' | tail -1)"
+            source "${REAL_NVM_DIR}/nvm.sh"
+            nvm install "$(cat ${nvmRcFileName})"
+      -
+        run:
+          name: 'NVM install - install yarn for node .nvmrc'
+          command: |
+            source "${REAL_NVM_DIR}/nvm.sh"
+            npm --global install --save yarn
+            yarn config set cache-folder "${YARN_CACHE_FOLDER}"
 
   composer_install:
     description: 'Install Composer dependencies with cache restore and save'
@@ -80,18 +164,18 @@ commands:
         restore_cache:
           name: 'Composer - cache restore'
           keys:
-            - 'composer-{{ checksum "./composer.lock" }}-v1'
+            - 'composer-{{ checksum "./composer.lock" }}-v2'
       -
         run:
           name: 'Composer - install'
-          command: >
+          command: |
             composer install --no-progress
       -
         save_cache:
           name: 'Composer - cache save'
-          key: 'composer-{{ checksum "./composer.lock" }}-v1'
+          key: 'composer-{{ checksum "./composer.lock" }}-v2'
           paths:
-            - '/root/.cache/composer/'
+            - '/home/circleci/.cache/composer/'
 
   lint:
     description: 'Run linters'
@@ -99,7 +183,8 @@ commands:
       -
         run:
           name: 'Run linters'
-          command: 'bin/robo lint'
+          command: |
+            "$(composer config bin-dir)/robo" lint
 
   test:
     description: 'Run tests'
@@ -108,11 +193,13 @@ commands:
         restore_cache:
           name: 'Yarn - cache restore'
           keys:
-            - 'yarn-{{ checksum "./tests/fixtures/project_01/docroot/themes/custom/dummy_t1/package.json" }}-v1'
+            - 'yarn-{{ checksum "./tests/fixtures/project_01/docroot/themes/custom/dummy_t1/package.json" }}-v2'
       -
         run:
           name: 'Run tests - Unit'
-          command: 'bin/robo test:phpunit Unit'
+          command: |
+            source "${REAL_NVM_DIR}/nvm.sh"
+            "$(composer config bin-dir)/robo" test:phpunit Unit
       -
         codecov/upload:
           flags: 'unit'
@@ -121,10 +208,11 @@ commands:
         run:
           name: 'Run tests - Integration'
           command: |
+            source "${REAL_NVM_DIR}/nvm.sh"
             cd tests/fixtures/project_01/docroot
             php -S localhost:8888 .ht.router.php 1>/dev/null 2>/dev/null &
             cd ../../../..
-            bin/robo test:phpunit Integration
+            "$(composer config bin-dir)/robo" test:phpunit Integration
       -
         codecov/upload:
           flags: 'integration'
@@ -136,40 +224,54 @@ commands:
       -
         save_cache:
           name: 'Yarn - cache save'
-          key: 'yarn-{{ checksum "./tests/fixtures/project_01/docroot/themes/custom/dummy_t1/package.json" }}-v1'
+          key: 'yarn-{{ checksum "./tests/fixtures/project_01/docroot/themes/custom/dummy_t1/package.json" }}-v2'
           paths:
-            - '/root/.cache/yarn/'
+            - '/home/circleci/.cache/yarn/'
 
 jobs:
   build:
-    executor: 'php704'
+    executor: 'php_min'
     working_directory: '~/repo'
     steps:
       - 'checkout'
+      - 'install_php_extension_gd'
       - 'composer_install'
   lint:
-    executor: 'php704'
+    executor: 'php_min'
     working_directory: '~/repo'
     steps:
       - 'checkout'
+      - 'install_php_extension_gd'
       - 'composer_install'
       - 'lint'
-  test_php800:
-    executor: 'php800'
+  test_php_min:
+    executor: 'php_min'
     working_directory: '~/repo'
     steps:
       - 'checkout'
-      - 'install_yarn'
-      - 'install_php_requirements'
+      - 'install_php_extension_gd'
+      - 'install_php_extension_pcov'
+      - 'nvm_install'
       - 'composer_install'
       - 'test'
-  test_php704:
-    executor: 'php704'
+  test_php_plus1:
+    executor: 'php_plus1'
     working_directory: '~/repo'
     steps:
       - 'checkout'
-      - 'install_yarn'
-      - 'install_php_requirements'
+      - 'install_php_extension_gd'
+      - 'install_php_extension_pcov'
+      - 'nvm_install'
+      - 'composer_install'
+      - 'test'
+  test_php_plus2:
+    executor: 'php_plus2'
+    working_directory: '~/repo'
+    steps:
+      - 'checkout'
+      - 'install_php_extension_gd'
+      - 'install_php_extension_pcov'
+      - 'nvm_install'
       - 'composer_install'
       - 'test'
 
@@ -181,12 +283,16 @@ workflows:
       -
         lint:
           requires:
-            - build
+            - 'build'
       -
-        test_php704:
+        test_php_min:
           requires:
-            - build
+            - 'build'
       -
-        test_php800:
+        test_php_plus1:
           requires:
-            - build
+            - 'build'
+      -
+        test_php_plus2:
+          requires:
+            - 'build'

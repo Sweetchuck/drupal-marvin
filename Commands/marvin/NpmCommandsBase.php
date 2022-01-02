@@ -6,7 +6,7 @@ namespace Drush\Commands\marvin;
 
 use Drupal\marvin\Robo\NodeDetectorTaskLoader;
 use Robo\Collection\CollectionBuilder;
-use Robo\Collection\loadTasks as ForEachTaskLoader;
+use Robo\Collection\Tasks as ForEachTaskLoader;
 use Sweetchuck\Robo\Git\GitTaskLoader;
 use Sweetchuck\Robo\Nvm\NvmTaskLoader;
 use Sweetchuck\Robo\Yarn\YarnTaskLoader;

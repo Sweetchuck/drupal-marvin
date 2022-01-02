@@ -118,7 +118,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesCommandClassNameToConfigIdentifier
    */
   public function testCommandClassNameToConfigIdentifier(string $expected, string $className): void {
-    static::assertEquals(
+    static::assertSame(
       $expected,
       Utils::commandClassNameToConfigIdentifier($className)
     );
@@ -195,7 +195,7 @@ class UtilsTest extends TestCase {
     $vfs = vfsStream::setup(__FUNCTION__, NULL, $vfsStructure);
     $absoluteDirectory = Path::join($vfs->url(), $relativeDirectory);
 
-    static::assertEquals($expected, Utils::findFileUpward($fileName, $absoluteDirectory));
+    static::assertSame($expected, Utils::findFileUpward($fileName, $absoluteDirectory));
   }
 
   public function casesGetDirectDescendantDrupalPhpFiles(): array {
@@ -552,7 +552,7 @@ class UtilsTest extends TestCase {
    * @dataProvider casesParseDrupalExtensionVersionNumber
    */
   public function testParseDrupalExtensionVersionNumber($expected, $versionNumber): void {
-    static::assertEquals($expected, Utils::parseDrupalExtensionVersionNumber($versionNumber));
+    static::assertSame($expected, Utils::parseDrupalExtensionVersionNumber($versionNumber));
   }
 
   public function testParseDrupalExtensionVersionNumberFail(): void {

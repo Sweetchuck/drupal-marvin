@@ -8,6 +8,8 @@ use Consolidation\AnnotatedCommand\CommandError;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 use Drupal\marvin\StatusReport\StatusReportInterface;
 use Icecave\SemVer\Version;
+use League\Container\Container as LeagueContainer;
+use Psr\Container\ContainerInterface;
 use Stringy\StaticStringy;
 use Stringy\Stringy;
 use Symfony\Component\Console\Helper\Table as ConsoleTable;
@@ -27,7 +29,7 @@ class Utils {
    *
    * @var bool[]
    */
-  public static $drupalPackageTypes = [
+  public static array $drupalPackageTypes = [
     'drupal-core' => TRUE,
     'drupal-drush' => TRUE,
     'drupal-module' => TRUE,
@@ -38,7 +40,7 @@ class Utils {
   /**
    * @var bool[]
    */
-  public static $drupalPhpExtensions = [
+  public static array $drupalPhpExtensions = [
     'engine' => TRUE,
     'install' => TRUE,
     'module' => TRUE,
@@ -46,6 +48,28 @@ class Utils {
     'profile' => TRUE,
     'theme' => TRUE,
   ];
+
+  public static function addDefinitionsToContainer(iterable $definitions, ContainerInterface $container) {
+    foreach ($definitions as $alias => $definition) {
+      if ($container->has($alias)) {
+        continue;
+      }
+
+      if (!is_array($definition)) {
+        $definition = [
+          'class' => $definition,
+        ];
+      }
+
+      $definition += [
+        'shared' => TRUE,
+      ];
+
+      if ($container instanceof LeagueContainer) {
+        $container->add($alias, $definition['class'], $definition['shared']);
+      }
+    }
+  }
 
   /**
    * @todo https://packagist.org/packages/mindplay/composer-locator

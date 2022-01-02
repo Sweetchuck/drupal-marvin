@@ -31,3 +31,5 @@
 /composer.local.json
 /composer.local.lock
 /.gitattributes
+
+/robo.yml

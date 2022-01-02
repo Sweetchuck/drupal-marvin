@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace Drush\Commands\dummy_m1;
 
+use Drupal\marvin\Utils;
 use Drush\Commands\marvin\PhpcsCommandsBase;
-use League\Container\ContainerInterface as LeagueContainer;
 use Robo\Collection\CollectionBuilder;
 use Sweetchuck\LintReport\Reporter\BaseReporter;
 
@@ -17,14 +17,16 @@ class PhpcsCommands extends PhpcsCommandsBase {
   public function initLintReporters() {
     $lintServices = BaseReporter::getServices();
     $container = $this->getContainer();
-    foreach ($lintServices as $name => $class) {
-      if ($container->has($name)) {
-        continue;
-      }
-
-      if ($container instanceof LeagueContainer) {
-        $container->share($name, $class);
-      }
+    foreach ($lintServices as $id => $class) {
+      Utils::addDefinitionsToContainer(
+        [
+          $id => [
+            'shared' => FALSE,
+            'class' => $class,
+          ],
+        ],
+        $container,
+      );
     }
   }
 

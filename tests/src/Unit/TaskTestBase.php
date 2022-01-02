@@ -14,12 +14,11 @@ use PHPUnit\Framework\TestCase;
 use Robo\Collection\CollectionBuilder;
 use Robo\Robo;
 use Symfony\Component\Console\Application as SymfonyApplication;
-use Symfony\Component\ErrorHandler\BufferingLogger;
 
 class TaskTestBase extends TestCase {
 
   /**
-   * @var \League\Container\ContainerInterface
+   * @var \Psr\Container\ContainerInterface
    */
   protected $container;
 
@@ -48,7 +47,7 @@ class TaskTestBase extends TestCase {
     Drush::unsetContainer();
 
     $this->container = new LeagueContainer();
-    $application = new SymfonyApplication('Marvin - Unit', '1.0.0');
+    $application = new SymfonyApplication('Marvin - Unit', '2.0.0');
     $this->config = (new DrushConfig())
       ->set('drush.vendor-dir', '.');
     $input = NULL;
@@ -59,7 +58,6 @@ class TaskTestBase extends TestCase {
 
     Robo::configureContainer($this->container, $application, $this->config, $input, $output);
     Drush::setContainer($this->container);
-    $this->container->share('logger', BufferingLogger::class);
 
     $this->builder = CollectionBuilder::create($this->container, NULL);
     $this->taskBuilder = new TaskBuilder();

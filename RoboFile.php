@@ -2,20 +2,29 @@
 
 declare(strict_types = 1);
 
-use League\Container\ContainerInterface as LeagueContainer;
+use Consolidation\AnnotatedCommand\CommandResult;
+use League\Container\Container as LeagueContainer;
+use NuvoleWeb\Robo\Task\Config\Robo\loadTasks as ConfigLoader;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Robo\Common\ConfigAwareTrait;
+use Robo\Contract\ConfigAwareInterface;
 use Robo\Tasks;
 use Robo\Collection\CollectionBuilder;
 use Sweetchuck\LintReport\Reporter\BaseReporter;
 use Sweetchuck\Robo\Git\GitTaskLoader;
 use Sweetchuck\Robo\Phpcs\PhpcsTaskLoader;
 use Sweetchuck\Robo\PhpMessDetector\PhpmdTaskLoader;
+use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 use Webmozart\PathUtil\Path;
 
-class RoboFile extends Tasks {
+class RoboFile extends Tasks implements LoggerAwareInterface, ConfigAwareInterface {
 
+  use LoggerAwareTrait;
+  use ConfigAwareTrait;
+  use ConfigLoader;
   use GitTaskLoader;
   use PhpcsTaskLoader;
   use PhpmdTaskLoader;
@@ -73,6 +82,17 @@ class RoboFile extends Tasks {
   }
 
   /**
+   * @command config:export
+   */
+  public function configExport(
+    array $options = [
+      'format' => 'yaml',
+    ]
+  ) {
+    return CommandResult::data($this->getConfig()->export());
+  }
+
+  /**
    * Run code style checkers.
    *
    * @command lint
@@ -109,8 +129,8 @@ class RoboFile extends Tasks {
    *
    * @command test
    */
-  public function test(string $testsuite = ''): CollectionBuilder {
-    return $this->getTaskPhpunitRun($testsuite);
+  public function test(array $suiteNames): CollectionBuilder {
+    return $this->getTaskPhpunitRun($suiteNames);
   }
 
   /**
@@ -118,8 +138,8 @@ class RoboFile extends Tasks {
    *
    * @command test:phpunit
    */
-  public function testPhpunit(string $suite = 'all'): CollectionBuilder {
-    return $this->getTaskPhpunitRun($suite);
+  public function testPhpunit(array $suiteNames): CollectionBuilder {
+    return $this->getTaskPhpunitRun($suiteNames);
   }
 
   /**
@@ -136,7 +156,7 @@ class RoboFile extends Tasks {
       ->collectionBuilder()
       ->addTask($this->taskComposerValidate())
       ->addTask($this->getTaskPhpcsLint())
-      ->addTask($this->getTaskPhpunitRun('Unit'));
+      ->addTask($this->getTaskPhpunitRun(['Unit']));
   }
 
   /**
@@ -261,15 +281,46 @@ class RoboFile extends Tasks {
     return $this->taskPhpcsLintFiles($options);
   }
 
-  protected function getTaskPhpunitRun(string $suite = 'all'): CollectionBuilder {
+  protected function getTaskPhpunitRun(array $suiteNames = []): CollectionBuilder {
+    if (!$suiteNames) {
+      $suiteNames = ['all'];
+    }
+
+    $phpExecutables = array_filter(
+      $this->getConfig()->get('php.executables'),
+      new ArrayFilterEnabled(),
+    );
+
+    $cb = $this->collectionBuilder();
+    foreach ($suiteNames as $suiteName) {
+      foreach ($phpExecutables as $phpExecutable) {
+        $cb->addTask($this->getTaskPhpunitRunPhp($suiteName, $phpExecutable));
+      }
+    }
+
+    return $cb;
+  }
+
+  protected function getTaskPhpunitRunPhp(string $suite, array $php): CollectionBuilder {
     if ($suite === '') {
       $suite = 'all';
     }
 
+    $cmdPattern = '';
     $cmdArgs = [];
+    foreach ($php['envVars'] ?? [] as $envName => $envValue) {
+      $cmdPattern .= "{$envName}";
+      if ($envValue === NULL) {
+        $cmdPattern .= ' ';
+      }
+      else {
+        $cmdPattern .= '=%s ';
+        $cmdArgs[] = escapeshellarg($envValue);
+      }
+    }
 
-    $cmdPattern = '%s';
-    $cmdArgs[] = escapeshellcmd($this->getPhpExecutable());
+    $cmdPattern .= '%s';
+    $cmdArgs[] = $php['command'];
 
     $cmdPattern .= ' %s';
     $cmdArgs[] = escapeshellcmd("{$this->binDir}/phpunit");
@@ -327,12 +378,6 @@ class RoboFile extends Tasks {
 
   protected function getPhpdbgExecutable(): string {
     return getenv($this->getEnvVarName('phpdbg_executable')) ?: Path::join(PHP_BINDIR, 'phpdbg');
-  }
-
-  protected function isPhpDbgAvailable(): bool {
-    $command = [$this->getPhpdbgExecutable(), '-qrr'];
-
-    return (new Process($command))->run() === 0;
   }
 
   protected function errorOutput(): ?OutputInterface {

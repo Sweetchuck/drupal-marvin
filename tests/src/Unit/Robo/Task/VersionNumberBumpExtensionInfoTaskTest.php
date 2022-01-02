@@ -7,7 +7,6 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 use Drupal\marvin\Robo\Task\VersionNumberBumpExtensionInfoTask;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
-use Symfony\Component\ErrorHandler\BufferingLogger;
 use Webmozart\PathUtil\Path;
 
 /**
@@ -20,58 +19,6 @@ use Webmozart\PathUtil\Path;
 class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
 
   public function casesRunSuccess(): array {
-    $taskName = 'Marvin - Bump version number - extension info';
-
-    $logEntryHeader = [
-      'notice',
-      'Bump version number to "<info>{versionNumber}</info>" in "<info>{packagePath}</info>" directory.',
-      [
-        'versionNumber' => '8.x-1.1',
-        'packagePath' => NULL,
-        'name' => $taskName,
-      ],
-    ];
-
-    $logEntrySkipInfoYaml = [
-      'debug',
-      'Skip update version number to "<info>{versionNumber}</info>" in "<info>{pattern}</info>" files.',
-      [
-        'versionNumber' => '',
-        'pattern' => '',
-        'name' => $taskName,
-      ],
-    ];
-
-    $logEntryDoInfoYaml = [
-      'debug',
-      'Update version number to "<info>{versionNumber}</info>" in "<info>{file}</info>" file.',
-      [
-        'versionNumber' => '',
-        'file' => '',
-        'name' => $taskName,
-      ],
-    ];
-
-    $logEntrySkipComposerJson = [
-      'debug',
-      'Skip update version number to "<info>{versionNumber}</info>" in "<info>{file}</info>" file.',
-      [
-        'versionNumber' => '',
-        'file' => '',
-        'name' => $taskName,
-      ],
-    ];
-
-    $logEntryDoComposerJson = [
-      'debug',
-      'Update version number to "<info>{versionNumber}</info>" in "<info>{file}</info>" file.',
-      [
-        'versionNumber' => '',
-        'file' => '',
-        'name' => $taskName,
-      ],
-    ];
-
     $composerJsonBefore = implode(PHP_EOL, [
       '{',
       '    "name": "drupal/dummy_m1",',
@@ -108,21 +55,13 @@ class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
       'all' => [
         [
           'exitCode' => 0,
-          'logEntries' => [
-            array_replace_recursive($logEntryHeader, [2 => ['packagePath' => 'vfs://testRunSuccess.all']]),
-            array_replace_recursive($logEntryDoInfoYaml, [
-              2 => [
-                'versionNumber' => '8.x-1.1',
-                'file' => 'vfs://testRunSuccess.all/dummy_m1.info.yml',
-              ],
-            ]),
-            array_replace_recursive($logEntryDoComposerJson, [
-              2 => [
-                'versionNumber' => '1.1.0',
-                'file' => 'vfs://testRunSuccess.all/composer.json',
-              ],
-            ]),
-          ],
+          'stdOutput' => '',
+          'stdError' => implode("\n", [
+            ' [Marvin - Bump version number - extension info] Bump version number to "8.x-1.1" in "vfs://testRunSuccess.all" directory.',
+            ' [Marvin - Bump version number - extension info] Update version number to "8.x-1.1" in "vfs://testRunSuccess.all/dummy_m1.info.yml" file.',
+            ' [Marvin - Bump version number - extension info] Update version number to "1.1.0" in "vfs://testRunSuccess.all/composer.json" file.',
+            '',
+          ]),
           'files' => [
             'composer.json' => $composerJsonAfter,
             'dummy_m1.info.yml' => $infoYamlAfter,
@@ -139,21 +78,13 @@ class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
       'bumpExtensionInfo.false' => [
         [
           'exitCode' => 0,
-          'logEntries' => [
-            array_replace_recursive($logEntryHeader, [2 => ['packagePath' => 'vfs://testRunSuccess.bumpExtensionInfo.false']]),
-            array_replace_recursive($logEntrySkipInfoYaml, [
-              2 => [
-                'versionNumber' => '8.x-1.1',
-                'pattern' => 'vfs://testRunSuccess.bumpExtensionInfo.false/*.info.yml',
-              ],
-            ]),
-            array_replace_recursive($logEntryDoComposerJson, [
-              2 => [
-                'versionNumber' => '1.1.0',
-                'file' => 'vfs://testRunSuccess.bumpExtensionInfo.false/composer.json',
-              ],
-            ]),
-          ],
+          'stdOutput' => '',
+          'stdError' => implode("\n", [
+            ' [Marvin - Bump version number - extension info] Bump version number to "8.x-1.1" in "vfs://testRunSuccess.bumpExtensionInfo.false" directory.',
+            ' [Marvin - Bump version number - extension info] Skip update version number to "8.x-1.1" in "vfs://testRunSuccess.bumpExtensionInfo.false/*.info.yml" files.',
+            ' [Marvin - Bump version number - extension info] Update version number to "1.1.0" in "vfs://testRunSuccess.bumpExtensionInfo.false/composer.json" file.',
+            '',
+          ]),
           'files' => [
             'composer.json' => $composerJsonAfter,
             'dummy_m1.info.yml' => $infoYamlBefore,
@@ -171,25 +102,13 @@ class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
       'bumpComposerJson.false' => [
         [
           'exitCode' => 0,
-          'logEntries' => [
-            array_replace_recursive($logEntryHeader, [
-              2 => [
-                'packagePath' => 'vfs://testRunSuccess.bumpComposerJson.false',
-              ],
-            ]),
-            array_replace_recursive($logEntryDoInfoYaml, [
-              2 => [
-                'versionNumber' => '8.x-1.1',
-                'file' => 'vfs://testRunSuccess.bumpComposerJson.false/dummy_m1.info.yml',
-              ],
-            ]),
-            array_replace_recursive($logEntrySkipComposerJson, [
-              2 => [
-                'versionNumber' => '1.1.0',
-                'file' => 'vfs://testRunSuccess.bumpComposerJson.false/composer.json',
-              ],
-            ]),
-          ],
+          'stdOutput' => '',
+          'stdError' => implode("\n", [
+            ' [Marvin - Bump version number - extension info] Bump version number to "8.x-1.1" in "vfs://testRunSuccess.bumpComposerJson.false" directory.',
+            ' [Marvin - Bump version number - extension info] Update version number to "8.x-1.1" in "vfs://testRunSuccess.bumpComposerJson.false/dummy_m1.info.yml" file.',
+            ' [Marvin - Bump version number - extension info] Skip update version number to "1.1.0" in "vfs://testRunSuccess.bumpComposerJson.false/composer.json" file.',
+            '',
+          ]),
           'files' => [
             'composer.json' => $composerJsonBefore,
             'dummy_m1.info.yml' => $infoYamlAfter,
@@ -232,11 +151,22 @@ class VersionNumberBumpExtensionInfoTaskTest extends TaskTestBase {
 
     static::assertSame($expected['exitCode'], $result->getExitCode());
 
-    if (array_key_exists('logEntries', $expected)) {
-      /** @var \Symfony\Component\ErrorHandler\BufferingLogger $logger */
-      $logger = $task->logger();
-      static::assertInstanceOf(BufferingLogger::class, $logger);
-      static::assertRoboTaskLogEntries($expected['logEntries'], $logger->cleanLogs());
+    /** @var \Drupal\Tests\marvin\Helper\DummyOutput $stdOutput */
+    $stdOutput = $this->container->get('output');
+    if (array_key_exists('stdOutput', $expected)) {
+      static::assertSame(
+        $expected['stdOutput'],
+        $stdOutput->output,
+        'stdOutput',
+      );
+    }
+
+    if (array_key_exists('stdError', $expected)) {
+      static::assertSame(
+        $expected['stdError'],
+        $stdOutput->getErrorOutput()->output,
+        'stdError',
+      );
     }
 
     foreach ($expected['files'] as $fileName => $fileContent) {

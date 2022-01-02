@@ -23,20 +23,19 @@ class PhpunitCommands extends PhpunitCommandsBase {
     array $options = []
   ): CollectionBuilder {
     $marvinRootDir = MarvinUtils::marvinRootDir();
-    $phpunitExecutable = Path::makeRelative("$marvinRootDir/bin/phpunit", $workingDirectory);
+    $phpunitExecutable = Path::makeRelative("$marvinRootDir/vendor/bin/phpunit", $workingDirectory);
 
     $testSuiteNames = ['Unit'];
     $phpVariant = $this->createPhpVariantFromCurrent();
 
-    $task = $this
+    return $this
       ->getTaskPhpUnit($this->geDefaultPhpunitTaskOptions($phpVariant))
       ->setWorkingDirectory($workingDirectory)
+      ->setHideStdOutput(FALSE)
       ->setColors('never')
       ->setPhpunitExecutable($phpunitExecutable)
       ->setTestSuite($testSuiteNames)
       ->setArguments($args);
-
-    return $task;
   }
 
 }

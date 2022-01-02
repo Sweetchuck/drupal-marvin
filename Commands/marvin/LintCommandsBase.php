@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Drush\Commands\marvin;
 
-use League\Container\Container as LeagueContainer;
+use Drupal\marvin\Utils;
 use Sweetchuck\LintReport\Reporter\BaseReporter;
 use Sweetchuck\LintReport\ReporterInterface;
 use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
@@ -35,14 +35,16 @@ class LintCommandsBase extends CommandsBase {
   public function initLintReporters() {
     $lintServices = BaseReporter::getServices();
     $container = $this->getContainer();
-    foreach ($lintServices as $name => $class) {
-      if ($container->has($name)) {
-        continue;
-      }
-
-      if ($container instanceof LeagueContainer) {
-        $container->share($name, $class);
-      }
+    foreach ($lintServices as $id => $class) {
+      Utils::addDefinitionsToContainer(
+        [
+          $id => [
+            'shared' => FALSE,
+            'class' => $class,
+          ],
+        ],
+        $container,
+      );
     }
   }
 

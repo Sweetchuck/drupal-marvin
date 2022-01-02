@@ -16,22 +16,21 @@ class PhpunitCommandsTest extends UnishIntegrationTestCase {
 
   public function casesMarvinTestUnit(): array {
     $root = $this->getMarvinRootDir();
-    $phpBinDir = PHP_BINDIR;
 
     return [
       'basic good' => [
         [
           'exitCode' => 0,
-          'stdError' => implode(' ', [
-            '[PHPUnit - Run] runs',
-            "\"cd '$root/tests/fixtures/project_01'",
-            '&&',
-            "$phpBinDir/phpdbg -qrr",
-            "'../../../bin/phpunit'",
-            "--colors='never'",
-            "--testsuite='Unit'",
-            "'docroot/modules/custom/dummy_m1/tests/src/Unit/DummyM1GoodTest.php'\"",
-          ]),
+          'stdError' => [
+            "[PHPUnit - Run] runs",
+            "cd '$root/tests/fixtures/project_01'",
+            implode(' ', [
+              "php '../../../vendor/bin/phpunit'",
+              "--colors='never'",
+              "--testsuite='Unit'",
+              "'docroot/modules/custom/dummy_m1/tests/src/Unit/DummyM1GoodTest.php'\"",
+            ]),
+          ],
           'stdOutput' => '(1 test, 1 assertion)',
         ],
         [
@@ -41,18 +40,18 @@ class PhpunitCommandsTest extends UnishIntegrationTestCase {
       'basic bad' => [
         [
           'exitCode' => 1,
-          'stdError' => implode(' ', [
+          'stdError' => [
             '[PHPUnit - Run] runs',
-            "\"cd '$root/tests/fixtures/project_01'",
-            '&&',
-            "$phpBinDir/phpdbg -qrr",
-            "'../../../bin/phpunit'",
-            "--colors='never'",
-            "--testsuite='Unit'",
-            "'docroot/modules/custom/dummy_m1/tests/src/Unit/DummyM1BadTest.php'\"" . PHP_EOL,
-            '[Sweetchuck\Robo\PHPUnit\Task\RunTask]   ' . PHP_EOL,
-            '[Sweetchuck\Robo\PHPUnit\Task\RunTask]  Exit code 1',
-          ]),
+            "cd '$root/tests/fixtures/project_01'",
+            implode(' ', [
+              "php '../../../vendor/bin/phpunit'",
+              "--colors='never'",
+              "--testsuite='Unit'",
+              "'docroot/modules/custom/dummy_m1/tests/src/Unit/DummyM1BadTest.php'\"" . PHP_EOL,
+              '[Sweetchuck\Robo\PHPUnit\Task\RunTask]   ' . PHP_EOL,
+              '[Sweetchuck\Robo\PHPUnit\Task\RunTask]  Exit code 1',
+            ]),
+          ],
           'stdOutput' => 'Tests: 1, Assertions: 1, Failures: 1.',
         ],
         [
@@ -80,13 +79,15 @@ class PhpunitCommandsTest extends UnishIntegrationTestCase {
       $this->getCommonCommandLineOptions(),
       NULL,
       NULL,
-      $expected['exitCode']
+      $expected['exitCode'],
     );
 
     $actualStdError = $this->getErrorOutput();
     $actualStdOutput = $this->getOutput();
 
-    static::assertSame($expected['stdError'], $actualStdError, 'stdError');
+    foreach ($expected['stdError'] ?? [] as $index => $expectedStcError) {
+      static::assertStringContainsString($expectedStcError, $actualStdError, "stdError-$index");
+    }
     static::assertStringEndsWith($expected['stdOutput'], $actualStdOutput, 'stdOutput');
   }
 

@@ -17,7 +17,7 @@ class GitHookSubscriberCommands extends CommandsBase {
     return [
       'dummy_m1' => [
         'weight' => -200,
-        'task' => function () use ($input, $output) {
+        'task' => function () use ($output) {
           $output->write('GitHookSubscriberCommands::onEventMarvinGitHookPreCommit called');
         },
       ],

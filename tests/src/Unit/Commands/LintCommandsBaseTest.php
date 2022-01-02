@@ -149,7 +149,7 @@ class LintCommandsBaseTest extends CommandsTestBase {
   public function testParseLintReporterConfigs(): void {
     $container = new Container();
     $this->initContainerLintReporters($container);
-    $container->add('lintVerboseReporter', VerboseReporter::class);
+    $container->add('lintVerboseReporter', VerboseReporter::class, FALSE);
 
     $config = new Config($this->getDefaultConfigData());
 

@@ -22,6 +22,7 @@ class StatusReport implements StatusReportInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function count() {
     return count($this->entries);
   }
@@ -29,6 +30,7 @@ class StatusReport implements StatusReportInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function getIterator() {
     return new \ArrayIterator($this->entries);
   }
@@ -36,6 +38,7 @@ class StatusReport implements StatusReportInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function jsonSerialize() {
     $data = [];
     foreach ($this->entries as $entry) {
