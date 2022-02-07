@@ -7,11 +7,11 @@ namespace Drupal\marvin;
 use Consolidation\AnnotatedCommand\CommandError;
 use Consolidation\OutputFormatters\StructuredData\RowsOfFields;
 use Drupal\marvin\StatusReport\StatusReportInterface;
-use Icecave\SemVer\Version;
 use League\Container\Container as LeagueContainer;
 use Psr\Container\ContainerInterface;
 use Stringy\StaticStringy;
 use Stringy\Stringy;
+use Sweetchuck\Utils\VersionNumber;
 use Symfony\Component\Console\Helper\Table as ConsoleTable;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -406,10 +406,10 @@ class Utils {
   }
 
   public static function semverToDrupal(string $core, string $semver): string {
-    $version = Version::parse($semver);
-    $version->setPatch(99999);
+    $version = VersionNumber::createFromString($semver);
+    $version->patch = '99999';
 
-    return str_replace('.99999', '', "{$core}-{$version}");
+    return str_replace('.99999', '', "$core-$version");
   }
 
   public static function drupalToSemver(string $drupalVersion): string {
@@ -428,61 +428,9 @@ class Utils {
     return $semver;
   }
 
-  /**
-   * @todo Replace with sweetchuck/utils.
-   *
-   * @see \Sweetchuck\Utils\VersionNumber
-   */
-  public static function incrementSemVersion(string $semver, string $fragment): Version {
-    $version = Version::parse($semver);
-
-    switch ($fragment) {
-      case 'major':
-        $version->setMinor(0);
-      case 'minor':
-        $version->setPatch(0);
-      case 'patch':
-        $version->setPreReleaseVersion(NULL);
-      case 'pre-release':
-      case 'preReleaseVersion':
-        $version->setBuildMetaData(NULL);
-        break;
-
-      default:
-        throw new \UnexpectedValueException('@todo Not implemented yet', 1);
-    }
-
-    switch ($fragment) {
-      case 'major':
-        $version->setMajor($version->major() + 1);
-        break;
-
-      case 'minor':
-        $version->setMinor($version->minor() + 1);
-        break;
-
-      case 'patch':
-        // @todo Not recommended to increment the "patch" part.
-        $version->setPatch($version->patch() + 1);
-        break;
-
-      case 'pre-release':
-      case 'preReleaseVersion':
-        $preRelease = $version->preReleaseVersion();
-        if (!$preRelease) {
-          $version->setPatch($version->patch() + 1);
-          $version->setPreReleaseVersion('alpha1');
-
-          break;
-        }
-
-        $parts = static::parseSemVersionPreRelease($preRelease);
-        if ($parts) {
-          $version->setPreReleaseVersion(sprintf('%s%d', $parts['type'], $parts['number'] + 1));
-        }
-
-        break;
-    }
+  public static function incrementSemVersion(string $semver, string $fragment): VersionNumber {
+    $version = VersionNumber::createFromString($semver);
+    $version->bump($fragment);
 
     return $version;
   }

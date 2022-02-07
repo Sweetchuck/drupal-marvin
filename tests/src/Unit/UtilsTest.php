@@ -806,12 +806,14 @@ class UtilsTest extends TestCase {
    * @dataProvider casesIncrementSemVersion
    */
   public function testIncrementSemVersion(string $expected, string $semver, string $fragment): void {
-    static::assertSame($expected, (string) Utils::incrementSemVersion($semver, $fragment));
+    static::assertSame(
+      $expected,
+      (string) Utils::incrementSemVersion($semver, $fragment),
+    );
   }
 
   public function testIncrementSemVersionFail(): void {
-    static::expectException(\UnexpectedValueException::class);
-    static::expectExceptionCode(1);
+    static::expectException(\InvalidArgumentException::class);
     Utils::incrementSemVersion('1.2.3', 'not-exists');
   }
 
