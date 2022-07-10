@@ -51,7 +51,7 @@ class StatusReportCommandsTest extends UnishIntegrationTestCase {
           'exitCode' => RfcLogLevel::ERROR + 1,
           'stdOutput' => implode(PHP_EOL, [
             'Severity Title Value Description ',
-            ' Error    e1_ti e1_va e1_de',
+            'Error    e1_ti e1_va e1_de',
           ]),
         ],
         RfcLogLevel::ERROR,

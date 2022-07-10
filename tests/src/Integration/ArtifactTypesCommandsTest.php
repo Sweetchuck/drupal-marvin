@@ -39,8 +39,8 @@ class ArtifactTypesCommandsTest extends UnishIntegrationTestCase {
     $this->drush('marvin:artifact:types', [], $options);
 
     $expected = implode(PHP_EOL, [
-      ' ID    Label                   Description   ',
-      " dummy Dummy - integrationTest Do not use it ",
+      'ID    Label                   Description   ',
+      'dummy Dummy - integrationTest Do not use it ',
       '',
     ]);
 

@@ -337,7 +337,6 @@ $databases = [
   'default' => [
     'default' => [
       'driver' => 'sqlite',
-      'namespace' => '\Drupal\Core\Database\Driver\sqlite',
       'database' => __DIR__ . '/db.default.default.sqlite',
     ],
   ],
