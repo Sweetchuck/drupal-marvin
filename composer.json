@@ -69,8 +69,8 @@
         "behat/mink-goutte-driver": "^1.2",
         "cweagans/composer-patches": "^1.6",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
-        "drupal/core-composer-scaffold": "^9.2",
-        "drupal/core-recommended": "^9.2",
+        "drupal/core-composer-scaffold": "^9.4",
+        "drupal/core-recommended": "^9.4",
         "drush/drush": "^11.0",
         "mikey179/vfsstream": "^1.6",
         "nuvoleweb/robo-config": "^2.0",
@@ -116,7 +116,7 @@
         "composer-exit-on-patch-failure": true,
         "patches": {
             "drupal/core": {
-                "https://www.drupal.org/project/drupal/issues/3182103": "https://www.drupal.org/files/issues/2021-12-14/3182103-35-UpdateUploaderTestBase-left-out.patch"
+                "https://www.drupal.org/project/drupal/issues/3182103": "https://www.drupal.org/files/issues/2022-06-17/3182103-37-9.4.x.patch"
             },
             "danielstjules/stringy": {
                 "https://github.com/danielstjules/Stringy/issues/209 - PHP 8.1 compatibility": "https://patch-diff.githubusercontent.com/raw/danielstjules/Stringy/pull/211.patch"
