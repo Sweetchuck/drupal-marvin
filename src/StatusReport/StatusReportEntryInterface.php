@@ -8,39 +8,25 @@ interface StatusReportEntryInterface extends \JsonSerializable {
 
   public function getId(): string;
 
-  /**
-   * @return $this
-   */
-  public function setId(string $id);
+  public function setId(string $id): static;
 
   public function getTitle(): string;
 
-  /**
-   * @return $this
-   */
-  public function setTitle(string $title);
+  public function setTitle(string $title): static;
 
   public function getValue(): string;
 
-  /**
-   * @return $this
-   */
-  public function setValue(string $value);
+  public function setValue(string $value): static;
 
   public function getDescription(): string;
 
-  /**
-   * @return $this
-   */
-  public function setDescription(string $description);
+  public function setDescription(string $description): static;
 
   public function getSeverity(): int;
 
   /**
    * @see \Drupal\Core\Logger\RfcLogLevel::getLevels
-   *
-   * @return $this
    */
-  public function setSeverity(int $severity);
+  public function setSeverity(int $severity): static;
 
 }

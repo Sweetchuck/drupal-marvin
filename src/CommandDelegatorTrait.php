@@ -27,6 +27,7 @@ trait CommandDelegatorTrait {
   /**
    * @todo Find a better name for this method.
    * @todo Make this method universal.
+   * @todo Trigger a *.alter event.
    */
   protected function delegate(string $eventBaseName, ...$args): CollectionBuilder {
     $cb = $this->collectionBuilder();
@@ -70,18 +71,17 @@ trait CommandDelegatorTrait {
   }
 
   /**
-   * @return $this
-   *
    * @SuppressWarnings(UnusedFormalParameter)
    */
-  protected function delegatePrepareCollectionBuilder(CollectionBuilder $cb, string $eventBaseName, array $args) {
+  protected function delegatePrepareCollectionBuilder(
+    CollectionBuilder $cb,
+    string $eventBaseName,
+    array $args,
+  ): static {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function delegateAddTasks(CollectionBuilder $cb, array $taskDefinitions) {
+  protected function delegateAddTasks(CollectionBuilder $cb, array $taskDefinitions): static {
     $taskTypes = ['task', 'rollback', 'completion'];
     foreach ($taskDefinitions as $taskDefinition) {
       foreach ($taskTypes as $taskType) {
@@ -98,10 +98,8 @@ trait CommandDelegatorTrait {
    * @param \Robo\Collection\CollectionBuilder $cb
    * @param \Robo\Contract\TaskInterface|\Closure $task
    * @param string $taskType
-   *
-   * @return $this
    */
-  protected function delegateAddTask(CollectionBuilder $cb, $task, string $taskType) {
+  protected function delegateAddTask(CollectionBuilder $cb, $task, string $taskType): static {
     if ($taskType === 'rollback' || $taskType === 'completion') {
       $method = $task instanceof TaskInterface ? $taskType : "{$taskType}Code";
       $cb->$method($task);
@@ -120,16 +118,28 @@ trait CommandDelegatorTrait {
     return $this;
   }
 
-  protected function delegateLogTaskDefinitions(string $eventBaseName, iterable $taskDefinitions) {
+  protected function delegateLogTaskDefinitions(string $eventBaseName, array $taskDefinitions): static {
+    $logger = $this->getLogger();
+    $logArgs = [
+      'eventName' => $this->getCustomEventName($eventBaseName),
+    ];
+
+    if (!$taskDefinitions) {
+      $logger->notice(
+        'there are no tasks for event: {eventName}',
+        $logArgs,
+      );
+
+      return $this;
+    }
+
     $output = new BufferedOutput();
     $table = Utils::taskDefinitionsAsTable($taskDefinitions, $output);
     $table->render();
-    $this->getLogger()->debug(
+    $logArgs['taskDefinitionsTable'] = $output->fetch();
+    $this->getLogger()->notice(
       "tasks to run on event: {eventName}\n{taskDefinitionsTable}",
-      [
-        'eventName' => $this->getCustomEventName($eventBaseName),
-        'taskDefinitionsTable' => $output->fetch(),
-      ]
+      $logArgs,
     );
 
     return $this;

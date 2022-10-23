@@ -6,7 +6,7 @@ namespace Drupal\Tests\marvin\Unit\Robo\Task;
 
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use org\bovigo\vfs\vfsStream;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * @group marvin
@@ -40,7 +40,7 @@ class PrepareDirectoryTaskTest extends TaskTestBase {
           'stdOutput' => '',
           'stdError' => implode("\n", [
             ' [Marvin - Prepare directory] vfs://testRun.exists-empty/a',
-            ' [Marvin - Prepare directory] Delete all content from directory "vfs://testRun.exists-empty/a"',
+            ' [Marvin - Prepare directory] Remove all content from directory "vfs://testRun.exists-empty/a"',
             '',
           ]),
         ],
@@ -57,7 +57,7 @@ class PrepareDirectoryTaskTest extends TaskTestBase {
           'stdOutput' => '',
           'stdError' => implode("\n", [
             ' [Marvin - Prepare directory] vfs://testRun.exists-not-empty/a',
-            ' [Marvin - Prepare directory] Delete all content from directory "vfs://testRun.exists-not-empty/a"',
+            ' [Marvin - Prepare directory] Remove all content from directory "vfs://testRun.exists-not-empty/a"',
             '',
           ]),
         ],

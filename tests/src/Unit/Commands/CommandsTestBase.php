@@ -11,7 +11,7 @@ use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Sweetchuck\LintReport\Reporter\BaseReporter;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 class CommandsTestBase extends TestCase {
 

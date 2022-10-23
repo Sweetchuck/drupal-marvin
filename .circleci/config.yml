@@ -15,6 +15,7 @@ orbs:
   COMPOSER_MEMORY_LIMIT: '-1'
   COMPOSER_DISABLE_XDEBUG_WARN: '1'
   COMPOSER_CACHE_DIR: '/home/circleci/.cache/composer'
+  COMPOSER_IGNORE_PLATFORM_REQ: 'php'
 
 .env_node: &env_node
   NVM_DIR: '/home/circleci/.nvm'
@@ -40,7 +41,7 @@ executors:
     docker:
       -
         name: 'main'
-        image: 'circleci/php:7.4'
+        image: 'cimg/php:8.1'
 
   php_plus1:
     environment:
@@ -52,19 +53,7 @@ executors:
     docker:
       -
         name: 'main'
-        image: 'circleci/php:8.0'
-
-  php_plus2:
-    environment:
-      <<: *env_app
-      <<: *env_xdebug
-      <<: *env_composer
-      <<: *env_node
-      <<: *env_test
-    docker:
-      -
-        name: 'main'
-        image: 'cimg/php:8.1'
+        image: 'cimg/php:8.2'
 
 commands:
   install_php_extension_gd:
@@ -119,21 +108,6 @@ commands:
             echo 'extension=pcov' | sudo tee "${scanDir}/pcov.ini"
             php -m | grep pcov
 
-  install_php_phpdbg:
-    description: 'Install phpdbg'
-    steps:
-      -
-        run:
-          name: 'Install phpdbg'
-          command: |
-            if command -v phpdbg ; then
-                exit 0
-            fi
-
-            sudo apt-get update
-            sudo apt-get install -y "php$(php -r 'echo mb_substr(PHP_VERSION, 0, 3);')-phpdbg"
-            command -v phpdbg
-
   nvm_install:
     description: 'NVM install'
     steps:
@@ -169,6 +143,7 @@ commands:
         run:
           name: 'Composer - install'
           command: |
+            sudo composer self-update
             composer install --no-progress
       -
         save_cache:
@@ -231,42 +206,22 @@ commands:
 jobs:
   build:
     executor: 'php_min'
-    working_directory: '~/repo'
     steps:
       - 'checkout'
       - 'install_php_extension_gd'
       - 'composer_install'
   lint:
     executor: 'php_min'
-    working_directory: '~/repo'
     steps:
       - 'checkout'
       - 'install_php_extension_gd'
       - 'composer_install'
       - 'lint'
-  test_php_min:
-    executor: 'php_min'
-    working_directory: '~/repo'
-    steps:
-      - 'checkout'
-      - 'install_php_extension_gd'
-      - 'install_php_extension_pcov'
-      - 'nvm_install'
-      - 'composer_install'
-      - 'test'
-  test_php_plus1:
-    executor: 'php_plus1'
-    working_directory: '~/repo'
-    steps:
-      - 'checkout'
-      - 'install_php_extension_gd'
-      - 'install_php_extension_pcov'
-      - 'nvm_install'
-      - 'composer_install'
-      - 'test'
-  test_php_plus2:
-    executor: 'php_plus2'
-    working_directory: '~/repo'
+  test:
+    parameters:
+      executor:
+        type: 'string'
+    executor: '<<parameters.executor>>'
     steps:
       - 'checkout'
       - 'install_php_extension_gd'
@@ -285,14 +240,12 @@ workflows:
           requires:
             - 'build'
       -
-        test_php_min:
+        test:
+          name: 'test_<<matrix.executor>>'
           requires:
             - 'build'
-      -
-        test_php_plus1:
-          requires:
-            - 'build'
-      -
-        test_php_plus2:
-          requires:
-            - 'build'
+          matrix:
+            parameters:
+              executor:
+                - 'php_min'
+                - 'php_plus1'

@@ -4,14 +4,14 @@ declare(strict_types = 1);
 
 namespace Drupal\marvin;
 
+use Consolidation\Config\ConfigInterface;
+
 trait PhpVariantTrait {
 
   /**
-   * @return \Consolidation\Config\ConfigInterface
-   *
    * @see \Robo\Common\ConfigAwareTrait::getConfig
    */
-  abstract public function getConfig();
+  abstract public function getConfig(): ConfigInterface;
 
   protected function getConfigPhpVariants(): array {
     $phpVariants = [];
@@ -67,7 +67,7 @@ trait PhpVariantTrait {
     return $this->loadPhpVariant($phpVariant['id'], $phpVariant);
   }
 
-  protected function detectPhpVariantVersion($item): array {
+  protected function detectPhpVariantVersion(array $item): array {
     $parts = [
       'id' => (int) explode('-', $item['id'])[0],
       'major' => 0,
@@ -109,7 +109,11 @@ trait PhpVariantTrait {
   }
 
   protected function getPhpIdFromCurrentPhp(): string {
-    return PHP_VERSION_ID . '-' . (ZEND_THREAD_SAFE ? 'zts' : 'nts');
+    return sprintf(
+      '%06s-%s',
+      (string) PHP_VERSION_ID,
+      ZEND_THREAD_SAFE ? 'zts' : 'nts',
+    );
   }
 
 }

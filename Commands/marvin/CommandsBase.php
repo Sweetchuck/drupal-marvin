@@ -19,8 +19,8 @@ use Robo\Contract\ConfigAwareInterface;
 use Robo\Tasks;
 use Stringy\StaticStringy;
 use Sweetchuck\Robo\Composer\ComposerTaskLoader;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Process\Process;
-use Webmozart\PathUtil\Path;
 
 class CommandsBase extends Tasks implements
     ConfigAwareInterface,
@@ -122,7 +122,7 @@ class CommandsBase extends Tasks implements
 
   protected function getEnvironment(): string {
     return getenv('DRUSH_MARVIN_ENVIRONMENT') ?:
-      $this->getConfig()->get('marvin.environment', 'dev');
+      $this->getConfig()->get('marvin.environment', 'local');
   }
 
   /**

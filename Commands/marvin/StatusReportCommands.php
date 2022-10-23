@@ -18,7 +18,9 @@ class StatusReportCommands extends CommandsBase {
 
   /**
    * @command marvin:status-report
+   *
    * @bootstrap none
+   *
    * @default-string-field id
    * @default-fields severityName,title,value,description
    * @field-labels
@@ -29,7 +31,7 @@ class StatusReportCommands extends CommandsBase {
    *   severity: Severity ID
    *   severityName: Severity
    */
-  public function statusReport(
+  public function cmdStatusReportExecute(
     array $options = [
       'format' => 'yaml',
       'fields' => '',
@@ -37,7 +39,7 @@ class StatusReportCommands extends CommandsBase {
       'table-style' => 'compact',
     ]
   ): CommandResult {
-    $statusReport = (new StatusReport())->addEntries(...array_values($this->collectStatusReportEntries()));
+    $statusReport = (new StatusReport())->addEntries($this->collectStatusReportEntries());
 
     return CommandResult::dataWithExitCode($statusReport, $statusReport->getExitCode());
   }
@@ -45,19 +47,14 @@ class StatusReportCommands extends CommandsBase {
   /**
    * @hook alter marvin:status-report
    */
-  public function hookAlterMarvinStatusReport(CommandResult $result, CommandData $commandData) {
+  public function cmdStatusReportAlter(CommandResult $result, CommandData $commandData) {
     $statusReport = $result->getOutputData();
     if ($statusReport instanceof StatusReportInterface) {
       $expectedFormat = $commandData->input()->getOption('format');
-      switch ($expectedFormat) {
-        case 'table':
-          $statusReport = MarvinUtils::convertStatusReportToRowsOfFields($statusReport);
-          break;
-
-        default:
-          $statusReport = $statusReport->jsonSerialize();
-          break;
-      }
+      $statusReport = match ($expectedFormat) {
+        'table' => MarvinUtils::convertStatusReportToRowsOfFields($statusReport),
+        default => $statusReport->jsonSerialize(),
+      };
 
       $result->setOutputData($statusReport);
     }
@@ -67,7 +64,15 @@ class StatusReportCommands extends CommandsBase {
    * @return \Drupal\marvin\StatusReport\StatusReportEntryInterface[]
    */
   protected function collectStatusReportEntries(): array {
-    $customEventHandlers = $this->getCustomEventHandlers($this->getCustomEventName(''));
+    $eventName = $this->getCustomEventName('');
+    $this->getLogger()->debug(
+      'event trigger: {eventName}',
+      [
+        'eventName' => $eventName,
+      ],
+    );
+
+    $customEventHandlers = $this->getCustomEventHandlers($eventName);
     $entries = [];
     foreach ($customEventHandlers as $customEventHandler) {
       /** @var \Drupal\marvin\StatusReport\StatusReportEntryInterface[] $result */

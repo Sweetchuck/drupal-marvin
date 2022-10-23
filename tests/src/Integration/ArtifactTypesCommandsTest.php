@@ -16,6 +16,7 @@ class ArtifactTypesCommandsTest extends UnishIntegrationTestCase {
   public function testArtifactTypesJson() {
     $options = $this->getCommonCommandLineOptions();
     $options['format'] = 'json';
+
     $this->drush('marvin:artifact:types', [], $options);
 
     $expected = [

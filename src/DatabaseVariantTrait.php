@@ -4,14 +4,14 @@ declare(strict_types = 1);
 
 namespace Drupal\marvin;
 
+use Consolidation\Config\ConfigInterface;
+
 trait DatabaseVariantTrait {
 
   /**
-   * @return \Consolidation\Config\ConfigInterface
-   *
    * @see \Robo\Common\ConfigAwareTrait::getConfig
    */
-  abstract public function getConfig();
+  abstract public function getConfig(): ConfigInterface;
 
   protected function getConfigDatabaseVariants(): array {
     $databaseVariants = [];

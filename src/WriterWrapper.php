@@ -10,10 +10,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class WriterWrapper {
 
-  /**
-   * @var null|\Symfony\Component\Console\Output\OutputInterface
-   */
-  protected $destinationInstance = NULL;
+  protected ?OutputInterface $destinationInstance = NULL;
 
   /**
    * File handler.
@@ -36,20 +33,15 @@ class WriterWrapper {
 
   /**
    * @param null|string|\Symfony\Component\Console\Output\OutputInterface $destination
-   *
-   * @return $this
    */
-  public function setDestination($destination) {
+  public function setDestination($destination): static {
     $this->reset();
     $this->destination = $destination;
 
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $destinationMode = 'w';
+  protected string $destinationMode = 'w';
 
   public function getDestinationMode(): string {
     return $this->destinationMode;
@@ -65,7 +57,7 @@ class WriterWrapper {
   /**
    * @see \Symfony\Component\Console\Output\OutputInterface::write
    */
-  public function write($messages, $newLine = FALSE, $options = 0) {
+  public function write($messages, $newLine = FALSE, $options = 0): static {
     $this->init();
     // @todo Error if the not initialized.
     if ($this->destinationInstance) {
@@ -77,10 +69,8 @@ class WriterWrapper {
 
   /**
    * Close the destination resource if it was opened here.
-   *
-   * @return $this
    */
-  public function close() {
+  public function close(): static {
     if ($this->destinationResource) {
       fclose($this->destinationResource);
     }
@@ -90,10 +80,8 @@ class WriterWrapper {
 
   /**
    * Initialize the output destination instance.
-   *
-   * @return $this
    */
-  protected function init() {
+  protected function init(): static {
     if ($this->destinationInstance) {
       return $this;
     }
@@ -122,10 +110,7 @@ class WriterWrapper {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function reset() {
+  protected function reset(): static {
     $this->destinationInstance = NULL;
     $this->destinationResource = NULL;
 

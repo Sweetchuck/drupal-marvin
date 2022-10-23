@@ -16,7 +16,9 @@ class ArtifactTypesCommands extends ArtifactCommandsBase {
    * Lists all available artifact types.
    *
    * @command marvin:artifact:types
+   *
    * @bootstrap none
+   *
    * @default-string-field id
    * @default-fields id,label,description
    * @field-labels
@@ -24,8 +26,10 @@ class ArtifactTypesCommands extends ArtifactCommandsBase {
    *   label: Label
    *   description: Description
    *   weight: Weight
+   *
+   * @todo Change return type to CommandResult.
    */
-  public function artifactTypes(
+  public function cmdArtifactTypesExecute(
     array $options = [
       'format' => 'yaml',
       'fields' => '',
@@ -43,7 +47,7 @@ class ArtifactTypesCommands extends ArtifactCommandsBase {
   /**
    * @hook alter marvin:artifact:types
    */
-  public function hookAlterMarvinArtifactTypes($result, CommandData $commandData) {
+  public function cmdArtifactTypesAlter($result, CommandData $commandData) {
     $expectedFormat = $commandData->input()->getOption('format');
     if ($expectedFormat === 'table' && is_array($result)) {
       return $this->convertArtifactTypesToRowsOfFields($result);

@@ -21,10 +21,7 @@ class NodeDetectorTask extends BaseTask implements BuilderAwareInterface {
     return $this->rootDirectory;
   }
 
-  /**
-   * @return $this
-   */
-  public function setRootDirectory(string $rootDirectory) {
+  public function setRootDirectory(string $rootDirectory): static {
     $this->rootDirectory = $rootDirectory;
 
     return $this;
@@ -36,16 +33,13 @@ class NodeDetectorTask extends BaseTask implements BuilderAwareInterface {
     return $this->workingDirectory;
   }
 
-  /**
-   * @return $this
-   */
-  public function setWorkingDirectory(string $workingDirectory) {
+  public function setWorkingDirectory(string $workingDirectory): static {
     $this->workingDirectory = $workingDirectory;
 
     return $this;
   }
 
-  public function setOptions(array $options) {
+  public function setOptions(array $options): static {
     parent::setOptions($options);
 
     if (array_key_exists('rootDirectory', $options)) {
@@ -59,10 +53,7 @@ class NodeDetectorTask extends BaseTask implements BuilderAwareInterface {
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function initOptions() {
+  protected function initOptions(): static {
     parent::initOptions();
 
     $this->options['rootDirectory'] = [
@@ -78,7 +69,7 @@ class NodeDetectorTask extends BaseTask implements BuilderAwareInterface {
     return $this;
   }
 
-  protected function runAction() {
+  protected function runAction(): static {
     $workingDirectory = $this->options['workingDirectory']['value'];
     $rootDirectory = $this->options['rootDirectory']['value'];
 

@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\marvin\Unit;
 
-use Drupal\marvin\Utils as MarvinUtils;
 use Drupal\Tests\marvin\Helper\DummyOutput;
 use Drupal\Tests\marvin\Helper\TaskBuilder;
 use Drush\Config\DrushConfig;
@@ -54,7 +53,7 @@ class TaskTestBase extends TestCase {
     $output = new DummyOutput(DummyOutput::VERBOSITY_DEBUG, FALSE, NULL);
 
     $this->container->add('container', $this->container);
-    $this->container->add('marvin.utils', MarvinUtils::class);
+    $this->container->add('marvin.utils', Utils::class);
 
     Robo::configureContainer($this->container, $application, $this->config, $input, $output);
     Drush::setContainer($this->container);

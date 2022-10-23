@@ -27,10 +27,7 @@ class PrepareDirectoryTask extends BaseTask {
     return $this->workingDirectory;
   }
 
-  /**
-   * @return $this
-   */
-  public function setWorkingDirectory(string $value) {
+  public function setWorkingDirectory(string $value): static {
     $this->workingDirectory = $value;
 
     return $this;
@@ -40,7 +37,7 @@ class PrepareDirectoryTask extends BaseTask {
     $this->fs = $fs ?: new Filesystem();
   }
 
-  public function setOptions(array $options) {
+  public function setOptions(array $options): static {
     parent::setOptions($options);
 
     if (array_key_exists('workingDirectory', $options)) {
@@ -50,10 +47,7 @@ class PrepareDirectoryTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function runHeader() {
+  protected function runHeader(): static {
     $this->printTaskInfo(
       '{workingDirectory}',
       [
@@ -64,10 +58,7 @@ class PrepareDirectoryTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function runAction() {
+  protected function runAction():static {
     $dir = $this->getWorkingDirectory();
     $context = [
       'workingDirectory' => $dir,
@@ -80,7 +71,7 @@ class PrepareDirectoryTask extends BaseTask {
       return $this;
     }
 
-    $this->printTaskDebug('Delete all content from directory "{workingDirectory}"', $context);
+    $this->printTaskDebug('Remove all content from directory "{workingDirectory}"', $context);
     $this->fs->remove($this->getDirectDescendants($dir));
 
     return $this;

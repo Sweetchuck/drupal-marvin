@@ -63,16 +63,7 @@ marvin:
   ##
   gitExecutable: 'git'
 
-  # @todo Remove marvin.database.
-  database:
-    variant: {}
-      #my0506:
-      #  type: 'mysql'
-      #pg1002:
-      #  type: 'pgsql'
-
   php:
-
     ##
     # Key is a file name extension, value indicates that it is enabled or not.
     #
@@ -101,9 +92,8 @@ marvin:
     #
     # @var array
     ##
-    variant: {}
-      #70203-nts:
-
+    variant:
+      min:
         ##
         # Same as the key in the marvin.php.variant.
         #
@@ -111,65 +101,64 @@ marvin:
         #
         # @var string
         ##
-        #id: ''
+        id: 'min'
 
         ##
         # @todo
         #
         # @var bool
         ##
-        #enabled: true
+        enabled: true
 
         ##
         # @todo
         #
         # @var string
         ##
-        #binDir: '${env.home}/.phpbrew/php/70203/bin'
+        binDir: '${env.HOME}/slash/usr/share/pmkr-php-070433-nts/bin'
 
-        ##
-        # @todo
-        #
-        # @var string
-        ##
-        #phpExecutable: ''
+        command:
+          ##
+          # Keys are environment variable names.
+          #
+          # @var array
+          ##
+          envVar:
+            ##
+            # @var null|string
+            ##
+            PHPRC: ''
+            PHP_INI_SCAN_DIR: ''
+          ##
+          # @var string
+          ##
+          executable: >
+            ${marvin.php.variant.min.binDir}/php
+            -d 'extension=pcov'
 
-        ##
-        # @todo
-        #
-        # @var string
-        ##
-        #phpdbgExecutable: ''
+      plus1:
+        id: 'plus1'
+        enabled: true
+        binDir: '${env.home}/slash/usr/share/pmkr-php-080026-nts/bin'
+        command:
+          envVar:
+            PHPRC: ''
+            PHP_INI_SCAN_DIR: ''
+          executable: >
+            ${marvin.php.variant.plus1.binDir}/php
+            -d 'extension=pcov'
 
-        ##
-        # Path to php.ini file to use.
-        #
-        # @var string
-        ##
-        #phpIni: ''
-
-        ##
-        # ID of PHP variant which is the CLI counterpart of this PHP variant.
-        #
-        # Most of the time the HTTP server uses a PHP with different configuration
-        # than the PHP available in the terminal.
-        #
-        # @var null|string
-        ##
-        #cli: ~
-
-        ##
-        # @todo
-        #
-        # @var array
-        ##
-        #version:
-          #id: 70102
-          #major: 7
-          #minor: 1
-          #patch: 2
-          #majorMinor: 701
-          #full: 7.1.2
+      plus2:
+        id: 'plus2'
+        enabled: true
+        binDir: '${env.home}/slash/usr/share/pmkr-php-080113-nts/bin'
+        command:
+          envVar:
+            PHPRC: ''
+            PHP_INI_SCAN_DIR: ''
+          executable: >
+            ${marvin.php.variant.plus2.binDir}/php
+            -d 'extension=pcov'
 
   lint:
     ##

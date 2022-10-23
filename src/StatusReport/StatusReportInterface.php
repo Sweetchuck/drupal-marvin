@@ -15,21 +15,16 @@ interface StatusReportInterface extends
     ExitCodeInterface {
 
   /**
-   * @return $this
+   * @phpstan-param iterable<\Drupal\marvin\StatusReport\StatusReportEntryInterface> $entries
    */
-  public function addEntries(StatusReportEntryInterface ...$entries);
+  public function addEntries(iterable $entries): static;
 
   /**
-   * @param string|\Drupal\marvin\StatusReport\StatusReportEntryInterface ...
-   *
-   * @return $this
+   * @param string|\Drupal\marvin\StatusReport\StatusReportEntryInterface ...$entries
    */
-  public function removeEntries(...$entries);
+  public function removeEntries(...$entries): static;
 
-  /**
-   * @return $this
-   */
-  public function removeAllEntries();
+  public function removeAllEntries(): static;
 
   /**
    * @return int|null

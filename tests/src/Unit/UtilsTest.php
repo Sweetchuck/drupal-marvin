@@ -12,7 +12,7 @@ use Drupal\marvin\StatusReport\StatusReportEntry;
 use Drupal\marvin\Utils;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * @group marvin
@@ -448,7 +448,7 @@ class UtilsTest extends TestCase {
     $actualRowsOfFields = Utils::convertStatusReportToRowsOfFields($statusReport);
     static::assertSame($expected, $actualRowsOfFields->getArrayCopy());
 
-    $statusReport->addEntries(
+    $statusReport->addEntries([
       (new StatusReportEntry())
         ->setId('a')
         ->setSeverity(RfcLogLevel::ERROR)
@@ -460,8 +460,8 @@ class UtilsTest extends TestCase {
         ->setSeverity(RfcLogLevel::WARNING)
         ->setTitle('b-title')
         ->setDescription('b-description')
-        ->setValue('b-value')
-    );
+        ->setValue('b-value'),
+    ]);
     $expected = [
       'a' => [
         'id' => 'a',

@@ -11,3 +11,11 @@ insert_final_newline = true
 
 [composer*.{json,lock}]
 indent_size = 4
+
+[phpstan*.neon]
+indent_style = tab
+indent_size = 4
+
+[.phpstan/*.neon]
+indent_style = tab
+indent_size = 4

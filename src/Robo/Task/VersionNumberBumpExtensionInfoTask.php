@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\marvin\Robo\Task;
 
-use Drupal\marvin\Utils as MarvinUtils;
+use Drupal\marvin\Utils;
 use Stringy\StaticStringy;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -27,10 +27,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this->packagePath;
   }
 
-  /**
-   * @return $this
-   */
-  public function setPackagePath(string $value) {
+  public function setPackagePath(string $value): static {
     $this->packagePath = $value;
 
     return $this;
@@ -46,10 +43,8 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
    * Drupal version number.
    *
    * Example value: "8.x-1.2".
-   *
-   * @return $this
    */
-  public function setVersionNumber(string $value) {
+  public function setVersionNumber(string $value): static {
     $this->versionNumber = $value;
 
     return $this;
@@ -61,10 +56,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this->bumpExtensionInfo;
   }
 
-  /**
-   * @return $this
-   */
-  public function setBumpExtensionInfo(bool $value) {
+  public function setBumpExtensionInfo(bool $value): static {
     $this->bumpExtensionInfo = $value;
 
     return $this;
@@ -76,19 +68,13 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this->bumpComposerJson;
   }
 
-  /**
-   * @return $this
-   */
-  public function setBumpComposerJson(bool $value) {
+  public function setBumpComposerJson(bool $value): static {
     $this->bumpComposerJson = $value;
 
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setOptions(array $options) {
+  public function setOptions(array $options): static {
     parent::setOptions($options);
 
     if (array_key_exists('packagePath', $options)) {
@@ -110,10 +96,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function initOptions() {
+  protected function initOptions(): static {
     parent::initOptions();
     $this->options += [
       'packagePath' => [
@@ -143,10 +126,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     $this->fs = $fs ?: new Filesystem();
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function runHeader() {
+  protected function runHeader(): static {
     // @todo These placeholders are not working.
     $this->printTaskInfo(
       'Bump version number to "<info>{versionNumber}</info>" in "<info>{packagePath}</info>" directory.',
@@ -159,10 +139,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function runValidate() {
+  protected function runValidate(): static {
     parent::runValidate();
 
     return $this
@@ -170,10 +147,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
       ->runValidateVersionNumber();
   }
 
-  /**
-   * @return $this
-   */
-  protected function runValidatePackagePath() {
+  protected function runValidatePackagePath(): static {
     $packagePath = $this->options['packagePath']['value'];
     if (!$packagePath) {
       throw new \InvalidArgumentException(
@@ -192,10 +166,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function runValidateVersionNumber() {
+  protected function runValidateVersionNumber(): static {
     $versionNumber = $this->options['versionNumber']['value'];
     if (!$versionNumber) {
       throw new \InvalidArgumentException(
@@ -204,7 +175,7 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
       );
     }
 
-    if (!MarvinUtils::isValidDrupalExtensionVersionNumber($versionNumber)) {
+    if (!Utils::isValidDrupalExtensionVersionNumber($versionNumber)) {
       // @todo Give a hint what's the problem with given version number.
       throw new \InvalidArgumentException(
         sprintf('The version number "%s" is invalid.', $versionNumber),
@@ -215,19 +186,13 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function runAction() {
+  protected function runAction(): static {
     return $this
       ->runActionExtensionInfo()
       ->runActionComposerJson();
   }
 
-  /**
-   * @return $this
-   */
-  protected function runActionExtensionInfo() {
+  protected function runActionExtensionInfo(): static {
     $packagePath = $this->options['packagePath']['value'];
     $versionNumber = $this->options['versionNumber']['value'];
 
@@ -262,18 +227,15 @@ class VersionNumberBumpExtensionInfoTask extends BaseTask {
 
       $this->fs->dumpFile(
         $file->getPathname(),
-        MarvinUtils::changeVersionNumberInYaml($file->getContents(), $versionNumber)
+        Utils::changeVersionNumberInYaml($file->getContents(), $versionNumber)
       );
     }
 
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function runActionComposerJson() {
-    $versionNumber = MarvinUtils::drupalToSemver($this->options['versionNumber']['value']);
+  protected function runActionComposerJson(): static {
+    $versionNumber = Utils::drupalToSemver($this->options['versionNumber']['value']);
     $composerJsonFilePath = "{$this->options['packagePath']['value']}/composer.json";
 
     if (!$this->fs->exists($composerJsonFilePath)) {

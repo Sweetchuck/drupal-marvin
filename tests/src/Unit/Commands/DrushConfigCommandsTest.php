@@ -37,7 +37,7 @@ class DrushConfigCommandsTest extends TaskTestBase {
   /**
    * @dataProvider casesDrushConfig
    */
-  public function testDrushConfig(array $expected, array $configData, array $options) {
+  public function testDrushConfig(array $expected, array $configData, array $options): void {
     $this->config->addContext('foo', new Config($configData));
 
     $commands = new DrushConfigCommands();

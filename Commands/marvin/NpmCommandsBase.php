@@ -10,7 +10,7 @@ use Robo\Collection\Tasks as ForEachTaskLoader;
 use Sweetchuck\Robo\Git\GitTaskLoader;
 use Sweetchuck\Robo\Nvm\NvmTaskLoader;
 use Sweetchuck\Robo\Yarn\YarnTaskLoader;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 class NpmCommandsBase extends CommandsBase {
 

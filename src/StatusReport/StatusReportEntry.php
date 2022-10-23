@@ -13,7 +13,7 @@ class StatusReportEntry implements StatusReportEntryInterface {
    *
    * @return static
    */
-  public static function __set_state(array $properties) {
+  public static function __set_state(array $properties):static {
     $entry = new static();
     if (array_key_exists('id', $properties)) {
       $entry->setId($properties['id']);
@@ -38,22 +38,13 @@ class StatusReportEntry implements StatusReportEntryInterface {
     return $entry;
   }
 
-  /**
-   * @var string
-   */
-  protected $id = '';
+  protected string $id = '';
 
-  /**
-   * {@inheritdoc}
-   */
   public function getId(): string {
     return $this->id;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setId(string $id) {
+  public function setId(string $id): static {
     $this->id = $id;
 
     return $this;
@@ -64,26 +55,17 @@ class StatusReportEntry implements StatusReportEntryInterface {
    */
   protected $title = '';
 
-  /**
-   * {@inheritdoc}
-   */
   public function getTitle(): string {
     return $this->title;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setTitle(string $title) {
+  public function setTitle(string $title): static {
     $this->title = $title;
 
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $value = '';
+  protected string $value = '';
 
   /**
    * {@inheritdoc}
@@ -92,52 +74,31 @@ class StatusReportEntry implements StatusReportEntryInterface {
     return $this->value;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setValue(string $value) {
+  public function setValue(string $value): static {
     $this->value = $value;
 
     return $this;
   }
 
-  /**
-   * @var string
-   */
-  protected $description = '';
+  protected string $description = '';
 
-  /**
-   * {@inheritdoc}
-   */
   public function getDescription(): string {
     return $this->description;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setDescription(string $description) {
+  public function setDescription(string $description): static {
     $this->description = $description;
 
     return $this;
   }
 
-  /**
-   * @var int
-   */
-  protected $severity = 0;
+  protected int $severity = 0;
 
-  /**
-   * {@inheritdoc}
-   */
   public function getSeverity(): int {
     return $this->severity;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setSeverity(int $severity) {
+  public function setSeverity(int $severity): static {
     $this->severity = $severity;
 
     return $this;
@@ -146,8 +107,7 @@ class StatusReportEntry implements StatusReportEntryInterface {
   /**
    * {@inheritdoc}
    */
-  #[\ReturnTypeWillChange]
-  public function jsonSerialize() {
+  public function jsonSerialize(): array {
     $severityNames = RfcLogLevel::getLevels();
     $severity = $this->getSeverity();
 

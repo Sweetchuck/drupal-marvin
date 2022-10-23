@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace Drupal\marvin\Robo\Task;
 
 use Symfony\Component\Filesystem\Filesystem;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * @todo Move this task out into an individual package.
@@ -25,10 +25,7 @@ class CopyFilesTask extends BaseTask {
     return $this->srcDir;
   }
 
-  /**
-   * @return $this
-   */
-  public function setSrcDir(string $directory) {
+  public function setSrcDir(string $directory): static {
     $this->srcDir = $directory;
 
     return $this;
@@ -40,10 +37,7 @@ class CopyFilesTask extends BaseTask {
     return $this->dstDir;
   }
 
-  /**
-   * @return $this
-   */
-  public function setDstDir(string $directory) {
+  public function setDstDir(string $directory): static {
     $this->dstDir = $directory;
 
     return $this;
@@ -63,10 +57,8 @@ class CopyFilesTask extends BaseTask {
 
   /**
    * @param string[]|\Symfony\Component\Finder\Finder|\Symfony\Component\Finder\SplFileInfo[] $files
-   *
-   * @return $this
    */
-  public function setFiles($files) {
+  public function setFiles($files): static {
     $this->files = $files;
 
     return $this;
@@ -76,10 +68,7 @@ class CopyFilesTask extends BaseTask {
     $this->fs = $fs ?: new Filesystem();
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setOptions(array $options) {
+  public function setOptions(array $options): static {
     parent::setOptions($options);
 
     if (array_key_exists('srcDir', $options)) {
@@ -97,10 +86,7 @@ class CopyFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function runAction() {
+  protected function runAction(): static {
     foreach ($this->getFiles() as $file) {
       $this->runActionCopy($file);
     }
@@ -110,10 +96,8 @@ class CopyFilesTask extends BaseTask {
 
   /**
    * @param string|string[]|\Symfony\Component\Finder\Finder|\Symfony\Component\Finder\Finder[]|\Symfony\Component\Finder\SplFileInfo|\Symfony\Component\Finder\SplFileInfo[] $file
-   *
-   * @return $this
    */
-  protected function runActionCopy($file) {
+  protected function runActionCopy($file): static {
     if (is_iterable($file)) {
       foreach ($file as $splFileInfo) {
         $this->runActionCopy($splFileInfo);
@@ -129,10 +113,8 @@ class CopyFilesTask extends BaseTask {
 
   /**
    * @param string|\Symfony\Component\Finder\SplFileInfo $file
-   *
-   * @return $this
    */
-  protected function runActionCopySingle($file) {
+  protected function runActionCopySingle($file): static {
     $srcDir = $this->getSrcDir();
     $dstDir = $this->getDstDir();
     $isString = is_string($file);

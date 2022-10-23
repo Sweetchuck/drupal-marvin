@@ -61,7 +61,7 @@ class StatusReportTest extends TestCase {
     static::assertSame(NULL, $statusReport->getHighestSeverity());
     static::assertSame(0, $statusReport->count());
 
-    $statusReport->addEntries($entryA, $entryB, $entryC, $entryD);
+    $statusReport->addEntries([$entryA, $entryB, $entryC, $entryD]);
     /** @var \Drupal\marvin\StatusReport\StatusReportEntryInterface $entry */
     foreach ($statusReport as $entryId => $entry) {
       static::assertSame($expected[$entryId], $entry->jsonSerialize());

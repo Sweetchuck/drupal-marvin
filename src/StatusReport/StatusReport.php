@@ -12,34 +12,28 @@ class StatusReport implements StatusReportInterface {
   /**
    * @var \Drupal\marvin\StatusReport\StatusReportEntryInterface[]
    */
-  protected $entries = [];
+  protected array $entries = [];
 
-  /**
-   * @var int
-   */
-  protected $lowestSeverityAssError = RfcLogLevel::ERROR;
+  protected int $lowestSeverityAssError = RfcLogLevel::ERROR;
 
   /**
    * {@inheritdoc}
    */
-  #[\ReturnTypeWillChange]
-  public function count() {
+  public function count(): int {
     return count($this->entries);
   }
 
   /**
    * {@inheritdoc}
    */
-  #[\ReturnTypeWillChange]
-  public function getIterator() {
+  public function getIterator(): \Iterator {
     return new \ArrayIterator($this->entries);
   }
 
   /**
    * {@inheritdoc}
    */
-  #[\ReturnTypeWillChange]
-  public function jsonSerialize() {
+  public function jsonSerialize(): array {
     $data = [];
     foreach ($this->entries as $entry) {
       $data[$entry->getId()] = $entry->jsonSerialize();
@@ -48,16 +42,10 @@ class StatusReport implements StatusReportInterface {
     return $data;
   }
 
-  /**
-   * {@inheritdoc}
-   */
   public function getOutputData() {
     return $this->jsonSerialize();
   }
 
-  /**
-   * {@inheritdoc}
-   */
   public function getExitCode() {
     return Utils::getExitCodeBasedOnSeverity(
       $this->getHighestSeverity(),
@@ -65,10 +53,7 @@ class StatusReport implements StatusReportInterface {
     );
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function addEntries(StatusReportEntryInterface ...$entries) {
+  public function addEntries(iterable $entries): static {
     foreach ($entries as $entry) {
       $this->entries[$entry->getId()] = $entry;
     }
@@ -79,7 +64,7 @@ class StatusReport implements StatusReportInterface {
   /**
    * {@inheritdoc}
    */
-  public function removeEntries(...$entries) {
+  public function removeEntries(...$entries): static {
     foreach ($entries as $entry) {
       $entryId = $entry instanceof StatusReportEntryInterface ? $entry->getId() : $entry;
       unset($this->entries[$entryId]);
@@ -91,7 +76,7 @@ class StatusReport implements StatusReportInterface {
   /**
    * {@inheritdoc}
    */
-  public function removeAllEntries() {
+  public function removeAllEntries(): static {
     $this->entries = [];
 
     return $this;
@@ -120,10 +105,7 @@ class StatusReport implements StatusReportInterface {
     return $this->lowestSeverityAssError;
   }
 
-  /**
-   * @return $this
-   */
-  public function setLowestSeverityAssError(int $severity) {
+  public function setLowestSeverityAsError(int $severity): static {
     $this->lowestSeverityAssError = $severity;
 
     return $this;

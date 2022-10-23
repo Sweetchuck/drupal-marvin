@@ -39,10 +39,7 @@ abstract class BaseTask extends RoboBaseTask implements
     return $this->assetNamePrefix;
   }
 
-  /**
-   * @return $this
-   */
-  public function setAssetNamePrefix(string $value) {
+  public function setAssetNamePrefix(string $value): static {
     $this->assetNamePrefix = $value;
 
     return $this;
@@ -54,10 +51,7 @@ abstract class BaseTask extends RoboBaseTask implements
     return $this->visibleStdOutput;
   }
 
-  /**
-   * @return $this
-   */
-  public function setVisibleStdOutput(bool $visible) {
+  public function setVisibleStdOutput(bool $visible): static {
     $this->visibleStdOutput = $visible;
 
     return $this;
@@ -73,10 +67,7 @@ abstract class BaseTask extends RoboBaseTask implements
     return $this->taskName ?: TaskInfo::formatTaskName($this);
   }
 
-  /**
-   * @return $this
-   */
-  protected function initOptions() {
+  protected function initOptions(): static {
     $this->options = [
       'assetNamePrefix' => [
         'type' => 'other',
@@ -87,10 +78,7 @@ abstract class BaseTask extends RoboBaseTask implements
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  public function setOptions(array $options) {
+  public function setOptions(array $options): static {
     if (array_key_exists('assetNamePrefix', $options)) {
       $this->setAssetNamePrefix($options['assetNamePrefix']);
     }
@@ -111,40 +99,25 @@ abstract class BaseTask extends RoboBaseTask implements
       ->runReturn();
   }
 
-  /**
-   * @return $this
-   */
-  protected function runPrepare() {
+  protected function runPrepare(): static {
     $this->initOptions();
 
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function runHeader() {
+  protected function runHeader(): static {
     $this->printTaskInfo('');
 
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function runValidate() {
+  protected function runValidate(): static {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  abstract protected function runAction();
+  abstract protected function runAction(): static;
 
-  /**
-   * @return $this
-   */
-  protected function runProcessOutputs() {
+  protected function runProcessOutputs(): static {
     return $this;
   }
 

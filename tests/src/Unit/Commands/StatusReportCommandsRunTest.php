@@ -10,6 +10,7 @@ use Drupal\marvin\StatusReport\StatusReportEntry;
 use Drupal\marvin\StatusReport\StatusReportInterface;
 use Drupal\Tests\marvin\Unit\TaskTestBase;
 use Drush\Commands\marvin\StatusReportCommands;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 
 /**
  * @group marvin
@@ -68,11 +69,14 @@ class StatusReportCommandsRunTest extends TaskTestBase {
       );
     }
 
+    $logger = new BufferingLogger();
+
     $commands = new StatusReportCommands();
     $commands->setConfig($this->config);
+    $commands->setLogger($logger);
     $commands->setHookManager($hookManager);
 
-    $commandResult = $commands->statusReport($options);
+    $commandResult = $commands->cmdStatusReportExecute($options);
 
     /** @var \Drupal\marvin\StatusReport\StatusReportInterface $actualStatusReport */
     $actualStatusReport = $commandResult->getOutputData();

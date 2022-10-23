@@ -1,0 +1,16 @@
+parameters:
+	typeAliases:
+		marvin-php-variant-command: '''
+			array{
+				envVar: array<string, null|string>,
+				command: string,
+			}
+		'''
+		marvin-php-variant: '''
+			array{
+				id: string,
+				enabled: bool,
+				binDir: string,
+				command: marvin-php-variant-command,
+			}
+		'''

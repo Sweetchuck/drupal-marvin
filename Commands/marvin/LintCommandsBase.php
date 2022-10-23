@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace Drush\Commands\marvin;
 
-use Drupal\marvin\Utils;
-use Sweetchuck\LintReport\Reporter\BaseReporter;
 use Sweetchuck\LintReport\ReporterInterface;
 use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
 
@@ -27,25 +25,6 @@ class LintCommandsBase extends CommandsBase {
     // @todo Check if it exists.
     // @todo Choice the first one if there is no default.
     return 'default';
-  }
-
-  /**
-   * @hook pre-command @initLintReporters
-   */
-  public function initLintReporters() {
-    $lintServices = BaseReporter::getServices();
-    $container = $this->getContainer();
-    foreach ($lintServices as $id => $class) {
-      Utils::addDefinitionsToContainer(
-        [
-          $id => [
-            'shared' => FALSE,
-            'class' => $class,
-          ],
-        ],
-        $container,
-      );
-    }
   }
 
   /**

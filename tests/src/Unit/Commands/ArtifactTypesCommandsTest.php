@@ -108,7 +108,7 @@ class ArtifactTypesCommandsTest extends TaskTestBase {
     $commands->setConfig($this->config);
     $commands->setHookManager($hookManager);
 
-    $actual = $commands->artifactTypes($options);
+    $actual = $commands->cmdArtifactTypesExecute($options);
 
     static::assertSame($expected, $actual);
   }
@@ -119,10 +119,10 @@ class ArtifactTypesCommandsTest extends TaskTestBase {
     $cdEmpty = $this->createCommandData();
     $cdTable = $this->createCommandData(['format' => 'table']);
 
-    static::assertSame([], $commands->hookAlterMarvinArtifactTypes([], $cdEmpty));
-    static::assertSame(['a' => 'b'], $commands->hookAlterMarvinArtifactTypes(['a' => 'b'], $cdEmpty));
+    static::assertSame([], $commands->cmdArtifactTypesAlter([], $cdEmpty));
+    static::assertSame(['a' => 'b'], $commands->cmdArtifactTypesAlter(['a' => 'b'], $cdEmpty));
 
-    $actual = $commands->hookAlterMarvinArtifactTypes(['a' => 'b'], $cdTable);
+    $actual = $commands->cmdArtifactTypesAlter(['a' => 'b'], $cdTable);
     static::assertInstanceOf(RowsOfFields::class, $actual);
     static::assertSame(['a' => 'b'], $actual->getArrayCopy());
   }
