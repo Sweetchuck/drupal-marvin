@@ -18,10 +18,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this->composerJsonFileName;
   }
 
-  /**
-   * @return $this
-   */
-  public function setComposerJsonFileName(string $value) {
+  public function setComposerJsonFileName(string $value): static {
     $this->composerJsonFileName = $value;
 
     return $this;
@@ -33,10 +30,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this->packagePath;
   }
 
-  /**
-   * @return $this
-   */
-  public function setPackagePath(string $value) {
+  public function setPackagePath(string $value): static {
     $this->packagePath = $value;
 
     return $this;
@@ -48,19 +42,13 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this->artifactDir;
   }
 
-  /**
-   * @return $this
-   */
-  public function setArtifactDir(string $artifactDir) {
+  public function setArtifactDir(string $artifactDir): static {
     $this->artifactDir = $artifactDir;
 
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setOptions(array $options) {
+  public function setOptions(array $options): static {
     parent::setOptions($options);
 
     if (array_key_exists('composerJsonFileName', $options)) {
@@ -78,19 +66,13 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function runHeader() {
+  protected function runHeader(): static {
     $this->printTaskInfo($this->getPackagePath());
 
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function runAction() {
+  protected function runAction(): static {
     // @todo The configuration what to copy should come from outside instead of
     // the hard-coded file patterns.
     // @todo Add extra exclude dirs configuration.
@@ -243,10 +225,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderGit(Finder $finder) {
+  protected function configFinderGit(Finder $finder): static {
     $finder
       ->notPath('.git')
       ->notPath('.gtm')
@@ -255,10 +234,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderPhp(Finder $finder) {
+  protected function configFinderPhp(Finder $finder): static {
     $finder
       ->name('*.php')
       ->name('*.inc')
@@ -278,10 +254,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderCss(Finder $finder, bool $withImportable) {
+  protected function configFinderCss(Finder $finder, bool $withImportable): static {
     $finder
       ->name('*.css')
       ->notPath('.sass-cache')
@@ -301,10 +274,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderJavaScript(Finder $finder) {
+  protected function configFinderJavaScript(Finder $finder): static {
     $finder
       ->name('*.js')
       ->notPath('node_modules')
@@ -327,10 +297,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderTypeScript(Finder $finder) {
+  protected function configFinderTypeScript(Finder $finder): static {
     $finder
       ->name('*.td.ts')
       ->notPath('typings')
@@ -342,10 +309,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderImages(Finder $finder) {
+  protected function configFinderImages(Finder $finder): static {
     $finder
       ->name('*.png')
       ->name('*.jpeg')
@@ -357,10 +321,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderFont(Finder $finder) {
+  protected function configFinderFont(Finder $finder): static {
     $finder
       ->name('*.otf')
       ->name('*.woff')
@@ -370,10 +331,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderRuby(Finder $finder) {
+  protected function configFinderRuby(Finder $finder): static {
     $finder
       ->notPath('.bundle')
       ->notName('.ruby-version')
@@ -385,10 +343,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderDocker(Finder $finder) {
+  protected function configFinderDocker(Finder $finder): static {
     $finder
       ->notName('Dockerfile')
       ->notName('docker-compose.yml')
@@ -397,10 +352,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderCi(Finder $finder) {
+  protected function configFinderCi(Finder $finder): static {
     $finder
       ->notName('Jenkinsfile')
       ->notPath('.gitlab')
@@ -413,10 +365,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderOs(Finder $finder) {
+  protected function configFinderOs(Finder $finder): static {
     $finder
       ->notName('.directory')
       ->notName('.directory.lock.*.test')
@@ -426,10 +375,7 @@ class ArtifactCollectFilesTask extends BaseTask {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function configFinderIde(Finder $finder) {
+  protected function configFinderIde(Finder $finder): static {
     $finder
       ->notPath('.idea')
       ->notPath('.phpstorm.meta.php')

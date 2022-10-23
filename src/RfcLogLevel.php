@@ -70,10 +70,8 @@ class RfcLogLevel {
 
   /**
    * An array with the severity levels as keys and labels as values.
-   *
-   * @var array
    */
-  protected static $levels = [];
+  protected static array $levels = [];
 
   /**
    * Returns a list of severity levels, as defined in RFC 5424.

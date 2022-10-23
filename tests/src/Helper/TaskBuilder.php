@@ -9,9 +9,7 @@ use Consolidation\Config\ConfigAwareInterface;
 use Consolidation\Config\ConfigAwareTrait;
 use Drupal\marvin\Robo\ArtifactCollectFilesTaskLoader;
 use Drupal\marvin\Robo\CopyFilesTaskLoader;
-use Drupal\marvin\Robo\GitCommitMsgValidatorTaskLoader;
 use Drupal\marvin\Robo\NodeDetectorTaskLoader;
-use Drupal\marvin\Robo\PhpcsConfigFallbackTaskLoader;
 use Drupal\marvin\Robo\PickFirstFileTaskLoader;
 use Drupal\marvin\Robo\PrepareDirectoryTaskLoader;
 use Drupal\marvin\Robo\VersionNumberTaskLoader;
@@ -50,16 +48,8 @@ class TaskBuilder implements
     taskMarvinCopyFiles as public;
   }
 
-  use GitCommitMsgValidatorTaskLoader {
-    taskMarvinGitCommitMsgValidator as public;
-  }
-
   use NodeDetectorTaskLoader {
     taskMarvinNodeDetector as public;
-  }
-
-  use PhpcsConfigFallbackTaskLoader {
-    taskMarvinPhpcsConfigFallback as public;
   }
 
   use PickFirstFileTaskLoader {

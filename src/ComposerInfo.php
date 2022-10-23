@@ -7,7 +7,7 @@ namespace Drupal\marvin;
 use Stringy\StaticStringy;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * @property-read string $name
@@ -21,22 +21,13 @@ class ComposerInfo implements \ArrayAccess {
   /**
    * @var static[]
    */
-  protected static $instances = [];
+  protected static array $instances = [];
 
-  /**
-   * @var \Symfony\Component\Filesystem\Filesystem
-   */
-  protected $fs;
+  protected Filesystem $fs;
 
-  /**
-   * @var array
-   */
-  protected $json = [];
+  protected array $json = [];
 
-  /**
-   * @var string
-   */
-  protected $jsonFileName = '';
+  protected string $jsonFileName = '';
 
   public function getJsonFileName(): string {
     return $this->jsonFileName;
@@ -46,34 +37,19 @@ class ComposerInfo implements \ArrayAccess {
     return Path::getDirectory($this->getJsonFileName());
   }
 
-  /**
-   * @var int
-   */
-  protected $jsonChangedTime = 0;
+  protected int $jsonChangedTime = 0;
 
-  /**
-   * @var array
-   */
-  protected $lock = [];
+  protected array $lock = [];
 
-  /**
-   * @var string
-   */
-  protected $lockFileName = '';
+  protected string $lockFileName = '';
 
   public function getLockFileName(): string {
     return $this->lockFileName;
   }
 
-  /**
-   * @var int
-   */
-  protected $lockChangedTime = 0;
+  protected int $lockChangedTime = 0;
 
-  /**
-   * @var array
-   */
-  protected $jsonDefault = [
+  protected array $jsonDefault = [
     'type' => 'library',
     'config' => [
       'bin-dir' => 'vendor/bin',
@@ -81,10 +57,7 @@ class ComposerInfo implements \ArrayAccess {
     ],
   ];
 
-  /**
-   * @return $this
-   */
-  public static function create(string $baseDir = '', string $jsonFileName = '', ?Filesystem $fs = NULL) {
+  public static function create(string $baseDir = '', string $jsonFileName = '', ?Filesystem $fs = NULL): static {
     if (!$jsonFileName) {
       $jsonFileName = Utils::getComposerJsonFileName();
     }
@@ -107,10 +80,7 @@ class ComposerInfo implements \ArrayAccess {
     unset(static::$instances[$this->jsonFileName]);
   }
 
-  /**
-   * @return $this
-   */
-  protected function initLockFileName() {
+  protected function initLockFileName(): static {
     $jsonExtension = pathinfo($this->jsonFileName, PATHINFO_EXTENSION);
     $jsonExtensionLength = mb_strlen($jsonExtension);
     $this->lockFileName = mb_substr($this->jsonFileName, 0, $jsonExtensionLength * -1) . 'lock';
@@ -121,8 +91,7 @@ class ComposerInfo implements \ArrayAccess {
   /**
    * {@inheritdoc}
    */
-  #[\ReturnTypeWillChange]
-  public function offsetExists($offset) {
+  public function offsetExists($offset): bool {
     return array_key_exists($offset, $this->getJson());
   }
 
@@ -139,8 +108,7 @@ class ComposerInfo implements \ArrayAccess {
   /**
    * {@inheritdoc}
    */
-  #[\ReturnTypeWillChange]
-  public function offsetSet($offset, $value) {
+  public function offsetSet($offset, $value): void {
     $this->initJson();
     $this->json[$offset] = $value;
   }
@@ -148,8 +116,7 @@ class ComposerInfo implements \ArrayAccess {
   /**
    * {@inheritdoc}
    */
-  #[\ReturnTypeWillChange]
-  public function offsetUnset($offset) {
+  public function offsetUnset($offset): void {
     $this->initJson();
     unset($this->json[$offset]);
   }
@@ -186,7 +153,7 @@ class ComposerInfo implements \ArrayAccess {
     return NULL;
   }
 
-  protected function initJson() {
+  protected function initJson(): static {
     $this->checkJsonExists();
     $changedTime = filectime($this->jsonFileName);
     if ($changedTime > $this->jsonChangedTime) {
@@ -201,19 +168,13 @@ class ComposerInfo implements \ArrayAccess {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function initLock() {
+  protected function initLock(): static {
     return $this
       ->initLockReadFile()
       ->initLockChangeKeys();
   }
 
-  /**
-   * @return $this
-   */
-  protected function initLockReadFile() {
+  protected function initLockReadFile(): static {
     if (!$this->fs->exists($this->lockFileName)) {
       $this->lock = [];
 
@@ -229,10 +190,7 @@ class ComposerInfo implements \ArrayAccess {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  protected function initLockChangeKeys() {
+  protected function initLockChangeKeys(): static {
     foreach (['packages', 'packages-dev'] as $mainKey) {
       if (!isset($this->lock[$mainKey])) {
         continue;
@@ -247,10 +205,7 @@ class ComposerInfo implements \ArrayAccess {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  public function invalidate() {
+  public function invalidate(): static {
     $this->jsonChangedTime = 0;
     $this->lockChangedTime = 0;
 
@@ -301,10 +256,7 @@ class ComposerInfo implements \ArrayAccess {
     return $this['config']['vendor-dir'] . '/drupal';
   }
 
-  /**
-   * @return $this
-   */
-  protected function checkJsonExists() {
+  protected function checkJsonExists(): static {
     if (!$this->fs->exists($this->jsonFileName)) {
       throw new FileNotFoundException(NULL, 1, NULL, $this->jsonFileName);
     }

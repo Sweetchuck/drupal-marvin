@@ -17,7 +17,7 @@ use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 /**
  * @todo Make a service out of this class.
@@ -49,7 +49,21 @@ class Utils {
     'theme' => TRUE,
   ];
 
-  public static function addDefinitionsToContainer(iterable $definitions, ContainerInterface $container) {
+  public static function initLintReporters(array $lintServices, ContainerInterface $container): void {
+    foreach ($lintServices as $id => $class) {
+      Utils::addDefinitionsToContainer(
+        [
+          $id => [
+            'shared' => FALSE,
+            'class' => $class,
+          ],
+        ],
+        $container,
+      );
+    }
+  }
+
+  public static function addDefinitionsToContainer(iterable $definitions, ContainerInterface $container): void {
     foreach ($definitions as $alias => $definition) {
       if ($container->has($alias)) {
         continue;
@@ -66,7 +80,9 @@ class Utils {
       ];
 
       if ($container instanceof LeagueContainer) {
-        $container->add($alias, $definition['class'], $definition['shared']);
+        $container
+          ->add($alias, $definition['class'])
+          ->setShared($definition['shared']);
       }
     }
   }
@@ -119,6 +135,11 @@ class Utils {
     return getenv('COMPOSER') ?: 'composer.json';
   }
 
+  /**
+   * @deprecated
+   *
+   * @see \Sweetchuck\Utils\Filesystem::findFileUpward
+   */
   public static function findFileUpward(string $fileName, string $absoluteDirectory = ''): string {
     if (!$absoluteDirectory) {
       $absoluteDirectory = getcwd();
@@ -367,6 +388,23 @@ class Utils {
     return E_ALL;
   }
 
+  /**
+   * @phpstan-param marvin-php-variant $phpVariant
+   */
+  public static function phpVariantToCommand(array $phpVariant): string {
+    $command = '';
+    foreach ($phpVariant['command']['envVar'] ?? [] as $name => $value) {
+      if ($value === NULL) {
+        continue;
+      }
+
+      // @todo Security risk or flexible.
+      $command .= sprintf('%s=%s ', $name, $value);
+    }
+
+    return $command . $phpVariant['command']['executable'];
+  }
+
   public static function dbUrl(array $connection): string {
     if ($connection['driver'] === 'sqlite') {
       return 'sqlite://' . $connection['database'];
@@ -520,6 +558,36 @@ class Utils {
     }
 
     return '';
+  }
+
+  /**
+   * @phpstan-return iterable<\Symfony\Component\Finder\SplFileInfo>
+   */
+  public static function collectDrupalSiteDirs(string $drupalRoot): iterable {
+    return (new Finder())
+      ->in("$drupalRoot/sites")
+      ->depth(0)
+      ->directories()
+      ->filter(function (\SplFileInfo $siteDir): bool {
+        return file_exists($siteDir->getPathname() . '/settings.php');
+      });
+  }
+
+  public static function fileGetContents(string $fileName): string {
+    $content = file_get_contents($fileName);
+    if ($content === FALSE) {
+      throw new \Exception('@todo');
+    }
+
+    return $content;
+  }
+
+  public static function generateHashSalt(?int $length = NULL): string {
+    if ($length === NULL) {
+      $length = random_int(32, 64);
+    }
+
+    return bin2hex(random_bytes($length));
   }
 
 }

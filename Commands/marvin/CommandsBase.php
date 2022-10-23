@@ -19,8 +19,9 @@ use Robo\Contract\ConfigAwareInterface;
 use Robo\Tasks;
 use Stringy\StaticStringy;
 use Sweetchuck\Robo\Composer\ComposerTaskLoader;
+use Sweetchuck\Utils\Comparer\ArrayValueComparer;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Process\Process;
-use Webmozart\PathUtil\Path;
 
 class CommandsBase extends Tasks implements
     ConfigAwareInterface,
@@ -122,7 +123,7 @@ class CommandsBase extends Tasks implements
 
   protected function getEnvironment(): string {
     return getenv('DRUSH_MARVIN_ENVIRONMENT') ?:
-      $this->getConfig()->get('marvin.environment', 'dev');
+      $this->getConfig()->get('marvin.environment', 'local');
   }
 
   /**
@@ -172,6 +173,64 @@ class CommandsBase extends Tasks implements
       'stdOutput' => $process->getOutput(),
       'stdError' => $process->getErrorOutput(),
     ];
+  }
+
+  protected ?array $runtimeEnvironments = NULL;
+
+  protected function getRuntimeEnvironments(bool $reset = FALSE): array {
+    if ($reset) {
+      $this->runtimeEnvironments = NULL;
+    }
+
+    if ($this->runtimeEnvironments !== NULL) {
+      return $this->runtimeEnvironments;
+    }
+
+    $eventName = 'marvin:runtime-environment:list';
+    $this->getLogger()->debug(
+      'Collecting runtime environments "<info>{eventName}</info>"',
+      [
+        'eventName' => $eventName,
+      ],
+    );
+
+    $reservedIdentifiers = [
+      'local',
+    ];
+
+    $this->runtimeEnvironments = [];
+    /** @var callable[] $eventHandlers */
+    $eventHandlers = $this->getCustomEventHandlers($eventName);
+    foreach ($eventHandlers as $eventHandler) {
+      $items = $eventHandler();
+      foreach (array_keys($items) as $id) {
+        if (in_array($id, $reservedIdentifiers)) {
+          throw new \InvalidArgumentException(sprintf(
+            'runtime_environment identifier "%s" provided by "%s" is not allowed',
+            $id,
+            Utils::callableToString($eventHandler),
+          ));
+        }
+
+        $items[$id]['id'] = $id;
+        $items[$id] += [
+          'provider' => Utils::callableToString($eventHandler),
+          'weight' => 0,
+          'description' => '',
+        ];
+      }
+      $this->runtimeEnvironments += $items;
+    }
+
+    uasort(
+      $this->runtimeEnvironments,
+      new ArrayValueComparer([
+        'weight' => 0,
+        'id' => '',
+      ]),
+    );
+
+    return $this->runtimeEnvironments;
   }
 
 }

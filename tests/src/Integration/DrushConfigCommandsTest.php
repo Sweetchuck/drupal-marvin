@@ -31,8 +31,8 @@ class DrushConfigCommandsTest extends UnishIntegrationTestCase {
     $topLevelKeys = [
       'drush',
       'marvin',
-      'options',
       'env',
+      'options',
       'runtime',
     ];
 

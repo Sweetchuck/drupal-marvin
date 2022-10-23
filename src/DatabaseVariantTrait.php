@@ -7,8 +7,6 @@ namespace Drupal\marvin;
 trait DatabaseVariantTrait {
 
   /**
-   * @return \Consolidation\Config\ConfigInterface
-   *
    * @see \Robo\Common\ConfigAwareTrait::getConfig
    */
   abstract public function getConfig();

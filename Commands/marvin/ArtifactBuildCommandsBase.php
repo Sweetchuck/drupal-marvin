@@ -10,8 +10,8 @@ use Drupal\marvin\Utils as MarvinUtils;
 use Robo\Collection\CollectionBuilder;
 use Robo\State\Data as RoboStateData;
 use Sweetchuck\Robo\Git\GitTaskLoader;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\Finder;
-use Webmozart\PathUtil\Path;
 
 abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
 
@@ -109,7 +109,8 @@ abstract class ArtifactBuildCommandsBase extends ArtifactCommandsBase {
 
   protected function getInitialStateData(): array {
     return [
-      'coreVersion' => '8.x',
+      // @todo Auto detect core version.
+      'coreVersion' => '9.x',
       'artifactType' => $this->artifactType,
       'versionPartToBump' => $this->versionPartToBump,
       'composerInfo' => ComposerInfo::create($this->srcDir),

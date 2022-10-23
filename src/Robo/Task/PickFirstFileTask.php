@@ -9,7 +9,7 @@ use Robo\State\StateAwareInterface;
 use Robo\State\StateAwareTrait;
 use Sweetchuck\Utils\Filter\ArrayFilterEnabled;
 use Symfony\Component\Filesystem\Filesystem;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 class PickFirstFileTask extends BaseTask implements StateAwareInterface {
 
@@ -25,10 +25,7 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
     return $this->dirSuggestions;
   }
 
-  /**
-   * @return $this
-   */
-  public function setDirSuggestions(array $dirSuggestions) {
+  public function setDirSuggestions(array $dirSuggestions): static {
     $this->dirSuggestions = gettype(reset($dirSuggestions)) === 'boolean' ?
       $dirSuggestions
       : array_fill_keys($dirSuggestions, TRUE);
@@ -36,19 +33,13 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  public function addDirSuggestion(string $dir) {
+  public function addDirSuggestion(string $dir): static {
     $this->dirSuggestions[$dir] = TRUE;
 
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  public function removeDirSuggestion(string $dir) {
+  public function removeDirSuggestion(string $dir): static {
     unset($this->dirSuggestions[$dir]);
 
     return $this;
@@ -63,10 +54,7 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
     return $this->fileNameSuggestions;
   }
 
-  /**
-   * @return $this
-   */
-  public function setFileNameSuggestions(array $fileNameSuggestions) {
+  public function setFileNameSuggestions(array $fileNameSuggestions): static {
     $this->fileNameSuggestions = gettype(reset($fileNameSuggestions)) === 'boolean' ?
       $fileNameSuggestions
       : array_fill_keys($fileNameSuggestions, TRUE);
@@ -74,19 +62,13 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  public function addFileNameSuggestion(string $fileName) {
+  public function addFileNameSuggestion(string $fileName): static {
     $this->fileNameSuggestions[$fileName] = TRUE;
 
     return $this;
   }
 
-  /**
-   * @return $this
-   */
-  public function removeFileNameSuggestion(string $fileName) {
+  public function removeFileNameSuggestion(string $fileName): static {
     unset($this->fileNameSuggestions[$fileName]);
 
     return $this;
@@ -98,10 +80,7 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
     return $this->assetNameBase;
   }
 
-  /**
-   * @return $this
-   */
-  public function setAssetNameBase(string $assetNameBase) {
+  public function setAssetNameBase(string $assetNameBase): static {
     $this->assetNameBase = $assetNameBase;
 
     return $this;
@@ -111,10 +90,7 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
     $this->fs = $fs ?: new Filesystem();
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setOptions(array $options) {
+  public function setOptions(array $options): static {
     parent::setOptions($options);
 
     if (array_key_exists('dirSuggestions', $options)) {
@@ -132,10 +108,7 @@ class PickFirstFileTask extends BaseTask implements StateAwareInterface {
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function runAction() {
+  protected function runAction(): static {
     $state = $this->getState();
 
     $assetNamePrefix = $this->getAssetNamePrefix();

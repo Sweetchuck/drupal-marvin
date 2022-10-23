@@ -5,8 +5,8 @@ declare(strict_types = 1);
 namespace Drupal\marvin\Composer;
 
 use Composer\Script\Event;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Process\Process;
-use Webmozart\PathUtil\Path;
 
 class Scripts {
 
@@ -14,7 +14,6 @@ class Scripts {
    * @var string[]
    */
   protected static array $drushConfigDirs = [
-    'drush/contrib/marvin/Commands',
     'drush',
   ];
 
@@ -112,7 +111,7 @@ class Scripts {
     return static::$event->getComposer()->getConfig()->get('bin-dir');
   }
 
-  protected static function processCallback(string $type, string $buffer) {
+  protected static function processCallback(string $type, string $buffer): void {
     if ($type === Process::OUT) {
       static::$event->getIO()->write($buffer);
 

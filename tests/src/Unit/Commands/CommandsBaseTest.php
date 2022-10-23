@@ -22,7 +22,7 @@ class CommandsBaseTest extends CommandsTestBase {
   public static function casesGetEnvironment(): array {
     return [
       'basic' => [
-        'dev',
+        'local',
       ],
       'override' => [
         'prod',
@@ -59,7 +59,7 @@ class CommandsBaseTest extends CommandsTestBase {
   public static function casesGetEnvironmentVariants(): array {
     return [
       'basic' => [
-        ['dev', 'default'],
+        ['local', 'default'],
       ],
       'override' => [
         ['prod', 'default'],
@@ -68,10 +68,10 @@ class CommandsBaseTest extends CommandsTestBase {
         ],
       ],
       'override with gitHook' => [
-        ['devPreCommit', 'dev', 'default'],
+        ['localPreCommit', 'local', 'default'],
         [
           'marvin' => [
-            'environment' => 'dev',
+            'environment' => 'local',
             'gitHookName' => 'pre-commit',
           ],
         ],
