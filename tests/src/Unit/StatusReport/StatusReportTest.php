@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @group marvin
  *
- * @covers \Drupal\marvin\StatusReport\StatusReport<extended>
+ * @covers \Drupal\marvin\StatusReport\StatusReport
  */
 class StatusReportTest extends TestCase {
 

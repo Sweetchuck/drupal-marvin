@@ -10,6 +10,8 @@ trait PickFirstFileTaskLoader {
 
   /**
    * @return \Robo\Collection\CollectionBuilder|\Drupal\marvin\Robo\Task\PickFirstFileTask
+   *
+   * @phpstan-param marvin-robo-task-pick-first-file-options $options
    */
   protected function taskMarvinPickFirstFile(array $options = []) {
     /** @var \Drupal\marvin\Robo\Task\PickFirstFileTask $task */

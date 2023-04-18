@@ -10,6 +10,8 @@ trait PrepareDirectoryTaskLoader {
 
   /**
    * @return \Robo\Collection\CollectionBuilder|\Drupal\marvin\Robo\Task\PrepareDirectoryTask
+   *
+   * @phpstan-param marvin-robo-task-perpare-directory-options $options
    */
   protected function taskMarvinPrepareDirectory(array $options = []) {
     /** @var \Drupal\marvin\Robo\Task\PrepareDirectoryTask $task */

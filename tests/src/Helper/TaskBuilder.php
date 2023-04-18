@@ -26,12 +26,12 @@ use Robo\State\StateAwareTrait;
 use Robo\TaskAccessor;
 
 class TaskBuilder implements
-    BuilderAwareInterface,
-    ConfigAwareInterface,
-    ContainerAwareInterface,
-    LoggerAwareInterface,
-    OutputAwareInterface,
-    StateAwareInterface {
+  BuilderAwareInterface,
+  ConfigAwareInterface,
+  ContainerAwareInterface,
+  LoggerAwareInterface,
+  OutputAwareInterface,
+  StateAwareInterface {
 
   use TaskAccessor;
   use ConfigAwareTrait;
@@ -69,6 +69,7 @@ class TaskBuilder implements
   }
 
   public function collectionBuilder(): CollectionBuilder {
+    /** @phpstan-ignore-next-line */
     return CollectionBuilder::create($this->getContainer(), NULL);
   }
 

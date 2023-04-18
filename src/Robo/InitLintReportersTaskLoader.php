@@ -10,6 +10,8 @@ trait InitLintReportersTaskLoader {
 
   /**
    * @return \Robo\Collection\CollectionBuilder|\Drupal\marvin\Robo\Task\InitLintReportersTask
+   *
+   * @phpstan-param marvin-robo-task-base-options $options
    */
   protected function taskMarvinInitLintReporters(array $options = []) {
     /** @var \Drupal\marvin\Robo\Task\InitLintReportersTask $task */

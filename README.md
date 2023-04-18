@@ -13,6 +13,15 @@ The task is to automatically update `./drush/drush.yml#drush.paths.config`
 and `./drush/drush.yml/drush.paths.include` entries after `composer update`.
 
 
+### Custom exported config checker
+
+Error when any of the config refers to a `default` view_mode of an entity. \
+The main point here is to always use one of the „dedicated” view_mode. \
+
+* entity_reference field formatters
+* Text format / CKEditor / Embed media config
+
+
 ### Miscellaneous
 
 * https://packagist.org/packages/dealerdirect/phpcodesniffer-composer-installer

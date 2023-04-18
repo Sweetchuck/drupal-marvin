@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @group marvin
  *
- * @covers \Drupal\marvin\StatusReport\StatusReportEntry<extended>
+ * @covers \Drupal\marvin\StatusReport\StatusReportEntry
  */
 class StatusReportEntryTest extends TestCase {
 

@@ -11,7 +11,8 @@ use Robo\Config\Config;
  * @group marvin
  * @group drush-command
  *
- * @covers \Drush\Commands\marvin\StatusReportCommands<extended>
+ * @covers \Drush\Commands\marvin\StatusReportCommands
+ * @covers \Drush\Commands\marvin\CommandsBase
  */
 class StatusReportCommandsTest extends CommandsTestBase {
 

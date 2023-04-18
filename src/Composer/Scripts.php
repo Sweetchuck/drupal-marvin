@@ -49,7 +49,7 @@ class Scripts {
   protected static function forwardComposerHookToDrushCommand(string $hook): bool {
     $composerConfig = static::$event->getComposer()->getConfig();
     $binDirAbs = $composerConfig->get('bin-dir');
-    $binDir = Path::makeRelative($binDirAbs, getcwd());
+    $binDir = Path::makeRelative($binDirAbs, (string) getcwd());
     $cmd = [
       escapeshellcmd("$binDir/drush"),
     ];

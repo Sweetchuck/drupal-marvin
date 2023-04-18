@@ -11,6 +11,8 @@ trait NodeDetectorTaskLoader {
 
   /**
    * @return \Robo\Collection\CollectionBuilder|\Drupal\marvin\Robo\Task\NodeDetectorTask
+   *
+   * @phpstan-param marvin-robo-task-node-detector-options $options
    */
   protected function taskMarvinNodeDetector(array $options = []) {
     /** @var \Drupal\marvin\Robo\Task\NodeDetectorTask $task */

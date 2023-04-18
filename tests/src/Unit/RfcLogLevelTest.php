@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @group marvin
  *
- * @covers \Drupal\marvin\RfcLogLevel<extended>
+ * @covers \Drupal\marvin\RfcLogLevel
  */
 class RfcLogLevelTest extends TestCase {
 
