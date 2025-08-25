@@ -179,6 +179,7 @@ class ArtifactCollectFilesTask extends BaseTask {
               "$docroot/.htaccess",
               "$docroot/favicon.ico",
               "$docroot/robots.txt",
+              "$outerSitesDir/all/assets/robots-additions.txt",
             ],
             (new FileSystemExistsFilter())->setBaseDir($packagePath),
           ),

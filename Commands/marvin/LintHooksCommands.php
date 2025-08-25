@@ -5,25 +5,33 @@ declare(strict_types=1);
 namespace Drush\Commands\marvin;
 
 use Consolidation\AnnotatedCommand\Hooks\HookManager;
-use Drupal\marvin\Utils;
-use Drush\Attributes as CLI;
+use Drupal\marvin\Attributes\PreCommandInitLintReporters as PreCommandMarvinInitLintReporters;
+use Drush\Attributes\Hook as CliHook;
+use League\Container\Container as LeagueContainer;
 use Sweetchuck\LintReport\Reporter\BaseReporter;
 
 class LintHooksCommands extends CommandsBase {
 
-  public const TAG_PRE_COMMAND_MARVIN_INIT_LINT_REPORTERS = 'pre-command-marvin-init-lint-reporters';
-
-  #[CLI\Hook(
+  #[CliHook(
     type: HookManager::PRE_COMMAND_HOOK,
-    selector: self::TAG_PRE_COMMAND_MARVIN_INIT_LINT_REPORTERS,
+    selector: PreCommandMarvinInitLintReporters::SELECTOR,
   )]
-  public function onHookPreCommandMarvinInitLintReporters(): void {
-    $this->getLogger()->debug('triggered hook: pre-command @marvinInitLintReporters');
+  public function onHookPreCommandInitLintReporters(): void {
+    $lintServices = BaseReporter::getServices();
+    $container = $this->getContainer();
+    if (!($container instanceof LeagueContainer)) {
+      return;
+    }
 
-    Utils::initLintReporters(
-      BaseReporter::getServices(),
-      $this->getContainer(),
-    );
+    foreach ($lintServices as $name => $class) {
+      if ($container->has($name)) {
+        continue;
+      }
+
+      $container
+        ->add($name, $class)
+        ->setShared(FALSE);
+    }
   }
 
 }

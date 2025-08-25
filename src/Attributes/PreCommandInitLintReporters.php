@@ -5,28 +5,29 @@ declare(strict_types=1);
 namespace Drupal\marvin\Attributes;
 
 use Consolidation\AnnotatedCommand\Parser\CommandInfo;
-use Drush\Commands\marvin\LintHooksCommands;
 
 /**
  * Drush command annotator.
  *
  * ```php
- * use Drupal\marvin\Attributes as MarvinCLI;
+ * use Drupal\marvin\Attributes\PreCommandInitLintReporters as PreCommandMarvinInitLintReporters;
  *
- * #[MarvinCLI\PreCommandInitLintReporters()]
+ * #[MarvinCli\PreCommandInitLintReporters()]
  * ```
  */
 #[\Attribute(\Attribute::TARGET_METHOD)]
 class PreCommandInitLintReporters {
 
+  public const string SELECTOR = 'pre-command-marvin-init-lint-reporters';
+
   /**
    * @phpstan-param \ReflectionAttribute<\Robo\Tasks> $attribute
    */
-  public static function handle(\ReflectionAttribute $attribute, CommandInfo $commandInfo): void {
-    $commandInfo->addAnnotation(
-      LintHooksCommands::TAG_PRE_COMMAND_MARVIN_INIT_LINT_REPORTERS,
-      [],
-    );
+  public static function handle(
+    \ReflectionAttribute $attribute,
+    CommandInfo $commandInfo,
+  ): void {
+    $commandInfo->addAnnotation(static::SELECTOR, []);
   }
 
 }

@@ -64,7 +64,7 @@ class CopyFilesTask extends BaseTask {
     return $this;
   }
 
-  public function __construct(Filesystem $fs = NULL) {
+  public function __construct(?Filesystem $fs = NULL) {
     $this->fs = $fs ?: new Filesystem();
   }
 
