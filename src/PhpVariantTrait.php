@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\marvin;
 
+/**
+ * @deprecated
+ */
 trait PhpVariantTrait {
 
   /**
@@ -14,7 +17,7 @@ trait PhpVariantTrait {
   protected function getConfigPhpVariants(): array {
     $phpVariants = [];
 
-    $items = (array) $this->getConfig()->get('marvin.php.variant', []);
+    $items = (array) $this->getConfig()->get('marvin.php.variants', []);
     foreach ($items as $id => $item) {
       $phpVariants[$id] = $this->loadPhpVariant($id, $item);
     }

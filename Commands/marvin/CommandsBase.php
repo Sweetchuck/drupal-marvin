@@ -22,6 +22,9 @@ use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Process\Process;
 use Symfony\Component\String\UnicodeString;
 
+/**
+ * @deprecated
+ */
 class CommandsBase extends Tasks implements
   ConfigAwareInterface,
   CustomEventAwareInterface,
@@ -107,8 +110,12 @@ class CommandsBase extends Tasks implements
   }
 
   /**
+   * @deprecated
+   *
    * @todo This is not bullet proof, but good enough.
    * @todo Cache.
+   *
+   * @see \Drupal\marvin\Utils::getProjectRootDir
    */
   protected function getProjectRootDir(): string {
     // This method called from the __constructor() and the $this->config is not

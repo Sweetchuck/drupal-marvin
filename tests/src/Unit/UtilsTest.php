@@ -5,35 +5,29 @@ declare(strict_types=1);
 namespace Drupal\Tests\marvin\Unit;
 
 use Consolidation\AnnotatedCommand\CommandError;
-use Drupal\marvin\ComposerInfo;
 use Drupal\marvin\RfcLogLevel;
-use Drupal\marvin\StatusReport\StatusReport;
-use Drupal\marvin\StatusReport\StatusReportEntry;
 use Drupal\marvin\Utils;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Sweetchuck\Utils\FileSystemUtils;
 use Symfony\Component\Filesystem\Path;
 
-/**
- * @group marvin
- *
- * @covers \Drupal\marvin\Utils
- */
+#[Group('marvin')]
+#[CoversClass(Utils::class)]
 class UtilsTest extends TestCase {
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function tearDown(): void {
-    parent::tearDown();
-
-    putenv('COMPOSER');
+  protected function createInstance(): Utils {
+    return new Utils(new FileSystemUtils());
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesIsDrupalPackage(): array {
+  public static function casesIsDrupalPackage(): array {
     return [
       'module' => [TRUE, ['type' => 'drupal-module']],
       'theme' => [TRUE, ['type' => 'drupal-theme']],
@@ -45,148 +39,69 @@ class UtilsTest extends TestCase {
   }
 
   /**
-   * @dataProvider casesIsDrupalPackage
-   *
    * @phpstan-param marvin-composer-info $package
    */
+  #[Test]
+  #[DataProvider('casesIsDrupalPackage')]
   public function testIsDrupalPackage(bool $expected, array $package): void {
-    static::assertSame($expected, Utils::isDrupalPackage($package));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->isDrupalPackage($package),
+    );
   }
 
-  /**
-   * @backupGlobals
-   */
+  #[Test]
   public function testGetComposerJsonFileName(): void {
-    static::assertSame('composer.json', Utils::getComposerJsonFileName());
+    $this->setBackupStaticProperties(TRUE);
 
-    putenv('COMPOSER=foo.json');
-    static::assertSame('foo.json', Utils::getComposerJsonFileName());
+    $utils = $this->createInstance();
+
+    unset(
+      $_SERVER['COMPOSER'],
+      $_ENV['COMPOSER'],
+    );
+    putenv('COMPOSER');
+    static::assertSame('composer.json', $utils->getComposerJsonFileName());
+
+    putenv('COMPOSER=composer.json');
+    static::assertSame('composer.json', $utils->getComposerJsonFileName());
+
+    putenv('COMPOSER=composer.foo.json');
+    static::assertSame('composer.foo.json', $utils->getComposerJsonFileName());
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesIsValidDrupalExtensionVersionNumber(): array {
-    return [
-      '8.x-1.0' => [TRUE, '8.x-1.0'],
-    ];
-  }
-
-  /**
-   * @dataProvider casesIsValidDrupalExtensionVersionNumber
-   */
-  public function testIsValidDrupalExtensionVersionNumber(bool $expected, string $versionNumber): void {
-    static::assertSame($expected, Utils::isValidDrupalExtensionVersionNumber($versionNumber));
-  }
-
-  /**
-   * @phpstan-return array<string, mixed>
-   */
-  public function casesDrupalPhpExtensionPatterns(): array {
+  public static function casesDrupalPhpExtensionPatterns(): array {
     return [
       'basic' => [
         [
           '*.engine',
           '*.install',
           '*.module',
-          '*.php',
           '*.profile',
           '*.theme',
+          '*.php',
+          '*.inc',
         ],
       ],
     ];
   }
 
-  /**
-   * @dataProvider casesDrupalPhpExtensionPatterns
-   */
+  #[Test]
+  #[DataProvider('casesDrupalPhpExtensionPatterns')]
   public function testDrupalPhpExtensionPatterns(mixed $expected): void {
-    static::assertSame($expected, Utils::drupalPhpExtensionPatterns());
+    static::assertSame(
+      $expected,
+      $this->createInstance()->drupalPhpExtensionPatterns(),
+    );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesFindFileUpward(): array {
-    return [
-      'not-exists' => [
-        '',
-        'a.txt',
-        'foo',
-        [
-          'foo' => [],
-        ],
-      ],
-      '0-0' => [
-        'vfs://testFindFileUpward',
-        'a.txt',
-        '.',
-        [
-          'a.txt' => 'okay',
-        ],
-      ],
-      '1-0' => [
-        'vfs://testFindFileUpward',
-        'a.txt',
-        'foo',
-        [
-          'a.txt' => 'okay',
-          'foo' => [],
-        ],
-      ],
-      '2-0' => [
-        'vfs://testFindFileUpward',
-        'a.txt',
-        'foo/bar',
-        [
-          'a.txt' => 'okay',
-          'foo' => [
-            'bar' => [],
-          ],
-        ],
-      ],
-      '2-1' => [
-        'vfs://testFindFileUpward/foo',
-        'a.txt',
-        'foo/bar',
-        [
-          'foo' => [
-            'bar' => [],
-            'a.txt' => 'okay',
-          ],
-        ],
-      ],
-      '2-2' => [
-        'vfs://testFindFileUpward/foo/bar',
-        'a.txt',
-        'foo/bar',
-        [
-          'foo' => [
-            'bar' => [
-              'a.txt' => 'okay',
-            ],
-          ],
-        ],
-      ],
-    ];
-  }
-
-  /**
-   * @dataProvider casesFindFileUpward
-   *
-   * @phpstan-param array<string, mixed> $vfsStructure
-   */
-  public function testFindFileUpward(mixed $expected, string $fileName, string $relativeDirectory, array $vfsStructure): void {
-    $vfs = vfsStream::setup(__FUNCTION__, NULL, $vfsStructure);
-    $absoluteDirectory = Path::join($vfs->url(), $relativeDirectory);
-
-    static::assertSame($expected, Utils::findFileUpward($fileName, $absoluteDirectory));
-  }
-
-  /**
-   * @phpstan-return array<string, mixed>
-   */
-  public function casesGetDirectDescendantDrupalPhpFiles(): array {
+  public static function casesGetDirectDescendantDrupalPhpFiles(): array {
     return [
       'empty' => [
         [],
@@ -201,6 +116,7 @@ class UtilsTest extends TestCase {
           'a.profile',
           'a.theme',
           'a.php',
+          'a.inc',
         ],
         'a',
         [
@@ -219,178 +135,181 @@ class UtilsTest extends TestCase {
   }
 
   /**
-   * @dataProvider casesGetDirectDescendantDrupalPhpFiles
-   *
    * @phpstan-param array<string, mixed> $vfsStructure
    */
+  #[Test]
+  #[DataProvider('casesGetDirectDescendantDrupalPhpFiles')]
   public function testGetDirectDescendantDrupalPhpFiles(mixed $expected, string $relativeDirectory, array $vfsStructure): void {
     $vfs = vfsStream::setup(__FUNCTION__, NULL, $vfsStructure);
     $absoluteDirectory = Path::join($vfs->url(), $relativeDirectory);
 
     static::assertSame(
       $expected,
-      Utils::getDirectDescendantDrupalPhpFiles($absoluteDirectory),
+      $this->createInstance()->getDirectDescendantDrupalPhpFiles($absoluteDirectory),
     );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesEscapeYamlValueString(): array {
+  public static function casesEscapeYamlValueString(): array {
     return [
       'basic' => ["' foo bar '", ' foo bar '],
     ];
   }
 
-  /**
-   * @dataProvider casesEscapeYamlValueString
-   */
+  #[Test]
+  #[DataProvider('casesEscapeYamlValueString')]
   public function testEscapeYamlValueString(string $expected, string $text): void {
-    static::assertSame($expected, Utils::escapeYamlValueString($text));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->escapeYamlValueString($text),
+    );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesChangeVersionNumberInYaml(): array {
+  public static function casesChangeVersionNumberInYaml(): array {
     return [
       'first' => [
-        implode(PHP_EOL, [
-          'version: 8.x-1.1',
-          'type: module',
-          'core: 8.x',
-          '',
-        ]),
-        implode(PHP_EOL, [
-          'version: 8.x-1.0',
-          'type: module',
-          'core: 8.x',
-          '',
-        ]),
-        '8.x-1.1',
+        'expected' => <<<YAML
+          version: 4.5.6
+          type: module
+          name: My Module
+
+          YAML,
+        'yamlString' => <<<'YAML'
+          version: 1.2.3
+          type: module
+          name: My Module
+
+          YAML,
+        'versionNumber' => '4.5.6',
       ],
       'middle' => [
-        implode(PHP_EOL, [
-          'type: module',
-          'version: 8.x-1.1',
-          'core: 8.x',
-          '',
-        ]),
-        implode(PHP_EOL, [
-          'type: module',
-          'version: 8.x-1.0',
-          'core: 8.x',
-          '',
-        ]),
-        '8.x-1.1',
+        'expected' => <<<YAML
+          type: module
+          version: 4.5.6
+          name: My Module
+
+          YAML,
+        'yamlString' => <<<'YAML'
+          type: module
+          version: 1.2.3
+          name: My Module
+
+          YAML,
+        'versionNumber' => '4.5.6',
       ],
       'last-eol-yes' => [
-        implode(PHP_EOL, [
-          'type: module',
-          'core: 8.x',
-          'version: 8.x-1.1',
-          '',
-        ]),
-        implode(PHP_EOL, [
-          'type: module',
-          'core: 8.x',
-          'version: 8.x-1.0',
-          '',
-        ]),
-        '8.x-1.1',
+        'expected' => <<<YAML
+          type: module
+          name: My Module
+          version: 4.5.6
+
+          YAML,
+        'yamlString' => <<<'YAML'
+          type: module
+          name: My Module
+          version: 1.2.3
+
+          YAML,
+        'versionNumber' => '4.5.6',
       ],
       'last-eol-no' => [
-        implode(PHP_EOL, [
-          'type: module',
-          'core: 8.x',
-          'version: 8.x-1.1',
-        ]),
-        implode(PHP_EOL, [
-          'type: module',
-          'core: 8.x',
-          'version: 8.x-1.0',
-        ]),
-        '8.x-1.1',
+        'expected' => <<<YAML
+          type: module
+          name: My Module
+          version: 4.5.6
+          YAML,
+        'yamlString' => <<<'YAML'
+          type: module
+          name: My Module
+          version: 1.2.3
+          YAML,
+        'versionNumber' => '4.5.6',
       ],
       'only-eol-yes' => [
-        implode(PHP_EOL, [
-          'version: 8.x-1.1',
-          '',
-        ]),
-        implode(PHP_EOL, [
-          'version: 8.x-1.0',
-          '',
-        ]),
-        '8.x-1.1',
+        'expected' => <<<YAML
+          version: 4.5.6
+
+          YAML,
+        'yamlString' => <<<'YAML'
+          version: 1.2.3
+
+          YAML,
+        'versionNumber' => '4.5.6',
       ],
       'only-eol-no' => [
-        implode(PHP_EOL, [
-          'version: 8.x-1.1',
-        ]),
-        implode(PHP_EOL, [
-          'version: 8.x-1.0',
-        ]),
-        '8.x-1.1',
+        'expected' => <<<YAML
+          version: 4.5.6
+          YAML,
+        'yamlString' => <<<'YAML'
+          version: 1.2.3
+          YAML,
+        'versionNumber' => '4.5.6',
       ],
       'missing-eol-yes' => [
-        implode(PHP_EOL, [
-          'type: module',
-          'core: 8.x',
-          'version: 8.x-1.1',
-          '',
-        ]),
-        implode(PHP_EOL, [
-          'type: module',
-          'core: 8.x',
-          '',
-        ]),
-        '8.x-1.1',
+        'expected' => <<<YAML
+          type: module
+          name: My Module
+          version: 4.5.6
+
+          YAML,
+        'yamlString' => <<<'YAML'
+          type: module
+          name: My Module
+
+          YAML,
+        'versionNumber' => '4.5.6',
       ],
       'missing-eol-no' => [
-        implode(PHP_EOL, [
-          'type: module',
-          'core: 8.x',
-          'version: 8.x-1.1',
-          '',
-        ]),
-        implode(PHP_EOL, [
-          'type: module',
-          'core: 8.x',
-        ]),
-        '8.x-1.1',
+        'expected' => <<<YAML
+          type: module
+          name: My Module
+          version: 4.5.6
+
+          YAML,
+        'yamlString' => <<<'YAML'
+          type: module
+          name: My Module
+          YAML,
+        'versionNumber' => '4.5.6',
       ],
     ];
   }
 
-  /**
-   * @dataProvider casesChangeVersionNumberInYaml
-   */
+  #[Test]
+  #[DataProvider('casesChangeVersionNumberInYaml')]
   public function testChangeVersionNumberInYaml(string $expected, string $yamlString, string $versionNumber): void {
-    static::assertSame($expected, Utils::changeVersionNumberInYaml($yamlString, $versionNumber));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->changeVersionNumberInInfoYaml($yamlString, $versionNumber),
+    );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesEnsureTrailingEol(): array {
+  public static function casesEnsureTrailingEol(): array {
     return [
       'missing' => ['a' . PHP_EOL, 'a'],
       'already there' => ['a' . PHP_EOL, 'a' . PHP_EOL],
     ];
   }
 
-  /**
-   * @dataProvider casesEnsureTrailingEol
-   */
+  #[Test]
+  #[DataProvider('casesEnsureTrailingEol')]
   public function testEnsureTrailingEol(string $expected, string $text): void {
-    Utils::ensureTrailingEol($text);
+    $this->createInstance()->ensureTrailingEol($text);
     static::assertSame($expected, $text);
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesPhpUnitSuiteNameToNamespace(): array {
+  public static function casesPhpUnitSuiteNameToNamespace(): array {
     return [
       'unit' => ['Unit', 'unit'],
       'kernel' => ['Kernel', 'kernel'],
@@ -402,17 +321,19 @@ class UtilsTest extends TestCase {
     ];
   }
 
-  /**
-   * @dataProvider casesPhpUnitSuiteNameToNamespace
-   */
+  #[Test]
+  #[DataProvider('casesPhpUnitSuiteNameToNamespace')]
   public function testPhpUnitSuiteNameToNamespace(mixed $expected, string $suiteName): void {
-    static::assertSame($expected, Utils::phpUnitSuiteNameToNamespace($suiteName));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->phpUnitSuiteNameToNamespace($suiteName),
+    );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesAggregateCommandErrors(): array {
+  public static function casesAggregateCommandErrors(): array {
     return [
       'empty' => [
         NULL,
@@ -433,13 +354,14 @@ class UtilsTest extends TestCase {
   }
 
   /**
-   * @dataProvider casesAggregateCommandErrors
-   *
    * @phpstan-param null|array{exitCode: string, outputData: string} $expected
    * @phpstan-param \Consolidation\AnnotatedCommand\CommandError[] $commandErrors
    */
+  #[Test]
+  #[DataProvider('casesAggregateCommandErrors')]
   public function testAggregateCommandErrors(?array $expected, array $commandErrors): void {
-    $commandError = Utils::aggregateCommandErrors($commandErrors);
+    $utils = $this->createInstance();
+    $commandError = $utils->aggregateCommandErrors($commandErrors);
     if ($commandError === NULL) {
       static::assertSame($expected, $commandError);
 
@@ -450,52 +372,10 @@ class UtilsTest extends TestCase {
     static::assertSame($expected['outputData'], $commandError->getOutputData());
   }
 
-  public function testConvertStatusReportToRowsOfFields(): void {
-    $statusReport = new StatusReport();
-    $expected = [];
-    $actualRowsOfFields = Utils::convertStatusReportToRowsOfFields($statusReport);
-    static::assertSame($expected, $actualRowsOfFields->getArrayCopy());
-
-    $statusReport->addEntries([
-      (new StatusReportEntry())
-        ->setId('a')
-        ->setSeverity(RfcLogLevel::ERROR)
-        ->setTitle('a-title')
-        ->setDescription('a-description')
-        ->setValue('a-value'),
-      (new StatusReportEntry())
-        ->setId('b')
-        ->setSeverity(RfcLogLevel::WARNING)
-        ->setTitle('b-title')
-        ->setDescription('b-description')
-        ->setValue('b-value'),
-    ]);
-    $expected = [
-      'a' => [
-        'id' => 'a',
-        'title' => '<fg=red>a-title</>',
-        'value' => 'a-value',
-        'description' => 'a-description',
-        'severity' => '<fg=red>3</>',
-        'severityName' => '<fg=red>Error</>',
-      ],
-      'b' => [
-        'id' => 'b',
-        'title' => '<fg=yellow>b-title</>',
-        'value' => 'b-value',
-        'description' => 'b-description',
-        'severity' => '<fg=yellow>4</>',
-        'severityName' => '<fg=yellow>Warning</>',
-      ],
-    ];
-    $actualRowsOfFields = Utils::convertStatusReportToRowsOfFields($statusReport);
-    static::assertSame($expected, $actualRowsOfFields->getArrayCopy());
-  }
-
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesFormatTextBySeverity(): array {
+  public static function casesFormatTextBySeverity(): array {
     return [
       'warning' => ['<fg=yellow>a</>', RfcLogLevel::WARNING, 'a'],
       'error' => ['<fg=red>b</>', RfcLogLevel::ERROR, 'b'],
@@ -503,83 +383,19 @@ class UtilsTest extends TestCase {
     ];
   }
 
-  /**
-   * @dataProvider casesFormatTextBySeverity
-   */
+  #[Test]
+  #[DataProvider('casesFormatTextBySeverity')]
   public function testFormatTextBySeverity(string $expected, int $severity, string $text): void {
-    static::assertSame($expected, Utils::formatTextBySeverity($severity, $text));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->formatTextBySeverity($severity, $text),
+    );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesParseDrupalExtensionVersionNumber(): array {
-    return [
-      'minimum' => [
-        [
-          'coreMajor' => 8,
-          'extensionMajor' => 1,
-          'extensionMinor' => 2,
-          'extensionPreType' => '',
-          'extensionPreMajor' => 0,
-          'extensionBuild' => '',
-        ],
-        '8.x-1.2',
-      ],
-      'with pre' => [
-        [
-          'coreMajor' => 8,
-          'extensionMajor' => 1,
-          'extensionMinor' => 2,
-          'extensionPreType' => 'beta',
-          'extensionPreMajor' => 3,
-          'extensionBuild' => '',
-        ],
-        '8.x-1.2-beta3',
-      ],
-      'with build' => [
-        [
-          'coreMajor' => 8,
-          'extensionMajor' => 1,
-          'extensionMinor' => 2,
-          'extensionPreType' => '',
-          'extensionPreMajor' => 0,
-          'extensionBuild' => 'foo.bar',
-        ],
-        '8.x-1.2+foo.bar',
-      ],
-      'full' => [
-        [
-          'coreMajor' => 8,
-          'extensionMajor' => 1,
-          'extensionMinor' => 2,
-          'extensionPreType' => 'beta',
-          'extensionPreMajor' => 3,
-          'extensionBuild' => 'foo.bar',
-        ],
-        '8.x-1.2-beta3+foo.bar',
-      ],
-    ];
-  }
-
-  /**
-   * @dataProvider casesParseDrupalExtensionVersionNumber
-   */
-  public function testParseDrupalExtensionVersionNumber(mixed $expected, string $versionNumber): void {
-    static::assertSame($expected, Utils::parseDrupalExtensionVersionNumber($versionNumber));
-  }
-
-  public function testParseDrupalExtensionVersionNumberFail(): void {
-    $this->expectException(\InvalidArgumentException::class);
-    $this->expectExceptionCode(1);
-
-    Utils::parseDrupalExtensionVersionNumber('invalid');
-  }
-
-  /**
-   * @phpstan-return array<string, mixed>
-   */
-  public function casesDbUrl(): array {
+  public static function casesDbUrl(): array {
     return [
       'sqlite - basic' => [
         'sqlite:///default__default.sqlite',
@@ -662,18 +478,21 @@ class UtilsTest extends TestCase {
   }
 
   /**
-   * @dataProvider casesDbUrl
-   *
    * @phpstan-param marvin-db-connection $connection
    */
+  #[Test]
+  #[DataProvider('casesDbUrl')]
   public function testDbUrl(mixed $expected, array $connection): void {
-    static::assertSame($expected, Utils::dbUrl($connection));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->dbUrl($connection),
+    );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesSplitPackageName(): array {
+  public static function casesSplitPackageName(): array {
     return [
       'basic' => [
         [
@@ -692,17 +511,19 @@ class UtilsTest extends TestCase {
     ];
   }
 
-  /**
-   * @dataProvider casesSplitPackageName
-   */
+  #[Test]
+  #[DataProvider('casesSplitPackageName')]
   public function testSplitPackageName(mixed $expected, string $packageName): void {
-    static::assertSame($expected, Utils::splitPackageName($packageName));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->splitPackageName($packageName),
+    );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesPhpVersionToPhpVersionId(): array {
+  public static function casesPhpVersionToPhpVersionId(): array {
     return [
       'empty' => ['', ''],
       '070102' => ['070102', '070102'],
@@ -711,158 +532,43 @@ class UtilsTest extends TestCase {
     ];
   }
 
-  /**
-   * @dataProvider casesPhpVersionToPhpVersionId
-   */
+  #[Test]
+  #[DataProvider('casesPhpVersionToPhpVersionId')]
   public function testPhpVersionToPhpVersionId(string $expected, string $phpVersion): void {
-    static::assertSame($expected, Utils::phpVersionToPhpVersionId($phpVersion));
-  }
-
-  /**
-   * @phpstan-return array<string, mixed>
-   */
-  public function casesPhpErrorAll(): array {
-    // E_ALL is same for PHP 7.1, 7.2 and 7.3.
-    $eAll = 32767;
-
-    return [
-      'v7.1' => [$eAll, '7.1'],
-      'v7.2' => [$eAll, '7.2'],
-      'v7.3' => [$eAll, '7.3'],
-      'v701' => [$eAll, '701'],
-      'v702' => [$eAll, '702'],
-      'v703' => [$eAll, '703'],
-      '????' => [E_ALL, '???'],
-    ];
-  }
-
-  /**
-   * @dataProvider casesPhpErrorAll
-   */
-  public function testPhpErrorAll(int $expected, string $phpVersion): void {
-    static::assertSame($expected, Utils::phpErrorAll($phpVersion));
-  }
-
-  /**
-   * @phpstan-return array<string, mixed>
-   */
-  public function casesDetectDrupalRootDir(): array {
-    return [
-      'empty' => [
-        'vendor/drupal',
-        [],
-      ],
-      'type:drupal-core' => [
-        'a/b',
-        [
-          'extra' => [
-            'installer-paths' => [
-              'a/b/core' => ['type:drupal-core'],
-            ],
-          ],
-        ],
-      ],
-      'name:drupal/core' => [
-        'a/b',
-        [
-          'extra' => [
-            'installer-paths' => [
-              'a/b/core' => ['drupal/core'],
-            ],
-          ],
-        ],
-      ],
-    ];
-  }
-
-  /**
-   * @dataProvider casesDetectDrupalRootDir
-   *
-   * @phpstan-param array<string, mixed> $json
-   */
-  public function testDetectDrupalRootDir(string $expected, array $json): void {
-    $vfsStructure = [
-      'composer.json' => json_encode($json),
-    ];
-
-    $vfs = vfsStream::setup(
-      __FUNCTION__ . '.' . $this->dataName(),
-      NULL,
-      $vfsStructure
-    );
-    $composerInfo = ComposerInfo::create($vfs->url(), 'composer.json');
-    static::assertSame($expected, $composerInfo->getDrupalRootDir());
-  }
-
-  /**
-   * @phpstan-return array<string, mixed>
-   */
-  public function casesSemverToDrupal(): array {
-    return [
-      'basic' => ['8.x-4.2', '8.x', '4.2.1'],
-      'rc' => ['8.x-4.2-rc5', '8.x', '4.2.1-rc5'],
-    ];
-  }
-
-  /**
-   * @dataProvider casesSemverToDrupal
-   */
-  public function testSemverToDrupal(string $expected, string $core, string $semver): void {
-    static::assertSame($expected, Utils::semverToDrupal($core, $semver));
-  }
-
-  /**
-   * @phpstan-return array<string, mixed>
-   */
-  public function casesDrupalToSemver(): array {
-    return [
-      'basic' => ['1.0.0', '8.x-1.0'],
-      'pre-release' => ['1.2.0-beta1', '8.x-1.2-beta1'],
-      'pre-with-meta' => ['1.2.0-beta1+my-meta', '8.x-1.2-beta1+my-meta'],
-      'meta' => ['1.2.0+my-meta', '8.x-1.2+my-meta'],
-    ];
-  }
-
-  /**
-   * @dataProvider casesDrupalToSemver
-   */
-  public function testDrupalToSemver(string $expected, string $drupalVersion): void {
-    static::assertSame($expected, Utils::drupalToSemver($drupalVersion));
-  }
-
-  /**
-   * @phpstan-return array<string, mixed>
-   */
-  public function casesIncrementSemVersion(): array {
-    return [
-      'major.basic' => ['2.0.0', '1.2.3', 'major'],
-      'minor.basic' => ['1.3.0', '1.2.3', 'minor'],
-      'patch.basic' => ['1.2.4', '1.2.3', 'patch'],
-      'pre.basic-0' => ['1.2.4-alpha1', '1.2.3', 'pre-release'],
-      'pre.basic-1' => ['1.2.3-alpha2', '1.2.3-alpha1', 'pre-release'],
-      'pre.basic-2' => ['1.2.3-alpha.2', '1.2.3-alpha.1', 'pre-release'],
-    ];
-  }
-
-  /**
-   * @dataProvider casesIncrementSemVersion
-   */
-  public function testIncrementSemVersion(string $expected, string $semver, string $fragment): void {
     static::assertSame(
       $expected,
-      (string) Utils::incrementSemVersion($semver, $fragment),
+      $this->createInstance()->phpVersionToPhpVersionId($phpVersion),
     );
-  }
-
-  public function testIncrementSemVersionFail(): void {
-    static::expectException(\InvalidArgumentException::class);
-    Utils::incrementSemVersion('1.2.3', 'not-exists');
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesPickFirstFile(): array {
+  public static function casesPhpErrorAll(): array {
+    return [
+      'v8.3' => [32767, '8.3'],
+      'v803' => [32767, '803'],
+      'v8.4' => [32767, '8.4'],
+      'v804' => [32767, '804'],
+      'v8.5' => [30719, '8.5'],
+      'v805' => [30719, '805'],
+      '????' => [\E_ALL, '???'],
+    ];
+  }
+
+  #[Test]
+  #[DataProvider('casesPhpErrorAll')]
+  public function testPhpErrorAll(int $expected, string $phpVersion): void {
+    static::assertSame(
+      $expected,
+      $this->createInstance()->phpErrorAll($phpVersion),
+    );
+  }
+
+  /**
+   * @phpstan-return array<string, mixed>
+   */
+  public static function casesPickFirstFile(): array {
     return [
       'empty' => [NULL, [], [], []],
       'not-exists' => [
@@ -912,13 +618,13 @@ class UtilsTest extends TestCase {
   }
 
   /**
-   * @dataProvider casesPickFirstFile
-   *
    * @phpstan-param null|array<string, mixed> $expected
    * @phpstan-param array<string> $dirs
    * @phpstan-param array<string> $files
    * @phpstan-param array<string, mixed> $vfsStructure
    */
+  #[Test]
+  #[DataProvider('casesPickFirstFile')]
   public function testPickFirstFile(?array $expected, array $dirs, array $files, array $vfsStructure): void {
     $vfs = vfsStream::setup(
       __FUNCTION__ . '.' . $this->dataName(),
@@ -936,13 +642,16 @@ class UtilsTest extends TestCase {
       $dirs[$key] = Path::join($dirPrefix, $dirs[$key]);
     }
 
-    static::assertSame($expected, Utils::pickFirstFile($dirs, $files));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->pickFirstFile($dirs, $files),
+    );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesGetTriStateCliOption(): array {
+  public static function casesGetTriStateCliOption(): array {
     return [
       'null' => ['', NULL, 'a'],
       'true' => ['--a', TRUE, 'a'],
@@ -950,11 +659,13 @@ class UtilsTest extends TestCase {
     ];
   }
 
-  /**
-   * @dataProvider casesGetTriStateCliOption
-   */
+  #[Test]
+  #[DataProvider('casesGetTriStateCliOption')]
   public function testGetTriStateCliOption(string $expected, ?bool $state, string $optionName): void {
-    static::assertSame($expected, Utils::getTriStateCliOption($state, $optionName));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->getTriStateCliOption($state, $optionName),
+    );
   }
 
   /**
@@ -968,12 +679,33 @@ class UtilsTest extends TestCase {
   }
 
   /**
-   * @dataProvider casesGetExitCodeBasedOnSeverity
-   *
    * @phpstan-param int<0, 7> ...$args
    */
+  #[Test]
+  #[DataProvider('casesGetExitCodeBasedOnSeverity')]
   public function testGetExitCodeBasedOnSeverity(mixed $expected, int ...$args): void {
-    static::assertSame($expected, Utils::getExitCodeBasedOnSeverity(...$args));
+    static::assertSame(
+      $expected,
+      $this->createInstance()->getExitCodeBasedOnSeverity(...$args),
+    );
+  }
+
+  #[Test]
+  public function testGenerateHashSalt(): void {
+    $subject = $this->createInstance();
+
+    $hash01 = $subject->generateHashSalt();
+    static::assertGreaterThanOrEqual(32 * 2, strlen($hash01));
+    static::assertLessThanOrEqual(64 * 2, strlen($hash01));
+
+    $hash02 = $subject->generateHashSalt();
+    static::assertGreaterThanOrEqual(32 * 2, strlen($hash02));
+    static::assertLessThanOrEqual(64 * 2, strlen($hash02));
+
+    static::assertNotEquals($hash01, $hash02);
+
+    $hash03 = $subject->generateHashSalt(42);
+    static::assertSame(84, strlen($hash03));
   }
 
 }

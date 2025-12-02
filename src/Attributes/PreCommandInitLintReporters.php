@@ -9,11 +9,13 @@ use Consolidation\AnnotatedCommand\Parser\CommandInfo;
 /**
  * Drush command annotator.
  *
- * ```php
+ * @code
  * use Drupal\marvin\Attributes\PreCommandInitLintReporters as PreCommandMarvinInitLintReporters;
  *
  * #[MarvinCli\PreCommandInitLintReporters()]
- * ```
+ * @endcode
+ *
+ * @deprecated
  */
 #[\Attribute(\Attribute::TARGET_METHOD)]
 class PreCommandInitLintReporters {

@@ -1,3 +1,0 @@
-src/
-src-dev/Composer/
-tests/src/

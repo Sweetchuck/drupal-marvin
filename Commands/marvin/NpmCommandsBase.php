@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drush\Commands\marvin;
 
-use Drupal\marvin\Robo\NodeDetectorTaskLoader;
+use Drupal\marvin\Robo\NodeJsTaskTrait;
 use Robo\Collection\CollectionBuilder;
 use Robo\Collection\Tasks as ForEachTaskLoader;
 use Sweetchuck\Robo\Git\GitTaskLoader;
@@ -12,13 +12,18 @@ use Sweetchuck\Robo\Nvm\NvmTaskLoader;
 use Sweetchuck\Robo\Yarn\YarnTaskLoader;
 use Symfony\Component\Filesystem\Path;
 
+/**
+ * @deprecated
+ *
+ * @todo Move this in to a separated "marvin_frontend" (or something like that) package.
+ */
 class NpmCommandsBase extends CommandsBase {
 
   use ForEachTaskLoader;
   use GitTaskLoader;
   use NvmTaskLoader;
   use YarnTaskLoader;
-  use NodeDetectorTaskLoader;
+  use NodeJsTaskTrait;
 
   protected static string $classKeyPrefix = 'marvin.npm';
 
@@ -60,7 +65,7 @@ class NpmCommandsBase extends CommandsBase {
 
           $builder
             ->addTask($this
-              ->taskMarvinNodeDetector()
+              ->taskMarvinDetectNodeJs()
               ->setWorkingDirectory($workingDirectory)
               ->setRootDirectory($packagePathRelative)
             )

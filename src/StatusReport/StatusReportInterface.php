@@ -6,6 +6,7 @@ namespace Drupal\marvin\StatusReport;
 
 use Consolidation\AnnotatedCommand\ExitCodeInterface;
 use Consolidation\AnnotatedCommand\OutputDataInterface;
+use Consolidation\OutputFormatters\StructuredData\ConversionInterface;
 
 /**
  * @template-covariant TKey   of string
@@ -17,6 +18,7 @@ interface StatusReportInterface extends
   \JsonSerializable,
   \IteratorAggregate,
   \Countable,
+  ConversionInterface,
   OutputDataInterface,
   ExitCodeInterface {
 

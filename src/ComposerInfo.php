@@ -37,14 +37,14 @@ class ComposerInfo implements \ArrayAccess {
    */
   protected array $json = [];
 
-  protected string $jsonFileName = '';
+  protected string $jsonFilePath = '';
 
-  public function getJsonFileName(): string {
-    return $this->jsonFileName;
+  public function getJsonFilePath(): string {
+    return $this->jsonFilePath;
   }
 
   public function getWorkingDirectory(): string {
-    return Path::getDirectory($this->getJsonFileName());
+    return Path::getDirectory($this->getJsonFilePath());
   }
 
   protected int $jsonChangedTime = 0;
@@ -56,10 +56,10 @@ class ComposerInfo implements \ArrayAccess {
    */
   protected array $lock = [];
 
-  protected string $lockFileName = '';
+  protected string $lockFilePath = '';
 
-  public function getLockFileName(): string {
-    return $this->lockFileName;
+  public function getLockFilePath(): string {
+    return $this->lockFilePath;
   }
 
   protected int $lockChangedTime = 0;
@@ -75,43 +75,41 @@ class ComposerInfo implements \ArrayAccess {
     ],
   ];
 
-  public static function create(string $baseDir = '', string $jsonFileName = '', ?Filesystem $fs = NULL): static {
-    if (!$jsonFileName) {
-      $jsonFileName = Utils::getComposerJsonFileName();
+  public static function create(string $baseDir, string $jsonFileName, ?Filesystem $fs = NULL): static {
+    $jsonFilePath = Path::join($baseDir, $jsonFileName);
+    $jsonFilePathReal = realpath($jsonFilePath);
+    if ($jsonFilePathReal !== FALSE) {
+      $jsonFilePath = $jsonFilePathReal;
     }
 
-    // @todo Avoid using \getcwd() here.
-    $instanceId = Path::isAbsolute($jsonFileName) ?
-      $jsonFileName
-      : Path::join(
-        ($baseDir ?: (string) getcwd()),
-        $jsonFileName,
-      );
-
-    if (!isset(static::$instances[$instanceId])) {
+    if (!isset(static::$instances[$jsonFilePath])) {
       /* @phpstan-ignore-next-line */
-      static::$instances[$instanceId] = new static($jsonFileName, $fs, $baseDir);
+      static::$instances[$jsonFilePath] = new static($jsonFilePath, $fs, $baseDir);
     }
 
-    return static::$instances[$instanceId];
+    return static::$instances[$jsonFilePath];
   }
 
-  protected function __construct(string $jsonFileName, ?Filesystem $fs = NULL, string $baseDir = '') {
+  /**
+   * @param string $jsonFilePath
+   *   Absolute realpath to the composer.json file.
+   * @param null|\Symfony\Component\Filesystem\Filesystem $fs
+   */
+  protected function __construct(string $jsonFilePath, ?Filesystem $fs = NULL) {
     $this->fs = $fs ?: new Filesystem();
-    $this->jsonFileName = Path::isAbsolute($jsonFileName) ?
-      $jsonFileName
-      : Path::join(($baseDir ?: (string) getcwd()), $jsonFileName);
-    $this->initLockFileName();
+
+    $this->jsonFilePath = $jsonFilePath;
+    $this->initLockFilePath();
   }
 
   public function __destruct() {
-    unset(static::$instances[$this->jsonFileName]);
+    unset(static::$instances[$this->jsonFilePath]);
   }
 
-  protected function initLockFileName(): static {
-    $jsonExtension = pathinfo($this->jsonFileName, PATHINFO_EXTENSION);
+  protected function initLockFilePath(): static {
+    $jsonExtension = pathinfo($this->jsonFilePath, PATHINFO_EXTENSION);
     $jsonExtensionLength = mb_strlen($jsonExtension);
-    $this->lockFileName = mb_substr($this->jsonFileName, 0, $jsonExtensionLength * -1) . 'lock';
+    $this->lockFilePath = mb_substr($this->jsonFilePath, 0, $jsonExtensionLength * -1) . 'lock';
 
     return $this;
   }
@@ -190,13 +188,13 @@ class ComposerInfo implements \ArrayAccess {
 
   protected function initJson(): static {
     $this->checkJsonExists();
-    $changedTime = filectime($this->jsonFileName);
+    $changedTime = filectime($this->jsonFilePath);
     if ($changedTime !== FALSE && $changedTime > $this->jsonChangedTime) {
       /* @phpstan-ignore-next-line */
       $this->json = array_replace_recursive(
         $this->jsonDefault,
         json_decode(
-          file_get_contents($this->jsonFileName) ?: '{}',
+          file_get_contents($this->jsonFilePath) ?: '{}',
           TRUE,
         ),
       );
@@ -214,7 +212,7 @@ class ComposerInfo implements \ArrayAccess {
   }
 
   protected function initLockReadFile(): static {
-    if (!$this->fs->exists($this->lockFileName)) {
+    if (!$this->fs->exists($this->lockFilePath)) {
       $this->lock = [
         'content-hash' => '',
         'packages' => [],
@@ -232,10 +230,10 @@ class ComposerInfo implements \ArrayAccess {
       return $this;
     }
 
-    $changedTime = filectime($this->lockFileName);
+    $changedTime = filectime($this->lockFilePath);
     if ($changedTime !== FALSE && $changedTime > $this->lockChangedTime) {
       $this->lock = json_decode(
-        file_get_contents($this->lockFileName) ?: '{}',
+        file_get_contents($this->lockFilePath) ?: '{}',
         TRUE,
       );
       $this->lockChangedTime = $changedTime;
@@ -284,7 +282,31 @@ class ComposerInfo implements \ArrayAccess {
       ->lock;
   }
 
-  public function getDrupalExtensionInstallDir(string $type): ?string {
+  /**
+   * @return array<string, string>
+   */
+  public function getDrupalExtensionInstallDirPatterns(): array {
+    $types = [
+      'core',
+      'module',
+      'theme',
+      'profile',
+      'engine',
+      'recipe',
+      'drush',
+    ];
+
+    $dirs = [];
+    foreach ($types as $type) {
+      $dir = $this->getDrupalExtensionInstallDirPattern($type);
+      $dirs[$type] = $dir;
+      $dirs["drupal-$type"] = $dir;
+    }
+
+    return $dirs;
+  }
+
+  public function getDrupalExtensionInstallDirPattern(string $type): string {
     $type = (new UnicodeString($type))
       ->ensureStart('drupal-')
       ->toString();
@@ -297,7 +319,10 @@ class ComposerInfo implements \ArrayAccess {
       }
     }
 
-    return NULL;
+    return sprintf(
+      '%s/{$vendor}/{$name}',
+      $json['config']['vendor-dir'] ?? 'vendor',
+    );
   }
 
   public function getDrupalRootDir(): string {
@@ -319,8 +344,13 @@ class ComposerInfo implements \ArrayAccess {
   }
 
   protected function checkJsonExists(): static {
-    if (!$this->fs->exists($this->jsonFileName)) {
-      throw new FileNotFoundException(NULL, 1, NULL, $this->jsonFileName);
+    if (!$this->fs->exists($this->jsonFilePath)) {
+      throw new FileNotFoundException(
+        sprintf('CWD: %s ; jsonFilePath: %s', getcwd(), $this->jsonFilePath),
+        1,
+        NULL,
+        $this->jsonFilePath,
+      );
     }
 
     return $this;

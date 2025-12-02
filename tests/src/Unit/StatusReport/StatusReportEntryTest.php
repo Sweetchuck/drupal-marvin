@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\marvin\Unit\StatusReport;
 
 use Drupal\marvin\StatusReport\StatusReportEntry;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group marvin
- *
- * @covers \Drupal\marvin\StatusReport\StatusReportEntry
- */
+#[Group('marvin')]
+#[CoversClass(StatusReportEntry::class)]
 class StatusReportEntryTest extends TestCase {
 
   public function testAllInOne():void {

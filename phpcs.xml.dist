@@ -4,9 +4,14 @@
   xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd"
   name="Custom">
 
-  <file>./Commands/</file>
   <file>./src/</file>
   <file>./tests/src/</file>
+  <file>MarvinArtifactTypeListCommand.php</file>
+  <file>MarvinDrushConfigCommand.php</file>
+  <file>MarvinRuntimeEnvironmentListCommand.php</file>
+  <file>MarvinRuntimeEnvironmentSwitchCommand.php</file>
+  <file>MarvinStatusReportCommand.php</file>
+  <file>MarvinVersionNumberBumpCommand.php</file>
 
   <arg
     name="extensions"

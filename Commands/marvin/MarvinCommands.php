@@ -12,6 +12,11 @@ use Drupal\marvin\Attributes\ValidateExplode;
 use Drupal\marvin\Attributes\ValidateRuntimeEnvironmentId;
 use Drush\Attributes as CLI;
 
+/**
+ * @deprecated
+ *
+ * @todo Convert these input validators to Drush annotations.
+ */
 class MarvinCommands extends CommandsBase {
 
   #[CLI\Hook(

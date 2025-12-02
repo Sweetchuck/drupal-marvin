@@ -14,7 +14,7 @@ trait DatabaseVariantTrait {
   protected function getConfigDatabaseVariants(): array {
     $databaseVariants = [];
 
-    $items = (array) $this->getConfig()->get('marvin.database.variant', []);
+    $items = (array) $this->getConfig()->get('marvin.database.variants', []);
     foreach ($items as $id => $item) {
       $databaseVariants[$id] = $this->loadDatabaseVariant($id, $item);
     }

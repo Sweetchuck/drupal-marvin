@@ -4,6 +4,7 @@ parameters:
 			array{
 				envVar?: array<string, null|string>,
 				executable: string,
+				arguments?: array<string, null|string>,
 			}
 		'''
 		marvin-php-variant: '''
@@ -67,12 +68,13 @@ parameters:
 		marvin-task-definition: '''
 			array{
 				id?: string,
-				description?: string,
+				name?: string,
 				provider?: string,
+				description?: string,
 				weight?: int|float,
-				task?: \Closure|\Robo\Contract\TaskInterface,
-				completion?: \Closure|\Robo\Contract\TaskInterface,
-				rollback?: \Closure|\Robo\Contract\TaskInterface,
+				task?: callable|\Robo\Contract\TaskInterface,
+				completion?: callable|\Robo\Contract\TaskInterface,
+				rollback?: callable|\Robo\Contract\TaskInterface,
 			}
 		'''
 		marvin-lint-reporter-config-base: '''
@@ -83,6 +85,9 @@ parameters:
 		'''
 		marvin-artifact-type: '''
 			array{
+				id: string,
+				provider: string,
+				weight: int|float,
 				label: string,
 				description: string,
 			}
@@ -157,7 +162,16 @@ parameters:
 				assetNamePrefix?: string,
 				composerJsonFileName?: string,
 				packagePath?: string,
-				artifactDir?: string,
+				buildDir?: string,
+				filesToCopy?: array<string, array<string, mixed>>,
+			}
+		'''
+		marvin-robo-task-delete-artifact-files-options: '''
+			array{
+				assetNamePrefix?: string,
+				projectRootDir?: string,
+				buildDir?: string,
+				files?: iterable<string|\SplFileInfo>,
 			}
 		'''
 		marvin-robo-task-copy-files-options: '''

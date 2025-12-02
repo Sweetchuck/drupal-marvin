@@ -1,0 +1,308 @@
+marvin:
+
+  ##
+  # Name of the current environment.
+  #
+  # Allowed (recommended) values: "local", "ci", "dev", "prod".
+  # @todo Check that this config is really used somewhere or not.
+  #
+  # @var string
+  ##
+  environment: 'local'
+
+  ##
+  # Name of the directory where the generated artifacts should be stored.
+  #
+  # Relative directory path from the project root.
+  #
+  # @var string
+  ##
+  artifactDir: 'artifacts'
+
+  ##
+  # Path to a directory where every release artifact should be stored.
+  #
+  # @var string
+  ##
+  buildDir: '../../../artifacts'
+
+  ##
+  # Name of the directory where every build log should be stored.
+  #
+  # Relative directory path from the project root.
+  #
+  # @var string
+  ##
+  reportsDir: 'reports'
+
+  ##
+  # Name of the Git hook the Drush command was triggered by.
+  # For example, "pre-commit".
+  #
+  # @var null|string
+  ##
+  gitHookName: null
+
+  ##
+  # @todo
+  #
+  # @var null|string
+  ##
+  ci: null
+
+  ##
+  # @var string
+  ##
+  composerExecutable: 'composer'
+
+  ##
+  # Path to the "git" executable.
+  #
+  # @var string
+  ##
+  gitExecutable: 'git'
+
+  php:
+    ##
+    # Key is a file name extension. Value indicates whether it is enabled or not.
+    #
+    # @var array<string, bool>
+    #
+    # @todo Duplicated.
+    #
+    # @see \Drupal\marvin\Utils::$drupalPhpExtensions
+    ##
+    extensions:
+      profile: true
+      module: true
+      theme: true
+      engine: true
+      install: true
+      php: true
+      inc: true
+
+    ##
+    # Keys are custom.
+    #
+    # However keys are custom,
+    # currently the PHP version detection is based on the key.
+    # So it has to be provided in the following format:
+    # {PHP_VERSION_ID}-(zts|nts)
+    #
+    # Examples: 70102-zts or 70303-nts
+    #
+    # @todo Improve phpVariant version detection.
+    #
+    # @var array
+    ##
+    variants: {  }
+      #'0804':
+        ##
+        # Same as the key in the marvin.php.variants.
+        #
+        # Automatically populated.
+        #
+        # @var string
+        ##
+        #id: '0804'
+
+        ##
+        # @todo
+        #
+        # @var bool
+        #
+        # @todo Maybe use "conditions:" instead.
+        ##
+        #enabled: true
+
+        ##
+        # @todo
+        #
+        # @var int
+        #weight: 0
+
+        ##
+        # @todo
+        #
+        # @var string
+        ##
+        #binDir: '/usr/bin'
+
+        #command:
+          ##
+          # Keys are environment variable names.
+          #
+          # @var array
+          ##
+          #envVars:
+            ##
+            # @var null|string
+            ##
+            #PHPRC: ~
+            #PHP_INI_SCAN_DIR: ~
+
+          ##
+          # Path to the executable.
+          #
+          # @var string
+          ##
+          #executable: "${marvin.php.variants.0804.binDir}/php"
+
+          ##
+          # Additional CLI arguments passed to the executable.
+          #
+          # @var array<string>
+          #
+          # @code
+          #   - '-d'
+          #   - 'extension=pcov'
+          #   - '-d'
+          #   - 'memory_limit=-1'
+          # @endcode
+          ##
+          #arguments: []
+
+  lint:
+    ##
+    # Keys are custom.
+    #
+    # @var array
+    ##
+    reporterSetCandidates:
+      watch:
+        conditions:
+          watch: true
+
+        ##
+        # Keys are coming from "../reporters".
+        #
+        # @var array<string, bool>
+        ##
+        reporters:
+          verboseStdOutput: true
+      ci:
+        conditions:
+          ci: true
+        reporters:
+          verboseStdOutput: true
+          checkstyleReports: true
+      defaultGitHookPreCommit:
+        conditions:
+          gitHookName: 'pre-commit'
+        reporters:
+          summaryStdOutput: true
+          verboseReports: true
+      default:
+        conditions: {  }
+        reporters:
+          verboseStdOutput: true
+          verboseReports: true
+    reporters:
+      verboseStdOutput:
+        ##
+        # Name of the service to use to create an instance.
+        #
+        # That class MUST implement \Sweetchuck\LintReport\ReporterInterface.
+        # That service MUST be "shared: FALSE".
+        #
+        # @var class-string
+        #
+        # @see \Drupal\marvin\ContainerInitializer::getServiceInfoList()
+        #   For available services. (More can be added by other modules.)
+        ##
+        service: 'Sweetchuck\LintReport\Reporter\VerboseReporter'
+
+        ##
+        # @var array<string, mixed>
+        #
+        # @see \Sweetchuck\LintReport\Reporter\VerboseReporter::setOptions()
+        #   For available keys. Check the ::setOptions() method of the service.
+        #   \Sweetchuck\LintReport\ReporterInterface::setOptions().
+        #
+        # @see \Drupal\marvin\LintCommandTrait::parseLintReporterConfig()
+        #   For available placeholders.
+        ##
+        options:
+          #destination: 'php://stdout'
+          #basePath: '<automatically generated>'
+          filePathStyle: 'relative'
+          #showSeverity: true
+          showSource: true
+          #showLineNumber: true
+          #showColumnNumber: false
+          #showMessage: true
+      verboseReports:
+        service: 'Sweetchuck\LintReport\Reporter\VerboseReporter'
+        options:
+          destination: '{{ reportsDir }}/human/lint/verbose.{{ linter.id }}.txt'
+          filePathStyle: 'relative'
+          showSource: true
+      summaryStdOutput:
+        service: 'Sweetchuck\LintReport\Reporter\SummaryReporter'
+        options:
+          #destination: 'php://stdout'
+          #basePath: '<automatically generated>'
+          filePathStyle: 'relative'
+      summaryReports:
+        service: 'Sweetchuck\LintReport\Reporter\SummaryReporter'
+        options:
+          destination: '{{ reportsDir }}/human/lint/summary.{{ linter.id }}.txt'
+          filePathStyle: 'relative'
+      checkstyleReport:
+        service: 'Sweetchuck\LintReport\Reporter\CheckstyleReporter'
+        options:
+          destination: '{{ reportsDir }}/machine/lint/checkstyle.{{ linter.id }}.xml'
+          #basePath: '<automatically generated>'
+          filePathStyle: 'relative'
+      gitLabCodeQualityReport:
+        service: 'Sweetchuck\LintReport\Reporter\GitLabCodeQualityReporter'
+        options:
+          destination: '{{ reportsDir }}/machine/lint/gitLabCodeQuality.{{ linter.id }}.xml'
+          #basePath: '<automatically generated>'
+          filePathStyle: 'relative'
+
+  ##
+  # Keys are the official Git hook names.
+  #
+  # @var array
+  ##
+  gitHook:
+    commit-msg:
+      rules: {}
+        #customKey01:
+          ##
+          # @var bool
+          ##
+          #enabled: true
+
+          ##
+          # This will be auto-populated from the array key.
+          #
+          # @var string
+          ##
+          #name: 'customKey01'
+
+          ##
+          # RegExp pattern. Required.
+          #
+          # @var string
+          ##
+          #pattern: "/^.+$/u"
+
+          ##
+          # Human readable description.
+          #
+          # @var string
+          ##
+          #description: 'Lorem ipsum.'
+
+          ##
+          # The key is an example for a valid commit message.
+          #
+          # @var bool[]
+          ##
+          #examples:
+          #  foo:
+          #    valid: true
+          #    sample: 'Issue #42 - Something'
+          #    description: 'Lorem ipsum.'

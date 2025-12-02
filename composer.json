@@ -27,7 +27,7 @@
         "sort-packages": true
     },
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pcre": "*",
@@ -50,23 +50,11 @@
         "weitzman/drupal-test-traits": "^2.1"
     },
     "suggest": {
-        "drush/drush": "^13.0"
+        "drush/drush": "^13.7"
     },
     "autoload": {
         "psr-4": {
-            "Drush\\Commands\\marvin\\": "Commands/marvin/",
             "Drupal\\marvin\\": "src/"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-8.x-1.x": "1.x-dev",
-            "dev-9.x-2.x": "2.x-dev"
-        },
-        "drush": {
-            "services": {
-                "drush.services.yml": "*"
-            }
         }
     }
 }

@@ -58,6 +58,7 @@ class WriterWrapper {
    * @see \Symfony\Component\Console\Output\OutputInterface::write
    *
    * @phpstan-param string|iterable<string> $messages
+   * @phpstan-param int<0, 511> $options
    */
   public function write(string|iterable $messages, bool $newLine = FALSE, int $options = 0): static {
     $this->init();

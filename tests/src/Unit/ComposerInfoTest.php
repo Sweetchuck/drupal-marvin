@@ -7,16 +7,17 @@ namespace Drupal\Tests\marvin\Unit;
 use Drupal\marvin\ComposerInfo;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 
-/**
- * @group marvin
- *
- * @covers \Drupal\marvin\ComposerInfo
- */
+#[Group('marvin')]
+#[CoversClass(ComposerInfo::class)]
 class ComposerInfoTest extends TestCase {
 
   protected ?vfsStreamDirectory $rootDir;
@@ -26,6 +27,7 @@ class ComposerInfoTest extends TestCase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function setUp(): void {
     parent::setUp();
     $this->fs = new Filesystem();
@@ -33,6 +35,10 @@ class ComposerInfoTest extends TestCase {
     $this->rootDir = vfsStream::setup('ComposerInfo');
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  #[\Override]
   protected function tearDown(): void {
     $this->fs->remove($this->rootDir->getName());
     $this->rootDir = NULL;
@@ -43,12 +49,8 @@ class ComposerInfoTest extends TestCase {
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesGetLockFileName(): array {
+  public static function casesGetLockFileName(): array {
     return [
-      'empty' => [
-        '/ComposerInfo/' . preg_replace('/\.json/', '.lock', getenv('COMPOSER') ?: 'composer.json'),
-        '',
-      ],
       'basic' => [
         '/ComposerInfo/composer.lock',
         'composer.json',
@@ -60,27 +62,22 @@ class ComposerInfoTest extends TestCase {
     ];
   }
 
-  /**
-   * @dataProvider casesGetLockFileName
-   */
+  #[Test]
+  #[DataProvider('casesGetLockFileName')]
   public function testGetLockFileName(string $expected, string $jsonFileName): void {
     $baseDir = $this->rootDir->url();
     $ci = ComposerInfo::create($baseDir, $jsonFileName);
     static::assertSame(
       "vfs:/$expected",
-      $ci->getLockFileName(),
+      $ci->getLockFilePath(),
     );
   }
 
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesGetWorkingDirectory(): array {
+  public static function casesGetWorkingDirectory(): array {
     return [
-      'empty' => [
-        '/ComposerInfo',
-        '',
-      ],
       'basic' => [
         '/ComposerInfo',
         'composer.json',
@@ -92,9 +89,8 @@ class ComposerInfoTest extends TestCase {
     ];
   }
 
-  /**
-   * @dataProvider casesGetWorkingDirectory
-   */
+  #[Test]
+  #[DataProvider('casesGetWorkingDirectory')]
   public function testGetWorkingDirectory(string $expected, string $jsonFileName): void {
     $baseDir = $this->rootDir->url();
     $ci = ComposerInfo::create($baseDir, $jsonFileName);
@@ -104,7 +100,7 @@ class ComposerInfoTest extends TestCase {
   /**
    * @phpstan-return array<string, mixed>
    */
-  public function casesCreate(): array {
+  public static function casesCreate(): array {
     return [
       'basic' => [
         [
@@ -190,12 +186,12 @@ class ComposerInfoTest extends TestCase {
   }
 
   /**
-   * @dataProvider casesCreate
-   *
    * @phpstan-param array<string, mixed> $expected
    * @phpstan-param array<string, mixed> $json
    * @phpstan-param null|array<string, mixed> $lock
    */
+  #[Test]
+  #[DataProvider('casesCreate')]
   public function testCreate(array $expected, array $json, ?array $lock): void {
     $baseDir = Path::join(
       $this->rootDir->url(),
@@ -221,6 +217,7 @@ class ComposerInfoTest extends TestCase {
     static::assertSame($expected['lock'], $ci->getLock());
   }
 
+  #[Test]
   public function testInstances(): void {
     $vfs = vfsStream::setup(
       'instances',
@@ -242,13 +239,12 @@ class ComposerInfoTest extends TestCase {
   }
 
   /**
-   *
    * @phpstan-return array<string, mixed>
    */
-  public function casesGetDrupalExtensionInstallDir(): array {
+  public static function casesGetDrupalExtensionInstallDirPattern(): array {
     return [
       'empty' => [
-        NULL,
+        'vendor/{$vendor}/{$name}',
         'module',
         [],
       ],
@@ -267,11 +263,10 @@ class ComposerInfoTest extends TestCase {
   }
 
   /**
-   * @dataProvider casesGetDrupalExtensionInstallDir
-   *
    * @phpstan-param array<string, mixed> $json
    */
-  public function testGetDrupalExtensionInstallDir(?string $expected, string $type, array $json): void {
+  #[DataProvider('casesGetDrupalExtensionInstallDirPattern')]
+  public function testGetDrupalExtensionInstallDirPattern(?string $expected, string $type, array $json): void {
     $baseDir = $this->rootDir->url() . '/' . __FUNCTION__ . '/' . $this->dataName();
     mkdir($baseDir);
 
@@ -282,9 +277,42 @@ class ComposerInfoTest extends TestCase {
     );
 
     $ci = ComposerInfo::create($baseDir, "$baseName.json");
-    static::assertSame($expected, $ci->getDrupalExtensionInstallDir($type));
+    static::assertSame($expected, $ci->getDrupalExtensionInstallDirPattern($type));
   }
 
+  #[Test]
+  public function testGetDrupalExtensionInstallDirPatterns(): void {
+    $expected = [
+      'core' => 'vendor/{$vendor}/{$name}',
+      'drupal-core' => 'vendor/{$vendor}/{$name}',
+      'module' => 'vendor/{$vendor}/{$name}',
+      'drupal-module' => 'vendor/{$vendor}/{$name}',
+      'theme' => 'vendor/{$vendor}/{$name}',
+      'drupal-theme' => 'vendor/{$vendor}/{$name}',
+      'profile' => 'vendor/{$vendor}/{$name}',
+      'drupal-profile' => 'vendor/{$vendor}/{$name}',
+      'engine' => 'vendor/{$vendor}/{$name}',
+      'drupal-engine' => 'vendor/{$vendor}/{$name}',
+      'recipe' => 'vendor/{$vendor}/{$name}',
+      'drupal-recipe' => 'vendor/{$vendor}/{$name}',
+      'drush' => 'vendor/{$vendor}/{$name}',
+      'drupal-drush' => 'vendor/{$vendor}/{$name}',
+    ];
+    $json = [];
+    $baseDir = $this->rootDir->url() . '/' . __FUNCTION__ . '/' . $this->dataName();
+    mkdir($baseDir);
+
+    $baseName = 'composer';
+    $this->fs->dumpFile(
+      "$baseDir/$baseName.json",
+      json_encode($json) ?: '{}',
+    );
+
+    $ci = ComposerInfo::create($baseDir, "$baseName.json");
+    static::assertSame($expected, $ci->getDrupalExtensionInstallDirPatterns());
+  }
+
+  #[Test]
   public function testOffsetUnset(): void {
     $json = [
       'name' => 'a/b',
@@ -308,6 +336,7 @@ class ComposerInfoTest extends TestCase {
     static::assertNull($ci->name);
   }
 
+  #[Test]
   public function testMagicGet(): void {
     $json = [];
 
@@ -348,6 +377,7 @@ class ComposerInfoTest extends TestCase {
     static::assertSame('f', $ci->packageName);
   }
 
+  #[Test]
   public function testMagicGetUnknown(): void {
     $json = [
       'name' => 'a/b',
@@ -373,6 +403,7 @@ class ComposerInfoTest extends TestCase {
     static::assertNull($ci->{'notExists'});
   }
 
+  #[Test]
   public function testCheckJsonExists(): void {
     $baseDir = Path::join(
       $this->rootDir->url(),
@@ -383,6 +414,60 @@ class ComposerInfoTest extends TestCase {
     static::expectException(FileNotFoundException::class);
     static::expectExceptionCode(1);
     $ci->getJson();
+  }
+
+  /**
+   * @phpstan-return array<string, mixed>
+   */
+  public static function casesDetectDrupalRootDir(): array {
+    return [
+      'empty' => [
+        'vendor/drupal',
+        [],
+      ],
+      'type:drupal-core' => [
+        'a/b',
+        [
+          'extra' => [
+            'installer-paths' => [
+              'a/b/core' => ['type:drupal-core'],
+            ],
+          ],
+        ],
+      ],
+      'name:drupal/core' => [
+        'a/b',
+        [
+          'extra' => [
+            'installer-paths' => [
+              'a/b/core' => ['drupal/core'],
+            ],
+          ],
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * @phpstan-param array<string, mixed> $json
+   */
+  #[Test]
+  #[DataProvider('casesDetectDrupalRootDir')]
+  public function testDetectDrupalRootDir(string $expected, array $json): void {
+    $vfsStructure = [
+      'composer.json' => json_encode($json),
+    ];
+
+    $vfs = vfsStream::setup(
+      __FUNCTION__ . '.' . $this->dataName(),
+      NULL,
+      $vfsStructure
+    );
+    $composerInfo = ComposerInfo::create($vfs->url(), 'composer.json');
+    static::assertSame(
+      $expected,
+      $composerInfo->getDrupalRootDir(),
+    );
   }
 
 }

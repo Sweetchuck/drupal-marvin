@@ -4,16 +4,26 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\marvin\Unit\StatusReport;
 
+use Drupal\marvin\RfcLogLevel;
 use Drupal\marvin\StatusReport\StatusReport;
 use Drupal\marvin\StatusReport\StatusReportEntry;
+use Drupal\marvin\Utils;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use Sweetchuck\Utils\FileSystemUtils;
 
-/**
- * @group marvin
- *
- * @covers \Drupal\marvin\StatusReport\StatusReport
- */
+#[Group('marvin')]
+#[CoversClass(StatusReport::class)]
 class StatusReportTest extends TestCase {
+
+  protected function createInstance(): StatusReport {
+    return new StatusReport(
+      new Utils(
+        new FileSystemUtils(),
+      ),
+    );
+  }
 
   public function testAllInOne(): void {
     $expected = [
@@ -56,7 +66,7 @@ class StatusReportTest extends TestCase {
     $entryC = StatusReportEntry::__set_state($expected['c']);
     $entryD = StatusReportEntry::__set_state($expected['d']);
 
-    $statusReport = new StatusReport();
+    $statusReport = $this->createInstance();
     static::assertSame([], $statusReport->jsonSerialize());
     static::assertSame(NULL, $statusReport->getHighestSeverity());
     static::assertSame(0, $statusReport->count());
@@ -92,6 +102,49 @@ class StatusReportTest extends TestCase {
     static::assertSame(0, $statusReport->count());
     static::assertSame(0, $statusReport->getExitCode());
     static::assertSame(NULL, $statusReport->getHighestSeverity());
+  }
+
+  public function testConvertToRowsOfFields(): void {
+    $statusReport = $this->createInstance();
+
+    $expected = [];
+    $actualRowsOfFields = $statusReport->convertToRowsOfFields();
+    static::assertSame($expected, $actualRowsOfFields->getArrayCopy());
+
+    $statusReport->addEntries([
+      (new StatusReportEntry())
+        ->setId('a')
+        ->setSeverity(RfcLogLevel::ERROR)
+        ->setTitle('a-title')
+        ->setDescription('a-description')
+        ->setValue('a-value'),
+      (new StatusReportEntry())
+        ->setId('b')
+        ->setSeverity(RfcLogLevel::WARNING)
+        ->setTitle('b-title')
+        ->setDescription('b-description')
+        ->setValue('b-value'),
+    ]);
+    $expected = [
+      'a' => [
+        'id' => 'a',
+        'title' => '<fg=red>a-title</>',
+        'value' => 'a-value',
+        'description' => 'a-description',
+        'severity' => '<fg=red>3</>',
+        'severityName' => '<fg=red>Error</>',
+      ],
+      'b' => [
+        'id' => 'b',
+        'title' => '<fg=yellow>b-title</>',
+        'value' => 'b-value',
+        'description' => 'b-description',
+        'severity' => '<fg=yellow>4</>',
+        'severityName' => '<fg=yellow>Warning</>',
+      ],
+    ];
+    $actualRowsOfFields = $statusReport->convertToRowsOfFields();
+    static::assertSame($expected, $actualRowsOfFields->getArrayCopy());
   }
 
 }

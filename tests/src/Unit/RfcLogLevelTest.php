@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\marvin\Unit;
 
 use Drupal\marvin\RfcLogLevel;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group marvin
- *
- * @covers \Drupal\marvin\RfcLogLevel
- */
+#[Group('marvin')]
+#[CoversClass(RfcLogLevel::class)]
 class RfcLogLevelTest extends TestCase {
 
   public function testGetLevels(): void {

@@ -26,7 +26,7 @@ class ValidateExplode {
   public const AC_SELECTOR = 'marvinValidateExplode';
 
   /**
-   * @phpstan-param array{string, mixed} $config
+   * @phpstan-param array<string, mixed> $config
    *
    * @todo Phpstan type.
    */
