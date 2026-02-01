@@ -170,7 +170,7 @@ class UtilsTest extends TestCase {
   /**
    * @phpstan-return array<string, mixed>
    */
-  public static function casesChangeVersionNumberInYaml(): array {
+  public static function casesChangeVersionNumberInInfoYaml(): array {
     return [
       'first' => [
         'expected' => <<<YAML
@@ -281,11 +281,61 @@ class UtilsTest extends TestCase {
   }
 
   #[Test]
-  #[DataProvider('casesChangeVersionNumberInYaml')]
-  public function testChangeVersionNumberInYaml(string $expected, string $yamlString, string $versionNumber): void {
+  #[DataProvider('casesChangeVersionNumberInInfoYaml')]
+  public function testChangeVersionNumberInInfoYaml(string $expected, string $yamlString, string $versionNumber): void {
     static::assertSame(
       $expected,
       $this->createInstance()->changeVersionNumberInInfoYaml($yamlString, $versionNumber),
+    );
+  }
+
+  /**
+   * @return array<string, mixed>
+   */
+  public static function casesChangeVersionNumberInLibrariesYaml(): array {
+    return [
+      'basic' => [
+        'expected' => <<< 'YAML'
+          a:
+            version: 4.5.6
+            css:
+              component:
+                a.css: {  }
+          b:
+            version: 4.5.6
+            css:
+              component:
+                a.css: {  }
+
+          YAML,
+        'yamlString' => <<< 'YAML'
+          a:
+            version: 1.0.x-dev
+            css:
+              component:
+                a.css: { }
+          b:
+            css:
+              component:
+                a.css: { }
+            version: 1.0.x-dev
+          YAML,
+        'versionNumber' => '4.5.6',
+      ],
+    ];
+  }
+
+  #[Test]
+  #[DataProvider('casesChangeVersionNumberInLibrariesYaml')]
+  public function testChangeVersionNumberInLibrariesYaml(
+    string $expected,
+    string $yamlString,
+    string $versionNumber,
+  ): void {
+    $subject = $this->createInstance();
+    static::assertSame(
+      $expected,
+      $subject->changeVersionNumberInLibrariesYaml($yamlString, $versionNumber),
     );
   }
 

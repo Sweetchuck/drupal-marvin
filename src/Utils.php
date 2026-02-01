@@ -248,11 +248,11 @@ class Utils {
    */
   public function changeVersionNumberInLibrariesYaml(string $yamlString, string $versionNumber): string {
     $data = Yaml::parse($yamlString);
-    foreach ($data['libraries'] as &$library) {
-      $library['version'] = $versionNumber;
+    foreach ($data as &$library) {
+      $library = ['version' => $versionNumber] + $library;
     }
 
-    $yamlString = Yaml::dump($data);
+    $yamlString = Yaml::dump($data, 99, 2);
     $this->ensureTrailingEol($yamlString);
 
     return $yamlString;
