@@ -38,14 +38,21 @@ trait MarvinTaskDefinitionCommandTrait {
       ->mtdrAddTasks($cb, $taskDefinitions)
       ->mtdrLogTaskDefinitions($this->logger, $pipelineId, $taskDefinitions);
 
-    $result = $cb->run();
-    if (!$result->wasSuccessful()) {
-      $this->logger->error($result->getMessage());
+    try {
+      $result = $cb->run();
+      if (!$result->wasSuccessful()) {
+        $this->logger->error($result->getMessage());
+
+        return Command::FAILURE;
+      }
+
+      return Command::SUCCESS;
+    }
+    catch (\Throwable $exception) {
+      $this->logger->error($exception->getMessage());
 
       return Command::FAILURE;
     }
-
-    return Command::SUCCESS;
   }
 
   /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\marvin\Robo\Task;
 
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 
@@ -99,7 +100,14 @@ class DeleteArtifactFilesTask extends BaseTask {
   }
 
   protected function runAction(): static {
-    foreach ($this->getFiles() as $file) {
+    $files = $this->getFiles();
+    if ($files instanceof Finder) {
+      // Finder fails when attempting to collect a file whose parent directory
+      // has been recursively deleted.
+      $files = iterator_to_array($files);
+    }
+
+    foreach ($files as $file) {
       $this->runActionSingle($file);
     }
 
@@ -133,6 +141,17 @@ class DeleteArtifactFilesTask extends BaseTask {
     );
 
     $filePathRelativeFromProjectRoot = Path::join($buildDir, $filePathRelativeFromBuildDir);
+
+    if (!$this->fs->exists($filePathRelativeFromProjectRoot)) {
+      $this->printTaskWarning(
+        "Cannot be deleted because does not exist: {filePath}",
+        [
+          'filePath' => $filePathRelativeFromProjectRoot,
+        ],
+      );
+
+      return $this;
+    }
 
     $this->printTaskDebug(
       'Delete: {filePath}',

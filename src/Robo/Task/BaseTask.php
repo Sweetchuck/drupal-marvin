@@ -135,7 +135,7 @@ abstract class BaseTask extends RoboBaseTask implements
       $this,
       $this->actionExitCode,
       $this->actionStdError,
-      $this->getAssetsWithPrefixedNames()
+      $this->getAssetsWithPrefixedNames(),
     );
   }
 
