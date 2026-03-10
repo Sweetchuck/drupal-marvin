@@ -10,24 +10,19 @@ use Psr\Container\ContainerInterface;
 
 abstract class ContainerInitializerBase {
 
+  /**
+   * @phpstan-return array<class-string<\Drupal\marvin\ContainerInitializerBase>>
+   */
+  public static function getDependencies(): array {
+    return [];
+  }
+
   public static function initialize(ContainerInterface $container): void {
-    if (static::isInitialized($container)) {
-      // Early exit. Assumes that every other service is also initialized.
-      return;
+    foreach (static::getDependencies() as $dependency) {
+      $dependency::initialize($container);
     }
 
     static::addServiceInfoList(static::getServiceInfoList(), $container);
-  }
-
-  /**
-   * Child classes should override this method.
-   *
-   * @code
-   * return $container->has(MyService::class);
-   * @endcode
-   */
-  public static function isInitialized(ContainerInterface $container): bool {
-    return FALSE;
   }
 
   /**

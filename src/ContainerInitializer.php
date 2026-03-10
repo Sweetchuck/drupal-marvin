@@ -14,12 +14,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ContainerInitializer extends ContainerInitializerBase {
 
-  #[\Override]
-  public static function isInitialized(ContainerInterface $container): bool {
-    // Checks the first non-third-party service.
-    return $container->has(ProcessFactoryInterface::class);
-  }
-
   /**
    * {@inheritdoc}
    */
