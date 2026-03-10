@@ -16,7 +16,7 @@ class BuildActionEvent extends Event {
   public const string EVENT_TASKS_ALTER = 'marvin.artifact.build.all.tasks.alter';
 
   /**
-   * @phpstan-param array<marvin-artifact-type> $artifactType
+   * @phpstan-param marvin-artifact-type $artifactType
    * @phpstan-param \Robo\Collection\CollectionBuilder $collectionBuilder
    *   Only for "new \Robo\Collection\CallableTask()" as $reference.
    *   However, callable|\Closure also can be used.
